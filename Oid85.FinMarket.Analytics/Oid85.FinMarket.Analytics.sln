@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oid85.FinMarket.Analytics.Application", "Oid85.FinMarket.Analytics.Application\Oid85.FinMarket.Analytics.Application.csproj", "{EF5FD950-29E6-3952-429E-8FDC348452F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oid85.FinMarket.Analytics.Common", "Oid85.FinMarket.Analytics.Common\Oid85.FinMarket.Analytics.Common.csproj", "{DD447EA4-838D-BA0C-659D-34E9B9D957AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oid85.FinMarket.Analytics.Core", "Oid85.FinMarket.Analytics.Core\Oid85.FinMarket.Analytics.Core.csproj", "{2433A331-1295-BA95-D012-DD2C9687FBD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oid85.FinMarket.Analytics.Infrastructure", "Oid85.FinMarket.Analytics.Infrastructure\Oid85.FinMarket.Analytics.Infrastructure.csproj", "{5F03FE16-5934-4F6D-F0F6-4C2A311FF2E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oid85.FinMarket.Analytics.WebHost", "Oid85.FinMarket.Analytics.WebHost\Oid85.FinMarket.Analytics.WebHost.csproj", "{FF17D116-DF14-1DB5-3692-CD47D5BA9963}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF5FD950-29E6-3952-429E-8FDC348452F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF5FD950-29E6-3952-429E-8FDC348452F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF5FD950-29E6-3952-429E-8FDC348452F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF5FD950-29E6-3952-429E-8FDC348452F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD447EA4-838D-BA0C-659D-34E9B9D957AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD447EA4-838D-BA0C-659D-34E9B9D957AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD447EA4-838D-BA0C-659D-34E9B9D957AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD447EA4-838D-BA0C-659D-34E9B9D957AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2433A331-1295-BA95-D012-DD2C9687FBD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2433A331-1295-BA95-D012-DD2C9687FBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2433A331-1295-BA95-D012-DD2C9687FBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2433A331-1295-BA95-D012-DD2C9687FBD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F03FE16-5934-4F6D-F0F6-4C2A311FF2E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F03FE16-5934-4F6D-F0F6-4C2A311FF2E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F03FE16-5934-4F6D-F0F6-4C2A311FF2E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F03FE16-5934-4F6D-F0F6-4C2A311FF2E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF17D116-DF14-1DB5-3692-CD47D5BA9963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF17D116-DF14-1DB5-3692-CD47D5BA9963}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF17D116-DF14-1DB5-3692-CD47D5BA9963}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF17D116-DF14-1DB5-3692-CD47D5BA9963}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B84FA9FC-06B1-46F1-92F9-39E0612292EA}
+	EndGlobalSection
+EndGlobal
