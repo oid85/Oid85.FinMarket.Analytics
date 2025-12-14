@@ -18,9 +18,4 @@
     <ProjectReference Include="..\Oid85.FinMarket.Analytics.Core\Oid85.FinMarket.Analytics.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\Services\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

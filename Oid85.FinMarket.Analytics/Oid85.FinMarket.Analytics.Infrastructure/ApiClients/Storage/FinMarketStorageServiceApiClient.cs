@@ -1,0 +1,45 @@
+﻿using System.Net.Http.Json;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Common.KnownConstants;
+using Oid85.FinMarket.Analytics.Core.Exceptions;
+using Oid85.FinMarket.Analytics.Core.Requests;
+using Oid85.FinMarket.Analytics.Core.Responses;
+
+namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
+{
+    /// <inheritdoc />
+    public class FinMarketStorageServiceApiClient(
+        IHttpClientFactory httpClientFactory) 
+        : IFinMarketStorageServiceApiClient
+    {
+        /// <inheritdoc />
+        public async Task<GetCandleListResponse> GetCandleListAsync(GetCandleListRequest request) => 
+            await GetResponseAsync<GetCandleListRequest, GetCandleListResponse>("/api/candles/list", request);
+
+        /// <inheritdoc />
+        public async Task<GetInstrumentListResponse> GetInstrumentListAsync(GetInstrumentListRequest request) =>
+            await GetResponseAsync<GetInstrumentListRequest, GetInstrumentListResponse>("/api/instruments/list", request);
+
+        private async Task<TResponse> GetResponseAsync<TRequest, TResponse>(string url, TRequest request) where TResponse : new()
+        {
+            try
+            {
+                var content = JsonContent.Create(request);
+                using var httpResponse = await SendPostRequestAsync(url, content);
+                var data = await httpResponse.Content.ReadFromJsonAsync<TResponse>();
+                return data ?? new TResponse();
+            }
+
+            catch (Exception exception)
+            {
+                throw new CustomBusinessException("500", "Ошибка при выполнении запроса", exception);
+            }
+        }
+
+        private async Task<HttpResponseMessage> SendPostRequestAsync(string url, HttpContent content)
+        {
+            using var httpClient = httpClientFactory.CreateClient(KnownHttpClients.FinMarketStorageServiceApiClient);
+            return await httpClient.PostAsync(url, content);
+        }
+    }
+}

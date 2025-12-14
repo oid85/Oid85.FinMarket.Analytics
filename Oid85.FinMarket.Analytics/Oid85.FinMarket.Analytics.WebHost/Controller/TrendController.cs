@@ -1,15 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
+using Oid85.FinMarket.Analytics.Core;
+using Oid85.FinMarket.Analytics.Core.Requests;
+using Oid85.FinMarket.Analytics.Core.Responses;
 using Oid85.FinMarket.Analytics.WebHost.Controller.Base;
 
 namespace Oid85.FinMarket.Analytics.WebHost.Controller;
 
 /// <summary>
-/// Свечи
+/// Тренды
 /// </summary>
-[Route("api/candles")]
+[Route("api/trends")]
 [ApiController]
-public class TrendController()
+public class TrendController(
+    ITrendService trendService)
     : BaseController
 {
-
+    /// <summary>
+    /// Получить анализ динамики трендов
+    /// </summary>
+    [HttpPost("dynamic")]
+    [ProducesResponseType(typeof(BaseResponse<GetTrendDynamicResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetTrendDynamicResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetTrendDynamicResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetTrendDynamicAsync(
+        [FromBody] GetTrendDynamicRequest request) =>
+        GetResponseAsync(
+            () => trendService.GetTrendDynamicAsync(request),
+            result => new BaseResponse<GetTrendDynamicResponse> { Result = result });
 }
