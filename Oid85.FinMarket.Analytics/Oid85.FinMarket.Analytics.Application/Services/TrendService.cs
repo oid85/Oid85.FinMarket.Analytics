@@ -73,7 +73,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 data.Add(dataItem);
             }
 
-            return data;
+            var result = data.OrderByDescending(x =>
+            {
+                var reverse = x.Trend.AsEnumerable().Reverse();
+                var count = reverse.TakeWhile(x => x == 1).Count();
+                return count;
+            }).ToList();
+
+            return result;
         }
 
         private async Task<Dictionary<string, List<Candle>>> GetCandleData(List<string> tickers)

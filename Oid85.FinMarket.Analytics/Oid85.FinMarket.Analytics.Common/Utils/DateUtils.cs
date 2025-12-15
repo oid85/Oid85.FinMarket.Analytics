@@ -7,20 +7,9 @@
             var curDate = from;
             var dates = new List<DateOnly>();
 
-            var daysOfWeek = new List<DayOfWeek>()
-        {
-            DayOfWeek.Monday,
-            DayOfWeek.Tuesday,
-            DayOfWeek.Wednesday,
-            DayOfWeek.Thursday,
-            DayOfWeek.Friday
-        };
-
             while (curDate <= to)
             {
-                if (daysOfWeek.Contains(curDate.DayOfWeek))
-                    dates.Add(curDate);
-
+                dates.Add(curDate);
                 curDate = curDate.AddDays(1);
             }
 
