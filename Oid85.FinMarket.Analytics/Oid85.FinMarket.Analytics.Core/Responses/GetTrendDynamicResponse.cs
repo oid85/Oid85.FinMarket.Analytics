@@ -12,7 +12,13 @@
     public class TrendDynamicData
     {
         public string Ticker { get; set; }
-        public List<int> Trend { get; set; }
-        public List<double> Delta { get; set; }
+        public List<TrendDynamicDataItem> Items { get; set; }
+    }
+
+    public class TrendDynamicDataItem
+    {
+        public DateOnly Date { get; set; }
+        public int? Trend { get; set; }
+        public double? Delta { get; set; }
     }
 }

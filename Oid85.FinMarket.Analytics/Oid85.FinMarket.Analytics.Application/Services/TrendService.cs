@@ -7,6 +7,7 @@ using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
@@ -27,16 +28,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var response = new GetTrendDynamicResponse();
 
-            response.Dates = DateUtils.GetDates(monthAgo, today);
-            response.Indexes = GetTrendDynamicData(monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Index).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Shares = GetTrendDynamicData(monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Share).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Futures = GetTrendDynamicData(monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Future).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Bonds = GetTrendDynamicData(monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Bond).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            var dates = DateUtils.GetDates(monthAgo, today);
+
+            response.Dates = dates;
+            response.Indexes = GetTrendDynamicData(dates,monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Index).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            response.Shares = GetTrendDynamicData(dates, monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Share).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            response.Futures = GetTrendDynamicData(dates, monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Future).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            response.Bonds = GetTrendDynamicData(dates, monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Bond).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
 
             return response;
         }
 
         private static List<TrendDynamicData> GetTrendDynamicData(
+            List<DateOnly> dates,
             DateOnly from, 
             DateOnly to, 
             List<string> tickers, 
@@ -47,36 +51,28 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var ticker in tickers)
             {
-                var dataItem = new TrendDynamicData() { Ticker = ticker, Trend = [], Delta = [] };
+                var trendDynamicData = new TrendDynamicData() { Ticker = ticker, Items = [] };
                 var ultimateSmootherValues = ultimateSmootherData[ticker].Where(x => x.Date >= from && x.Date <= to).ToList();
                 var candles = candleData[ticker].Where(x => x.Date >= from && x.Date <= to).ToList();
 
-                dataItem.Trend.Add(0);
-                dataItem.Delta.Add(0.0);
+                var dictionary = dates.ToDictionary(key => key, value => new TrendDynamicDataItem() { Date = value, Trend = null, Delta = null });
 
-
-                // Trend
-                for (int i = 1; i < ultimateSmootherValues.Count; i++)
-                    if (ultimateSmootherValues[i].Value > ultimateSmootherValues[i - 1].Value)
-                        dataItem.Trend.Add(1);
-
-                    else if (ultimateSmootherValues[i].Value < ultimateSmootherValues[i - 1].Value)
-                        dataItem.Trend.Add(-1);
-
-                    else
-                        dataItem.Trend.Add(0);                
-
-                // Delta
                 for (int i = 1; i < candles.Count; i++)
-                    dataItem.Delta.Add(Math.Round((candles[i].Close - candles[i - 1].Close) / candles[i - 1].Close * 100.0, 2));
+                {
+                    var date = candles[i].Date;
+                    dictionary[date].Trend = ultimateSmootherValues[i].Value > ultimateSmootherValues[i - 1].Value ? 1 : -1;
+                    dictionary[date].Delta = Math.Round((candles[i].Close - candles[i - 1].Close) / candles[i - 1].Close * 100.0, 2);                    
+                }
 
-                data.Add(dataItem);
+                trendDynamicData.Items = dictionary.Values.ToList();
+
+                data.Add(trendDynamicData);
             }
 
             var result = data.OrderByDescending(x =>
             {
-                var reverse = x.Trend.AsEnumerable().Reverse();
-                var count = reverse.TakeWhile(x => x == 1).Count();
+                var reverse = x.Items.AsEnumerable().Reverse();
+                var count = reverse.TakeWhile(x => x.Trend != null && x.Trend == 1).Count();
                 return count;
             }).ToList();
 
