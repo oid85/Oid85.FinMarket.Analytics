@@ -71,8 +71,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var result = data.OrderByDescending(x =>
             {
-                var reverse = x.Items.AsEnumerable().Reverse();
-                var count = reverse.TakeWhile(x => x.Trend != null && x.Trend == 1).Count();
+                var reverse = x.Items.Select(x => x.Trend).Where(x => x != null).AsEnumerable().Reverse();
+                var count = reverse.TakeWhile(x => x == 1).Count();
                 return count;
             }).ToList();
 
