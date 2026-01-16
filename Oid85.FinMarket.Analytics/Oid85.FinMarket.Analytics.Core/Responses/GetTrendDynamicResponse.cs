@@ -20,5 +20,6 @@
         public DateOnly Date { get; set; }
         public int? Trend { get; set; }
         public double? Delta { get; set; }
+        public double? Price { get; set; }
     }
 }

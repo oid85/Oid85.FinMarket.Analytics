@@ -55,13 +55,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var ultimateSmootherValues = ultimateSmootherData[ticker].Where(x => x.Date >= from && x.Date <= to).ToList();
                 var candles = candleData[ticker].Where(x => x.Date >= from && x.Date <= to).ToList();
 
-                var dictionary = dates.ToDictionary(key => key, value => new TrendDynamicDataItem() { Date = value, Trend = null, Delta = null });
+                var dictionary = dates.ToDictionary(key => key, value => new TrendDynamicDataItem() { Date = value, Trend = null, Delta = null, Price = null });
 
                 for (int i = 1; i < candles.Count; i++)
                 {
                     var date = candles[i].Date;
                     dictionary[date].Trend = ultimateSmootherValues[i].Value > ultimateSmootherValues[i - 1].Value ? 1 : -1;
-                    dictionary[date].Delta = Math.Round((candles[i].Close - candles[i - 1].Close) / candles[i - 1].Close * 100.0, 2);                    
+                    dictionary[date].Delta = Math.Round((candles[i].Close - candles[i - 1].Close) / candles[i - 1].Close * 100.0, 2);
+                    dictionary[date].Price = candles[i].Close;
                 }
 
                 trendDynamicData.Items = dictionary.Values.ToList();
