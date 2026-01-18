@@ -1,18 +1,17 @@
-﻿using System.Reflection.Metadata;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
     public class TrendService(
+        IInstrumentRepository instrumentRepository,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
         : ITrendService
     {
@@ -22,8 +21,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var monthAgo = DateOnly.FromDateTime(DateTime.Today.AddMonths(-1));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var instruments = await GetInstrumentAsync();
-            var candleData = await GetCandleData(instruments.Select(x => x.Ticker).ToList());
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
+            var candleData = await GetCandleData(instruments!.Select(x => x.Ticker).ToList());
             var ultimateSmootherData = GetUltimateSmootherData(candleData);
 
             var response = new GetTrendDynamicResponse();
@@ -31,10 +30,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var dates = DateUtils.GetDates(monthAgo, today);
 
             response.Dates = dates;
-            response.Indexes = GetTrendDynamicData(dates,monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Index).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Shares = GetTrendDynamicData(dates, monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Share).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Futures = GetTrendDynamicData(dates, monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Future).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Bonds = GetTrendDynamicData(dates, monthAgo, today, instruments.Where(x => x.Type == KnownInstrumentTypes.Bond).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            response.Indexes = GetTrendDynamicData(dates,monthAgo, today, instruments!.Where(x => x.Type == KnownInstrumentTypes.Index).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            response.Shares = GetTrendDynamicData(dates, monthAgo, today, instruments!.Where(x => x.Type == KnownInstrumentTypes.Share).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            response.Futures = GetTrendDynamicData(dates, monthAgo, today, instruments!.Where(x => x.Type == KnownInstrumentTypes.Future).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            response.Bonds = GetTrendDynamicData(dates, monthAgo, today, instruments!.Where(x => x.Type == KnownInstrumentTypes.Bond).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
 
             return response;
         }
@@ -108,20 +107,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             return data;
-        }
-
-        private async Task<List<Instrument>> GetInstrumentAsync()
-        {
-            var response = await finMarketStorageServiceApiClient.GetInstrumentListAsync(new());
-            return response.Result.Instruments
-                .Select(x => 
-                new Instrument
-                {
-                    Ticker = x.Ticker,
-                    Name = x.Name,
-                    Type = x.Type
-                })
-                .ToList();
         }
 
         private async Task<List<Candle>> GetCandleByTickerAsync(string ticker)

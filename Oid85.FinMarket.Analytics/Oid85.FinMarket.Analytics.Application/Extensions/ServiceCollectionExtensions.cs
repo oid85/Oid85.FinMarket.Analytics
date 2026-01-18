@@ -10,5 +10,6 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services)
     {
         services.AddTransient<ITrendService, TrendService>();
+        services.AddTransient<IInstrumentService, InstrumentService>();
     }
 }

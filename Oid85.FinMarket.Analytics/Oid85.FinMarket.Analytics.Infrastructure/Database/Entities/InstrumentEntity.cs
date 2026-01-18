@@ -1,15 +1,12 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Models
+﻿using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities.Base;
+
+namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Entities
 {
     /// <summary>
     /// Инструмент
     /// </summary>
-    public class Instrument
+    public class InstrumentEntity : BaseEntity
     {
-        /// <summary>
-        /// Идентификатор
-        /// </summary>
-        public Guid Id { get; set; }
-
         /// <summary>
         /// Тикер
         /// </summary>

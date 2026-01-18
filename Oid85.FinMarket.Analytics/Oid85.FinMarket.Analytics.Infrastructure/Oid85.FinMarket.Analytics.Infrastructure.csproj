@@ -31,7 +31,4 @@
 	  <ProjectReference Include="..\Oid85.FinMarket.Analytics.Application\Oid85.FinMarket.Analytics.Application.csproj" />
 	  <ProjectReference Include="..\Oid85.FinMarket.Analytics.Common\Oid85.FinMarket.Analytics.Common.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Database\Repositories\" />
-	</ItemGroup>
 </Project>

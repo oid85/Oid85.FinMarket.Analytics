@@ -3,8 +3,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage;
+using Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Extensions;
 
@@ -23,6 +25,8 @@ public static class ServiceCollectionExtensions
             options
                 .UseNpgsql(configuration.GetValue<string>(KnownSettingsKeys.PostgresFinMarketAnalyticsConnectionString)!)
                 .EnableServiceProviderCaching(false), poolSize: 32);
+
+        services.AddTransient<IInstrumentRepository, InstrumentRepository>();
     }
 
     public static void ConfigureFinMarketStorageServiceApiClient(
