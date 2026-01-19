@@ -49,6 +49,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Type = x.Type,
                     IsSelected = x.IsSelected
                 })
+                .OrderBy(x => x.Ticker)
                 .ToList()
             };
 
