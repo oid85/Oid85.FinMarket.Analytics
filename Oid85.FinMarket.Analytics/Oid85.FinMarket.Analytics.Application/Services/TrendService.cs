@@ -30,10 +30,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var dates = DateUtils.GetDates(monthAgo, today);
 
             response.Dates = dates;
-            response.Indexes = GetTrendDynamicData(dates,monthAgo, today, instruments!.Where(x => x.Type == KnownInstrumentTypes.Index).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Shares = GetTrendDynamicData(dates, monthAgo, today, instruments!.Where(x => x.Type == KnownInstrumentTypes.Share).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Futures = GetTrendDynamicData(dates, monthAgo, today, instruments!.Where(x => x.Type == KnownInstrumentTypes.Future).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
-            response.Bonds = GetTrendDynamicData(dates, monthAgo, today, instruments!.Where(x => x.Type == KnownInstrumentTypes.Bond).Select(x => x.Ticker).ToList(), ultimateSmootherData, candleData);
+            response.Indexes = GetTrendDynamicData(dates,monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData);
+            response.Shares = GetTrendDynamicData(dates, monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData);
+            response.Futures = GetTrendDynamicData(dates, monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData);
+            response.Bonds = GetTrendDynamicData(dates, monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Bond)], ultimateSmootherData, candleData);
 
             return response;
         }
@@ -42,17 +42,17 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             List<DateOnly> dates,
             DateOnly from, 
             DateOnly to, 
-            List<string> tickers, 
+            List<Instrument> instruments, 
             Dictionary<string, List<DateValue<double>>> ultimateSmootherData,
             Dictionary<string, List<Candle>> candleData)
         {
             var data = new List<TrendDynamicData>();
 
-            foreach (var ticker in tickers)
+            foreach (var instrument in instruments)
             {
-                var trendDynamicData = new TrendDynamicData() { Ticker = ticker, Items = [] };
-                var ultimateSmootherValues = ultimateSmootherData[ticker].Where(x => x.Date >= from && x.Date <= to).ToList();
-                var candles = candleData[ticker].Where(x => x.Date >= from && x.Date <= to).ToList();
+                var trendDynamicData = new TrendDynamicData() { Ticker = instrument.Ticker, Name = instrument.Name, Items = [] };
+                var ultimateSmootherValues = ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= from && x.Date <= to).ToList();
+                var candles = candleData[instrument.Ticker].Where(x => x.Date >= from && x.Date <= to).ToList();
 
                 var dictionary = dates.ToDictionary(key => key, value => new TrendDynamicDataItem() { Date = value, Trend = null, Delta = null, Price = null });
 
@@ -64,7 +64,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     dictionary[date].Price = candles[i].Close;
                 }
 
-                trendDynamicData.Items = dictionary.Values.ToList();
+                trendDynamicData.Items = [.. dictionary.Values];
 
                 data.Add(trendDynamicData);
             }

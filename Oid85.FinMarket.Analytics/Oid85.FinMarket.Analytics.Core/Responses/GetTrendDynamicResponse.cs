@@ -12,6 +12,7 @@
     public class TrendDynamicData
     {
         public string Ticker { get; set; }
+        public string Name { get; set; }
         public List<TrendDynamicDataItem> Items { get; set; }
     }
 
