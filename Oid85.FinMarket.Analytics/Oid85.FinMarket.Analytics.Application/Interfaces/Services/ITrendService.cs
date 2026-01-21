@@ -12,5 +12,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Динамика трендов
         /// </summary>
         Task<GetTrendDynamicResponse> GetTrendDynamicAsync(GetTrendDynamicRequest request);
+
+        /// <summary>
+        /// Сравнение трендов
+        /// </summary>
+        Task<GetCompareTrendResponse> GetCompareTrendAsync(GetCompareTrendRequest request);
     }
 }

@@ -24,11 +24,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-
-            var response = new GetTrendDynamicResponse();
-
             var dates = DateUtils.GetDates(monthAgo, today);
 
+            var response = new GetTrendDynamicResponse();
+            
             response.Dates = dates;
 
             response.Indexes = GetTrendDynamicData(dates,monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData);
@@ -78,6 +77,43 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }).ToList();
 
             return result;
+        }
+
+        /// <inheritdoc />
+        public async Task<GetCompareTrendResponse> GetCompareTrendAsync(GetCompareTrendRequest request)
+        {
+            var monthAgo = DateOnly.FromDateTime(DateTime.Today.AddMonths(-1));
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
+            var tickers = instruments!.Select(x => x.Ticker).ToList();
+            var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
+            var dates = DateUtils.GetDates(monthAgo, today);
+
+            var response = new GetCompareTrendResponse();
+
+            foreach (var item in ultimateSmootherData)
+                response.Series.Add(new GetCompareTrendSeriesResponse
+                {
+                    Name = item.Key,
+                    Data = GetSeriesData(dates, item.Value)
+                });
+
+            return response;
+        }
+
+        private static List<GetCompareTrendSeriesItemResponse> GetSeriesData(List<DateOnly> dates, List<DateValue<double>> dateValues)
+        {
+            var series = new List<GetCompareTrendSeriesItemResponse>();
+
+            foreach (var date in dates)
+                series.Add(new GetCompareTrendSeriesItemResponse
+                {
+                    Date = date,
+                    Value = dateValues.Find(x => x.Date == date)?.Value ?? null
+                });
+
+            return series;
         }
     }
 }

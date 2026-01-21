@@ -28,4 +28,17 @@ public class TrendController(
         GetResponseAsync(
             () => trendService.GetTrendDynamicAsync(request),
             result => new BaseResponse<GetTrendDynamicResponse> { Result = result });
+
+    /// <summary>
+    /// Получить анализ сравнения трендов
+    /// </summary>
+    [HttpPost("compare")]
+    [ProducesResponseType(typeof(BaseResponse<GetCompareTrendResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetCompareTrendResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetCompareTrendResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetCompareTrendAsync(
+        [FromBody] GetCompareTrendRequest request) =>
+        GetResponseAsync(
+            () => trendService.GetCompareTrendAsync(request),
+            result => new BaseResponse<GetCompareTrendResponse> { Result = result });
 }
