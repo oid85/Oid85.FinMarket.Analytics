@@ -97,7 +97,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new GetCompareTrendSeriesResponse
                     {
                         Name = item.Key,
-                        Data = GetSeriesData(dates, item.Value)
+                        Data = GetNormDataValues(GetSeriesData(dates, item.Value))
                     });
 
             return response;
@@ -105,8 +105,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private static List<GetCompareTrendSeriesItemResponse> GetSeriesData(List<DateOnly> dates, List<DateValue<double>> dateValues)
         {
-            var normDataValues = GetNormDataValues(dateValues);
-
             var series = new List<GetCompareTrendSeriesItemResponse>();
 
             foreach (var date in dates)
@@ -114,22 +112,22 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new GetCompareTrendSeriesItemResponse
                     {
                         Date = date,
-                        Value = normDataValues.Find(x => x.Date == date)?.Value ?? null
+                        Value = dateValues.Find(x => x.Date == date)?.Value ?? null
                     });
 
             return series;
         }
 
-        private static List<DateValue<double>> GetNormDataValues(List<DateValue<double>> dateValues)
+        private static List<GetCompareTrendSeriesItemResponse> GetNormDataValues(List<GetCompareTrendSeriesItemResponse> dateValues)
         {
             if (dateValues.Count == 0)
                 return [];
 
-            var result = new List<DateValue<double>>();
+            var result = new List<GetCompareTrendSeriesItemResponse>();
 
             foreach (var dateValue in dateValues)
                 result.Add(
-                    new DateValue<double>
+                    new GetCompareTrendSeriesItemResponse
                     {
                         Date = dateValue.Date,
                         Value = dateValue.Value / dateValues[0].Value
