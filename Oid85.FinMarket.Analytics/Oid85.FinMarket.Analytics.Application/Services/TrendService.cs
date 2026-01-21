@@ -118,19 +118,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return series;
         }
 
-        private static List<GetCompareTrendSeriesItemResponse> GetNormDataValues(List<GetCompareTrendSeriesItemResponse> dateValues)
+        private static List<GetCompareTrendSeriesItemResponse> GetNormDataValues(List<GetCompareTrendSeriesItemResponse> items)
         {
-            if (dateValues.Count == 0)
+            if (items.Count == 0)
                 return [];
+
+            if (!items.Any(x => x.Value is not null))
+                return items;
+
+            var divider = items.First(x => x.Value is not null).Value;
 
             var result = new List<GetCompareTrendSeriesItemResponse>();
 
-            foreach (var dateValue in dateValues)
+            foreach (var dateValue in items)
                 result.Add(
                     new GetCompareTrendSeriesItemResponse
                     {
                         Date = dateValue.Date,
-                        Value = dateValue.Value / dateValues[0].Value
+                        Value = dateValue.Value is null ? null : dateValue.Value / divider
                     });
 
             return result;
