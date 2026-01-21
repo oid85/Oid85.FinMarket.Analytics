@@ -93,11 +93,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var response = new GetCompareTrendResponse();
 
             foreach (var item in ultimateSmootherData)
-                response.Series.Add(new GetCompareTrendSeriesResponse
-                {
-                    Name = item.Key,
-                    Data = GetSeriesData(dates, item.Value)
-                });
+                response.Series.Add(
+                    new GetCompareTrendSeriesResponse
+                    {
+                        Name = item.Key,
+                        Data = GetSeriesData(dates, item.Value)
+                    });
 
             return response;
         }
@@ -107,11 +108,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var series = new List<GetCompareTrendSeriesItemResponse>();
 
             foreach (var date in dates)
-                series.Add(new GetCompareTrendSeriesItemResponse
-                {
-                    Date = date,
-                    Value = dateValues.Find(x => x.Date == date)?.Value ?? null
-                });
+                series.Add(
+                    new GetCompareTrendSeriesItemResponse
+                    {
+                        Date = date,
+                        Value = dateValues.Find(x => x.Date == date)?.Value ?? null
+                    });
 
             return series;
         }
