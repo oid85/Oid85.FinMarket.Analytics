@@ -9,6 +9,7 @@ public static class ServiceCollectionExtensions
     public static void ConfigureApplicationServices(
         this IServiceCollection services)
     {
+        services.AddTransient<IDataService, DataService>();
         services.AddTransient<ITrendService, TrendService>();
         services.AddTransient<IInstrumentService, InstrumentService>();
     }
