@@ -82,13 +82,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetCompareTrendResponse> GetCompareTrendAsync(GetCompareTrendRequest request)
         {
-            var monthAgo = DateOnly.FromDateTime(DateTime.Today.AddMonths(-1));
+            var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-14));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
             var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-            var dates = DateUtils.GetDates(monthAgo, today);
+            var dates = DateUtils.GetDates(startDate, today);
 
             var response = new GetCompareTrendResponse();
 
