@@ -90,17 +90,37 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dates = DateUtils.GetDates(startDate, today);
 
-            var response = new GetCompareTrendResponse();
+            var series = new List<GetCompareTrendSeriesResponse>();
 
-            foreach (var item in ultimateSmootherData)
-                response.Series.Add(
-                    new GetCompareTrendSeriesResponse
-                    {
-                        Name = item.Key,
-                        Data = GetNormDataValues(GetSeriesData(dates, item.Value))
-                    });
+            foreach (var pair in ultimateSmootherData)
+            {
+                var seriesItem = new GetCompareTrendSeriesResponse();
 
-            return response;
+                seriesItem.Name = pair.Key;
+                seriesItem.Data = GetNormDataValues(GetSeriesData(dates, pair.Value));
+                seriesItem.Color = GetColor(seriesItem.Name, seriesItem.Data);
+
+                series.Add(seriesItem);
+            }
+
+            return new GetCompareTrendResponse() { Series = series };
+
+            static string GetColor(string name, List<GetCompareTrendSeriesItemResponse> data)
+            {
+                if (data.Count == 0)
+                    return "#191970";
+
+                if (name == "MCFTR")
+                    return "#191970";
+
+                if (data.Last().Value > 0)
+                    return "#00CC66";
+
+                if (data.Last().Value < 0)
+                    return "#FF6633";
+
+                return "#191970";
+            }
         }
 
         private static List<GetCompareTrendSeriesItemResponse> GetSeriesData(List<DateOnly> dates, List<DateValue<double>> dateValues)
