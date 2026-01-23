@@ -2,5 +2,6 @@
 {
     public class GetCompareTrendRequest
     {
+        public int LastDaysCount { get; set; }
     }
 }

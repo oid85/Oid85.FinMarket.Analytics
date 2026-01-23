@@ -2,5 +2,6 @@
 {
     public class GetTrendDynamicRequest
     {
+        public int LastDaysCount { get; set; }
     }
 }
