@@ -92,7 +92,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var series = new List<GetCompareTrendSeriesResponse>();
 
-            var benchmark = ultimateSmootherData["MCFTR"].Last().Value / ultimateSmootherData["MCFTR"].First().Value;
+            var benchmarkValues = ultimateSmootherData["MCFTR"].Where(x => x.Date >= startDate && x.Date <= today).ToList();
+            var benchmark = benchmarkValues.Last().Value / benchmarkValues.First().Value;
 
             foreach (var pair in ultimateSmootherData)
             {
@@ -115,10 +116,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (name == "MCFTR")
                     return "#191970";
 
-                if (data.Last().Value > benchmark)
+                if (data.Last(x => x.Value is not null).Value > benchmark)
                     return "#00CC66";
 
-                if (data.Last().Value < benchmark)
+                if (data.Last(x => x.Value is not null).Value < benchmark)
                     return "#FF6633";
 
                 return "#191970";
