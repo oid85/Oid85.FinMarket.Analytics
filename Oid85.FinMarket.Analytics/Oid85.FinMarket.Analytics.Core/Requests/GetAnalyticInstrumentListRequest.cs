@@ -2,5 +2,6 @@
 {
     public class GetAnalyticInstrumentListRequest
     {
+        public int LastDaysCount { get; set; }
     }
 }

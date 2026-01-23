@@ -12,5 +12,6 @@
         public string Name { get; set; }        
         public bool IsSelected { get; set; }
         public string Type { get; set; }
+        public double BenchmarkChange { get; set; }
     }
 }

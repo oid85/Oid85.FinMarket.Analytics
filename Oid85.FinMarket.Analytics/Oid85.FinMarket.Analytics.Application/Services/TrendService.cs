@@ -17,23 +17,23 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetTrendDynamicResponse> GetTrendDynamicAsync(GetTrendDynamicRequest request)
         {
-            var monthAgo = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
+            var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
             var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-            var dates = DateUtils.GetDates(monthAgo, today);
+            var dates = DateUtils.GetDates(startDate, today);
 
             var response = new GetTrendDynamicResponse();
             
             response.Dates = dates;
 
-            response.Indexes = GetTrendDynamicData(dates,monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData);
-            response.Shares = GetTrendDynamicData(dates, monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData);
-            response.Futures = GetTrendDynamicData(dates, monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData);
-            response.Bonds = GetTrendDynamicData(dates, monthAgo, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Bond)], ultimateSmootherData, candleData);
+            response.Indexes = GetTrendDynamicData(dates,startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData);
+            response.Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData);
+            response.Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData);
+            response.Bonds = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Bond)], ultimateSmootherData, candleData);
 
             return response;
         }

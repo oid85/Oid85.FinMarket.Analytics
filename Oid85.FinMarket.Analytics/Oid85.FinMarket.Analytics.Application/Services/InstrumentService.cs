@@ -10,7 +10,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class InstrumentService(
         IInstrumentRepository instrumentRepository,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
+        IDataService dataService) 
         : IInstrumentService
     {
         /// <inheritdoc />
@@ -37,23 +38,54 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     await instrumentRepository.DeleteByTickerAsync(analyticInstrument.Ticker);
 
             var instruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
+            var tickers = instruments!.Select(x => x.Ticker).ToList();
+            var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
+
+            var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            var benchmarkIncrement = GetIncrement("MCFTR");
+
+            var items = new List<GetAnalyticInstrumentListItemResponse>();
+
+            foreach (var instrument in instruments)
+            {
+                var item = new GetAnalyticInstrumentListItemResponse();
+
+                item.Id = instrument.Id;
+                item.Ticker = instrument.Ticker;
+                item.Name = instrument.Name;
+                item.IsSelected = instrument.IsSelected;
+                item.Type = instrument.Type;
+                item.BenchmarkChange = Math.Round(GetIncrement(instrument.Ticker) - benchmarkIncrement, 2);
+
+                items.Add(item);
+            }
 
             var response = new GetAnalyticInstrumentListResponse()
             {
-                Instruments = instruments
-                .Select(x => new GetAnalyticInstrumentListItemResponse                
-                {
-                    Id = x.Id,
-                    Ticker = x.Ticker,
-                    Name = x.Name,
-                    Type = x.Type,
-                    IsSelected = x.IsSelected
-                })
-                .OrderBy(x => x.Ticker)
-                .ToList()
+                Instruments = [.. items.OrderByDescending(x => x.BenchmarkChange)]
             };
 
             return response;
+
+            // Изменение меджу первым и последним значением в процентах (приращение)
+            double GetIncrement(string ticker)
+            {
+                if (ultimateSmootherData.TryGetValue(ticker, out List<DateValue<double>>? dateValues))
+                {
+                    var filteredDateValues = dateValues.Where(x => x.Date >= startDate && x.Date <= today).ToList();
+
+                    if (filteredDateValues.Count == 0)
+                        return 0.0;
+
+                    var result = (filteredDateValues.Last().Value - filteredDateValues.First().Value) / filteredDateValues.First().Value * 100.0;
+
+                    return Math.Round(result, 2);
+                }
+
+                return 0.0;
+            }
         }
 
         /// <inheritdoc />
