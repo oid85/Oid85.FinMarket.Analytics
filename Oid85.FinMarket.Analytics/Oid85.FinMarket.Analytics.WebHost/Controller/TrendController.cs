@@ -13,7 +13,8 @@ namespace Oid85.FinMarket.Analytics.WebHost.Controller;
 [Route("api/trends")]
 [ApiController]
 public class TrendController(
-    ITrendService trendService)
+    ITrendDynamicService trendDynamicService,
+    ICompareTrendService compareTrendService)
     : BaseController
 {
     /// <summary>
@@ -26,7 +27,7 @@ public class TrendController(
     public Task<IActionResult> GetTrendDynamicAsync(
         [FromBody] GetTrendDynamicRequest request) =>
         GetResponseAsync(
-            () => trendService.GetTrendDynamicAsync(request),
+            () => trendDynamicService.GetTrendDynamicAsync(request),
             result => new BaseResponse<GetTrendDynamicResponse> { Result = result });
 
     /// <summary>
@@ -39,6 +40,6 @@ public class TrendController(
     public Task<IActionResult> GetCompareTrendAsync(
         [FromBody] GetCompareTrendRequest request) =>
         GetResponseAsync(
-            () => trendService.GetCompareTrendAsync(request),
+            () => compareTrendService.GetCompareTrendAsync(request),
             result => new BaseResponse<GetCompareTrendResponse> { Result = result });
 }

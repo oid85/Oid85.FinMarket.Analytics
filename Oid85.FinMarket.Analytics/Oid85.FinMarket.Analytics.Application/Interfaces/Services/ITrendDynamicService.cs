@@ -4,18 +4,13 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
     /// <summary>
-    /// Сервис трендов
+    /// Сервис TrendDynamic
     /// </summary>
-    public interface ITrendService
+    public interface ITrendDynamicService
     {
         /// <summary>
         /// Динамика трендов
         /// </summary>
         Task<GetTrendDynamicResponse> GetTrendDynamicAsync(GetTrendDynamicRequest request);
-
-        /// <summary>
-        /// Сравнение трендов
-        /// </summary>
-        Task<GetCompareTrendResponse> GetCompareTrendAsync(GetCompareTrendRequest request);
     }
 }

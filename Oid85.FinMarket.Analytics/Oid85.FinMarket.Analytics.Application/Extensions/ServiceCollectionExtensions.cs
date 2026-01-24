@@ -10,7 +10,8 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services)
     {
         services.AddTransient<IDataService, DataService>();
-        services.AddTransient<ITrendService, TrendService>();
+        services.AddTransient<ITrendDynamicService, TrendDynamicService>();
+        services.AddTransient<ICompareTrendService, CompareTrendService>();
         services.AddTransient<IInstrumentService, InstrumentService>();
     }
 }
