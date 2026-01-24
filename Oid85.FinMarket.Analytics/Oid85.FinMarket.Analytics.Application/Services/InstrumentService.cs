@@ -11,7 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class InstrumentService(
         IInstrumentRepository instrumentRepository,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
-        IDataService dataService) 
+        IDataService dataService)
         : IInstrumentService
     {
         /// <inheritdoc />
@@ -31,7 +31,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             Type = storageInstrument.Type,
                             IsSelected = true
                         });
-  
+
             // Удаляем неактуальные
             foreach (var analyticInstrument in analyticInstruments)
                 if (!storageInstruments.Select(x => x.Ticker).Contains(analyticInstrument.Ticker))

@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
             .Setup()
             .LoadConfigurationFromFile("nlog.config");
 
-        services.AddTransient(typeof(ILogger), _ => 
+        services.AddTransient(typeof(ILogger), _ =>
             LogManager.GetLogger(AppDomain.CurrentDomain.FriendlyName));
     }
 
@@ -27,8 +27,8 @@ public static class ServiceCollectionExtensions
                 Type = "string",
                 Format = "date",
                 Example = new OpenApiString(DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd"))
-            });            
-            
+            });
+
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
@@ -63,6 +63,6 @@ public static class ServiceCollectionExtensions
         services.AddHangfireServer();
     }
 
-    private static string GetXmlCommentsPath() => 
+    private static string GetXmlCommentsPath() =>
         Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SwaggerTest.XML");
 }

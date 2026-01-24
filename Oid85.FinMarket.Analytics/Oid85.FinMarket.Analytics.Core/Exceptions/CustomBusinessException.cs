@@ -4,8 +4,8 @@
 public class CustomBusinessException : Exception
 {
     public string Code { get; set; }
-        
-    public CustomBusinessException(string code, string message) : base(message)            
+
+    public CustomBusinessException(string code, string message) : base(message)
     {
         Code = code;
     }

@@ -9,7 +9,7 @@ public abstract class BaseController : ControllerBase
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     protected async Task<IActionResult> GetResponseAsync<TData, TResult>(
-        Func<Task<TData>> mainLogic, 
+        Func<Task<TData>> mainLogic,
         Func<TData, TResult> mapping)
         where TResult : BaseResponse<TData>, new() =>
         await RunBusinessLogic<TData, TResult>(async () =>
@@ -65,7 +65,7 @@ public abstract class BaseController : ControllerBase
 
         catch (Exception exception)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, 
+            return StatusCode(StatusCodes.Status500InternalServerError,
                 new TResult
                 {
                     Error = new ResponseError

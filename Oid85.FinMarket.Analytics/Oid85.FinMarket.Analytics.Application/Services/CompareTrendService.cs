@@ -10,7 +10,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class CompareTrendService(
         IInstrumentRepository instrumentRepository,
-        IDataService dataService) 
+        IDataService dataService)
         : ICompareTrendService
     {
         /// <inheritdoc />

@@ -15,9 +15,9 @@ public static class ServiceCollectionExtensions
     public static void ConfigureDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
-    {    
+    {
         services.AddDbContextPool<FinMarketContext>((serviceProvider, options) =>
-        {  
+        {
             options.UseNpgsql(configuration.GetValue<string>(KnownSettingsKeys.PostgresFinMarketAnalyticsConnectionString)!);
         });
 

@@ -6,7 +6,7 @@ using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities;
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {
     public class InstrumentRepository(
-        IDbContextFactory<FinMarketContext> contextFactory) 
+        IDbContextFactory<FinMarketContext> contextFactory)
         : IInstrumentRepository
     {
         public async Task<Guid?> AddAsync(Instrument instrument)

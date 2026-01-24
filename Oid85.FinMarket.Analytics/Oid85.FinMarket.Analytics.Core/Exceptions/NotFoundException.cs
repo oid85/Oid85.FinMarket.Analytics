@@ -4,8 +4,8 @@
 public class NotFoundException : Exception
 {
     public string Code { get; set; }
-        
-    public NotFoundException(string code, string message) : base(message)            
+
+    public NotFoundException(string code, string message) : base(message)
     {
         Code = code;
     }

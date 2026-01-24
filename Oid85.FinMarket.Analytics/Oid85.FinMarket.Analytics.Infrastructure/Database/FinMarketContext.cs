@@ -20,5 +20,5 @@ public class FinMarketContext(DbContextOptions<FinMarketContext> options) : DbCo
                 type => type
                     .GetInterface(typeof(IFinMarketSchema).ToString()) != null)
             .UseIdentityAlwaysColumns();
-    }    
+    }
 }

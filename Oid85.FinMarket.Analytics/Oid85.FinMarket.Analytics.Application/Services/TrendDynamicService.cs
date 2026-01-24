@@ -11,7 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class TrendDynamicService(
         IInstrumentRepository instrumentRepository,
-        IDataService dataService) 
+        IDataService dataService)
         : ITrendDynamicService
     {
         /// <inheritdoc />
@@ -27,10 +27,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var dates = DateUtils.GetDates(startDate, today);
 
             var response = new GetTrendDynamicResponse();
-            
+
             response.Dates = dates;
 
-            response.Indexes = GetTrendDynamicData(dates,startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData);
+            response.Indexes = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData);
             response.Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData);
             response.Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData);
             response.Bonds = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Bond)], ultimateSmootherData, candleData);
@@ -40,9 +40,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private static List<TrendDynamicData> GetTrendDynamicData(
             List<DateOnly> dates,
-            DateOnly from, 
-            DateOnly to, 
-            List<Instrument> instruments, 
+            DateOnly from,
+            DateOnly to,
+            List<Instrument> instruments,
             Dictionary<string, List<DateValue<double>>> ultimateSmootherData,
             Dictionary<string, List<Candle>> candleData)
         {

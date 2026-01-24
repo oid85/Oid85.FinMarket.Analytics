@@ -9,11 +9,11 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
 {
     /// <inheritdoc />
     public class FinMarketStorageServiceApiClient(
-        IHttpClientFactory httpClientFactory) 
+        IHttpClientFactory httpClientFactory)
         : IFinMarketStorageServiceApiClient
     {
         /// <inheritdoc />
-        public async Task<GetCandleListResponse> GetCandleListAsync(GetCandleListRequest request) => 
+        public async Task<GetCandleListResponse> GetCandleListAsync(GetCandleListRequest request) =>
             await GetResponseAsync<GetCandleListRequest, GetCandleListResponse>("/api/candles/list", request);
 
         /// <inheritdoc />
