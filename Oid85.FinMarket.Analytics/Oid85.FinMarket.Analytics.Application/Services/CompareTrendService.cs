@@ -1,5 +1,6 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
+using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
@@ -26,7 +27,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var series = new List<GetCompareTrendSeriesResponse>();
 
-            var benchmarkValues = ultimateSmootherData["MCFTR"].Where(x => x.Date >= startDate && x.Date <= today).ToList();
+            var benchmarkValues = ultimateSmootherData[KnownBenchmarkTickers.MCFTR].Where(x => x.Date >= startDate && x.Date <= today).ToList();
             var benchmarkChange = benchmarkValues.Last().Value / benchmarkValues.First().Value;
 
             foreach (var pair in ultimateSmootherData)
@@ -45,18 +46,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             static string GetColor(string name, List<GetCompareTrendSeriesItemResponse> data, double benchmarkChange)
             {
                 if (data.Count == 0)
-                    return "#191970";
+                    return KnownColors.DarkBlue;
 
-                if (name == "MCFTR")
-                    return "#191970";
+                if (name == KnownBenchmarkTickers.MCFTR)
+                    return KnownColors.DarkBlue;
 
                 if (data.Last(x => x.Value is not null).Value > benchmarkChange)
-                    return "#00CC66";
+                    return KnownColors.Green;
 
                 if (data.Last(x => x.Value is not null).Value < benchmarkChange)
-                    return "#FF6633";
+                    return KnownColors.Red;
 
-                return "#191970";
+                return KnownColors.DarkBlue;
             }
         }
 
