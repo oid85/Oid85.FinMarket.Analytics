@@ -46,10 +46,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             static string GetColor(string name, List<GetCompareTrendSeriesItemResponse> data, double benchmarkChange)
             {
                 if (data.Count == 0)
-                    return KnownColors.DarkBlue;
+                    return KnownColors.Blue;
 
                 if (name == KnownBenchmarkTickers.MCFTR)
-                    return KnownColors.DarkBlue;
+                    return KnownColors.Blue;
 
                 if (data.Last(x => x.Value is not null).Value > benchmarkChange)
                     return KnownColors.Green;
@@ -57,7 +57,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (data.Last(x => x.Value is not null).Value < benchmarkChange)
                     return KnownColors.Red;
 
-                return KnownColors.DarkBlue;
+                return KnownColors.Blue;
             }
         }
 

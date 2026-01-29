@@ -20,6 +20,14 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
         public async Task<GetInstrumentListResponse> GetInstrumentListAsync(GetInstrumentListRequest request) =>
             await GetResponseAsync<GetInstrumentListRequest, GetInstrumentListResponse>("/api/instruments/list", request);
 
+        /// <inheritdoc />
+        public async Task<GetFundamentalParameterListResponse> GetFundamentalParameterListAsync(GetFundamentalParameterListRequest request) =>
+            await GetResponseAsync<GetFundamentalParameterListRequest, GetFundamentalParameterListResponse>("/api/fundamental-parameters/list", request);
+
+        /// <inheritdoc />
+        public async Task<CreateOrUpdateFundamentalParameterResponse> CreateOrUpdateFundamentalParameterAsync(CreateOrUpdateFundamentalParameterRequest request) =>
+            await GetResponseAsync<CreateOrUpdateFundamentalParameterRequest, CreateOrUpdateFundamentalParameterResponse>("/api/fundamental-parameters/create-or-update", request);
+
         private async Task<TResponse> GetResponseAsync<TRequest, TResponse>(string url, TRequest request) where TResponse : new()
         {
             try

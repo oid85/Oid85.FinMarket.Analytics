@@ -1,6 +1,7 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
+using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -44,7 +45,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var benchmarkIncrement = GetIncrement("MCFTR");
+            var benchmarkIncrement = GetIncrement(KnownBenchmarkTickers.MCFTR);
 
             var items = new List<GetAnalyticInstrumentListItemResponse>();
 
@@ -100,7 +101,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return new SelectInstrumentResponse() { Id = request.Id };
         }
 
-        private async Task<List<Instrument>> GetStorageInstrumentAsync()
+        public async Task<List<Instrument>> GetStorageInstrumentAsync()
         {
             var response = await finMarketStorageServiceApiClient.GetInstrumentListAsync(new());
             return response.Result.Instruments

@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Core.Requests;
+﻿using Oid85.FinMarket.Analytics.Core.Models;
+using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
@@ -17,5 +18,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Выделить инстремент
         /// </summary>
         Task<SelectInstrumentResponse> SelectInstrumentAsync(SelectInstrumentRequest request);
+
+        /// <summary>
+        /// Получить инструменты с хранилища
+        /// </summary>
+        Task<List<Instrument>> GetStorageInstrumentAsync();
     }
 }
