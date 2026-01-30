@@ -15,5 +15,19 @@
         public double? Pe2023 { get; set; }
         public double? Pe2024 { get; set; }
         public double? Pe2025 { get; set; }
+        public double? Revenue2019 { get; set; }
+        public double? Revenue2020 { get; set; }
+        public double? Revenue2021 { get; set; }
+        public double? Revenue2022 { get; set; }
+        public double? Revenue2023 { get; set; }
+        public double? Revenue2024 { get; set; }
+        public double? Revenue2025 { get; set; }
+        public double? NetProfit2019 { get; set; }
+        public double? NetProfit2020 { get; set; }
+        public double? NetProfit2021 { get; set; }
+        public double? NetProfit2022 { get; set; }
+        public double? NetProfit2023 { get; set; }
+        public double? NetProfit2024 { get; set; }
+        public double? NetProfit2025 { get; set; }
     }
 }
