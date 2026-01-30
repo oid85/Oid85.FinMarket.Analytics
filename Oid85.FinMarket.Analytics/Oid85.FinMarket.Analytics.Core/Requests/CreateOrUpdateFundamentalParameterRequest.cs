@@ -2,7 +2,7 @@
 {
     public class CreateOrUpdateFundamentalParameterRequest
     {
-        public List<CreateOrUpdateFundamentalParameterItemRequest> FundamentalParameters { get; set; }
+        public List<CreateOrUpdateFundamentalParameterItemRequest> FundamentalParameters { get; set; } = [];
     }
 
     public class CreateOrUpdateFundamentalParameterItemRequest
