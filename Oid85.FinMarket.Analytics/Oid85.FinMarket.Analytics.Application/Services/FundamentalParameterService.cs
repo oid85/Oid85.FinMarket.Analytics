@@ -60,6 +60,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new GetAnalyticFundamentalParameterListItemResponse
                     {
                         Ticker = instrument.Ticker,
+                        Name = instrument.Name,
 
                         Pe2019 = GetFundanemtalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2019),
                         Pe2020 = GetFundanemtalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2020),

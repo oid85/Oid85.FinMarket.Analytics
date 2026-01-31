@@ -8,6 +8,7 @@
     public class GetAnalyticFundamentalParameterListItemResponse
     {
         public string Ticker { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public double? Pe2019 { get; set; }
         public double? Pe2020 { get; set; }
         public double? Pe2021 { get; set; }
