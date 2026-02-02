@@ -9,6 +9,15 @@
     {
         public string Ticker { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+
+        public double? Price2019 { get; set; }
+        public double? Price2020 { get; set; }
+        public double? Price2021 { get; set; }
+        public double? Price2022 { get; set; }
+        public double? Price2023 { get; set; }
+        public double? Price2024 { get; set; }
+        public double? Price2025 { get; set; }
+
         public double? Pe2019 { get; set; }
         public double? Pe2020 { get; set; }
         public double? Pe2021 { get; set; }
@@ -16,6 +25,7 @@
         public double? Pe2023 { get; set; }
         public double? Pe2024 { get; set; }
         public double? Pe2025 { get; set; }
+
         public double? Revenue2019 { get; set; }
         public double? Revenue2020 { get; set; }
         public double? Revenue2021 { get; set; }
@@ -23,6 +33,7 @@
         public double? Revenue2023 { get; set; }
         public double? Revenue2024 { get; set; }
         public double? Revenue2025 { get; set; }
+
         public double? NetProfit2019 { get; set; }
         public double? NetProfit2020 { get; set; }
         public double? NetProfit2021 { get; set; }

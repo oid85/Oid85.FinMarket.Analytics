@@ -1,16 +1,16 @@
 ﻿namespace Oid85.FinMarket.Analytics.Core.Responses
 {
-    public class GetCandleListResponse
+    public class GetLastCandleResponse
     {
-        public GetCandleListResult Result { get; set; } = new();
+        public GetLastCandleResult Result { get; set; } = new();
     }
 
-    public class GetCandleListResult
+    public class GetLastCandleResult
     {
-        public List<GetCandleListItemResponse> Candles { get; set; } = [];
+        public List<GetLastCandleItemResponse?> Candles { get; set; } = [];
     }
 
-    public class GetCandleListItemResponse
+    public class GetLastCandleItemResponse
     {
         /// <summary>
         /// Дата

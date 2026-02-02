@@ -19,6 +19,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
         Task<GetCandleListResponse> GetCandleListAsync(GetCandleListRequest request);
 
         /// <summary>
+        /// Получить последнюю свечу
+        /// </summary>
+        Task<GetLastCandleResponse> GetLastCandleAsync(GetLastCandleRequest request);
+
+        /// <summary>
         /// Получить фундаментальные параметры
         /// </summary>
         Task<GetFundamentalParameterListResponse> GetFundamentalParameterListAsync(GetFundamentalParameterListRequest request);

@@ -17,6 +17,10 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
             await GetResponseAsync<GetCandleListRequest, GetCandleListResponse>("/api/candles/list", request);
 
         /// <inheritdoc />
+        public async Task<GetLastCandleResponse> GetLastCandleAsync(GetLastCandleRequest request) =>
+            await GetResponseAsync<GetLastCandleRequest, GetLastCandleResponse>("/api/candles/last", request);
+
+        /// <inheritdoc />
         public async Task<GetInstrumentListResponse> GetInstrumentListAsync(GetInstrumentListRequest request) =>
             await GetResponseAsync<GetInstrumentListRequest, GetInstrumentListResponse>("/api/instruments/list", request);
 
