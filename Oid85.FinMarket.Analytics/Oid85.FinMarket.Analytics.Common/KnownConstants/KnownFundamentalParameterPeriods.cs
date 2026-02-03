@@ -9,4 +9,5 @@ public static class KnownFundamentalParameterPeriods
     public const string _2023 = "2023";
     public const string _2024 = "2024";
     public const string _2025 = "2025";
+    public const string _2026 = "2026";
 }
