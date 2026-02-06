@@ -144,143 +144,147 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var response = new GetAnalyticFundamentalParameterListResponse();
 
+            var fundamentalParameterItems = new List<GetAnalyticFundamentalParameterListItemResponse>();
+
             foreach (var instrument in instruments)
             {
-                var fundamentalParameter = new GetAnalyticFundamentalParameterListItemResponse();
+                var fundamentalParameterItem = new GetAnalyticFundamentalParameterListItemResponse();
 
-                fundamentalParameter.Ticker = instrument.Ticker;
-                fundamentalParameter.Name = instrument.Name;
+                fundamentalParameterItem.Ticker = instrument.Ticker;
+                fundamentalParameterItem.Name = instrument.Name;
 
-                fundamentalParameter.Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty);
+                fundamentalParameterItem.Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty);
 
-                fundamentalParameter.Price2019 = priceDictionary2019[instrument.Ticker];
-                fundamentalParameter.Price2020 = priceDictionary2020[instrument.Ticker];
-                fundamentalParameter.Price2021 = priceDictionary2021[instrument.Ticker];
-                fundamentalParameter.Price2022 = priceDictionary2022[instrument.Ticker];
-                fundamentalParameter.Price2023 = priceDictionary2023[instrument.Ticker];
-                fundamentalParameter.Price2024 = priceDictionary2024[instrument.Ticker];
-                fundamentalParameter.Price2025 = priceDictionary2025[instrument.Ticker];
-                fundamentalParameter.Price2026 = priceDictionary2026[instrument.Ticker];                
+                fundamentalParameterItem.Price2019 = priceDictionary2019[instrument.Ticker];
+                fundamentalParameterItem.Price2020 = priceDictionary2020[instrument.Ticker];
+                fundamentalParameterItem.Price2021 = priceDictionary2021[instrument.Ticker];
+                fundamentalParameterItem.Price2022 = priceDictionary2022[instrument.Ticker];
+                fundamentalParameterItem.Price2023 = priceDictionary2023[instrument.Ticker];
+                fundamentalParameterItem.Price2024 = priceDictionary2024[instrument.Ticker];
+                fundamentalParameterItem.Price2025 = priceDictionary2025[instrument.Ticker];
+                fundamentalParameterItem.Price2026 = priceDictionary2026[instrument.Ticker];                
 
-                fundamentalParameter.Pe2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.Pe2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.Pe2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.Pe2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.Pe2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.Pe2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.Pe2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.Pe2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.Pe2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.Pe2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.Pe2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.Pe2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.Pe2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.Pe2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.Pe2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.Pe2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.Ebitda2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.Ebitda2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.Ebitda2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.Ebitda2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.Ebitda2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.Ebitda2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.Ebitda2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.Ebitda2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.Ebitda2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.Ebitda2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.Ebitda2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.Ebitda2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.Ebitda2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.Ebitda2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.Ebitda2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.Ebitda2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.Revenue2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.Revenue2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.Revenue2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.Revenue2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.Revenue2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.Revenue2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.Revenue2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.Revenue2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.Revenue2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.Revenue2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.Revenue2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.Revenue2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.Revenue2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.Revenue2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.Revenue2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.Revenue2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.NetProfit2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.NetProfit2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.NetProfit2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.NetProfit2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.NetProfit2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.NetProfit2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.NetProfit2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.NetProfit2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.NetProfit2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.NetProfit2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.NetProfit2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.NetProfit2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.NetProfit2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.NetProfit2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.NetProfit2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.NetProfit2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.Ev2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.Ev2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.Ev2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.Ev2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.Ev2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.Ev2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.Ev2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.Ev2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.Ev2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.Ev2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.Ev2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.Ev2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.Ev2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.Ev2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.Ev2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.Ev2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.NetDebt2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.NetDebt2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.NetDebt2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.NetDebt2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.NetDebt2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.NetDebt2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.NetDebt2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.NetDebt2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.NetDebt2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.NetDebt2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.NetDebt2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.NetDebt2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.NetDebt2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.NetDebt2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.NetDebt2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.NetDebt2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.MarketCap2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.MarketCap2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.MarketCap2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.MarketCap2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.MarketCap2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.MarketCap2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.MarketCap2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.MarketCap2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.MarketCap2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.MarketCap2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.MarketCap2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.MarketCap2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.MarketCap2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.MarketCap2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.MarketCap2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.MarketCap2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.DividendYield2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.DividendYield2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.DividendYield2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.DividendYield2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.DividendYield2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.DividendYield2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.DividendYield2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.DividendYield2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.DividendYield2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.DividendYield2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.DividendYield2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.DividendYield2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.DividendYield2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.DividendYield2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.DividendYield2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.DividendYield2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.Roa2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.Roa2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.Roa2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.Roa2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.Roa2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.Roa2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.Roa2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.Roa2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.Roa2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.Roa2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.Roa2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.Roa2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.Roa2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.Roa2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.Roa2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.Roa2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.Pbv2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameter.Pbv2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameter.Pbv2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameter.Pbv2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameter.Pbv2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameter.Pbv2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameter.Pbv2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameter.Pbv2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.Pbv2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.Pbv2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.Pbv2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.Pbv2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.Pbv2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.Pbv2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.Pbv2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.Pbv2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameter.EvEbitda2019 = GetEvEbitda(fundamentalParameter.Ev2019, fundamentalParameter.Ebitda2019);
-                fundamentalParameter.EvEbitda2020 = GetEvEbitda(fundamentalParameter.Ev2020, fundamentalParameter.Ebitda2020);
-                fundamentalParameter.EvEbitda2021 = GetEvEbitda(fundamentalParameter.Ev2021, fundamentalParameter.Ebitda2021);
-                fundamentalParameter.EvEbitda2022 = GetEvEbitda(fundamentalParameter.Ev2022, fundamentalParameter.Ebitda2022);
-                fundamentalParameter.EvEbitda2023 = GetEvEbitda(fundamentalParameter.Ev2023, fundamentalParameter.Ebitda2023);
-                fundamentalParameter.EvEbitda2024 = GetEvEbitda(fundamentalParameter.Ev2024, fundamentalParameter.Ebitda2024);
-                fundamentalParameter.EvEbitda2025 = GetEvEbitda(fundamentalParameter.Ev2025, fundamentalParameter.Ebitda2025);
-                fundamentalParameter.EvEbitda2026 = GetEvEbitda(fundamentalParameter.Ev2026, fundamentalParameter.Ebitda2026);
+                fundamentalParameterItem.EvEbitda2019 = GetEvEbitda(fundamentalParameterItem.Ev2019, fundamentalParameterItem.Ebitda2019);
+                fundamentalParameterItem.EvEbitda2020 = GetEvEbitda(fundamentalParameterItem.Ev2020, fundamentalParameterItem.Ebitda2020);
+                fundamentalParameterItem.EvEbitda2021 = GetEvEbitda(fundamentalParameterItem.Ev2021, fundamentalParameterItem.Ebitda2021);
+                fundamentalParameterItem.EvEbitda2022 = GetEvEbitda(fundamentalParameterItem.Ev2022, fundamentalParameterItem.Ebitda2022);
+                fundamentalParameterItem.EvEbitda2023 = GetEvEbitda(fundamentalParameterItem.Ev2023, fundamentalParameterItem.Ebitda2023);
+                fundamentalParameterItem.EvEbitda2024 = GetEvEbitda(fundamentalParameterItem.Ev2024, fundamentalParameterItem.Ebitda2024);
+                fundamentalParameterItem.EvEbitda2025 = GetEvEbitda(fundamentalParameterItem.Ev2025, fundamentalParameterItem.Ebitda2025);
+                fundamentalParameterItem.EvEbitda2026 = GetEvEbitda(fundamentalParameterItem.Ev2026, fundamentalParameterItem.Ebitda2026);
 
-                fundamentalParameter.NetDebtEbitda2019 = GetNetDebtEbitda(fundamentalParameter.NetDebt2019, fundamentalParameter.Ebitda2019);
-                fundamentalParameter.NetDebtEbitda2020 = GetNetDebtEbitda(fundamentalParameter.NetDebt2020, fundamentalParameter.Ebitda2020);
-                fundamentalParameter.NetDebtEbitda2021 = GetNetDebtEbitda(fundamentalParameter.NetDebt2021, fundamentalParameter.Ebitda2021);
-                fundamentalParameter.NetDebtEbitda2022 = GetNetDebtEbitda(fundamentalParameter.NetDebt2022, fundamentalParameter.Ebitda2022);
-                fundamentalParameter.NetDebtEbitda2023 = GetNetDebtEbitda(fundamentalParameter.NetDebt2023, fundamentalParameter.Ebitda2023);
-                fundamentalParameter.NetDebtEbitda2024 = GetNetDebtEbitda(fundamentalParameter.NetDebt2024, fundamentalParameter.Ebitda2024);
-                fundamentalParameter.NetDebtEbitda2025 = GetNetDebtEbitda(fundamentalParameter.NetDebt2025, fundamentalParameter.Ebitda2025);
-                fundamentalParameter.NetDebtEbitda2026 = GetNetDebtEbitda(fundamentalParameter.NetDebt2026, fundamentalParameter.Ebitda2026);
+                fundamentalParameterItem.NetDebtEbitda2019 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2019, fundamentalParameterItem.Ebitda2019);
+                fundamentalParameterItem.NetDebtEbitda2020 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2020, fundamentalParameterItem.Ebitda2020);
+                fundamentalParameterItem.NetDebtEbitda2021 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2021, fundamentalParameterItem.Ebitda2021);
+                fundamentalParameterItem.NetDebtEbitda2022 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2022, fundamentalParameterItem.Ebitda2022);
+                fundamentalParameterItem.NetDebtEbitda2023 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2023, fundamentalParameterItem.Ebitda2023);
+                fundamentalParameterItem.NetDebtEbitda2024 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2024, fundamentalParameterItem.Ebitda2024);
+                fundamentalParameterItem.NetDebtEbitda2025 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2025, fundamentalParameterItem.Ebitda2025);
+                fundamentalParameterItem.NetDebtEbitda2026 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2026, fundamentalParameterItem.Ebitda2026);
 
-                fundamentalParameter.EbitdaRevenue2019 = GetEbitdaRevenue(fundamentalParameter.Ebitda2019, fundamentalParameter.Revenue2019);
-                fundamentalParameter.EbitdaRevenue2020 = GetEbitdaRevenue(fundamentalParameter.Ebitda2020, fundamentalParameter.Revenue2020);
-                fundamentalParameter.EbitdaRevenue2021 = GetEbitdaRevenue(fundamentalParameter.Ebitda2021, fundamentalParameter.Revenue2021);
-                fundamentalParameter.EbitdaRevenue2022 = GetEbitdaRevenue(fundamentalParameter.Ebitda2022, fundamentalParameter.Revenue2022);
-                fundamentalParameter.EbitdaRevenue2023 = GetEbitdaRevenue(fundamentalParameter.Ebitda2023, fundamentalParameter.Revenue2023);
-                fundamentalParameter.EbitdaRevenue2024 = GetEbitdaRevenue(fundamentalParameter.Ebitda2024, fundamentalParameter.Revenue2024);
-                fundamentalParameter.EbitdaRevenue2025 = GetEbitdaRevenue(fundamentalParameter.Ebitda2025, fundamentalParameter.Revenue2025);
-                fundamentalParameter.EbitdaRevenue2026 = GetEbitdaRevenue(fundamentalParameter.Ebitda2026, fundamentalParameter.Revenue2026);
+                fundamentalParameterItem.EbitdaRevenue2019 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2019, fundamentalParameterItem.Revenue2019);
+                fundamentalParameterItem.EbitdaRevenue2020 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2020, fundamentalParameterItem.Revenue2020);
+                fundamentalParameterItem.EbitdaRevenue2021 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2021, fundamentalParameterItem.Revenue2021);
+                fundamentalParameterItem.EbitdaRevenue2022 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2022, fundamentalParameterItem.Revenue2022);
+                fundamentalParameterItem.EbitdaRevenue2023 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2023, fundamentalParameterItem.Revenue2023);
+                fundamentalParameterItem.EbitdaRevenue2024 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2024, fundamentalParameterItem.Revenue2024);
+                fundamentalParameterItem.EbitdaRevenue2025 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2025, fundamentalParameterItem.Revenue2025);
+                fundamentalParameterItem.EbitdaRevenue2026 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2026, fundamentalParameterItem.Revenue2026);
 
-                response.FundamentalParameters.Add(fundamentalParameter);                
+                fundamentalParameterItems.Add(fundamentalParameterItem);                
             }
+
+            response.FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Moex)];
 
             return response;
         }
