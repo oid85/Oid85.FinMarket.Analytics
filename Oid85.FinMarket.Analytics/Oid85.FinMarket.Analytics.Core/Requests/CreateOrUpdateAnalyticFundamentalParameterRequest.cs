@@ -4,6 +4,11 @@
     {
         public string Ticker { get; set; }
 
+        /// <summary>
+        /// Доля в индексе MOEX
+        /// </summary>
+        public double? Moex { get; set; }
+
         public double? Pe2019 { get; set; }
         public double? Pe2020 { get; set; }
         public double? Pe2021 { get; set; }

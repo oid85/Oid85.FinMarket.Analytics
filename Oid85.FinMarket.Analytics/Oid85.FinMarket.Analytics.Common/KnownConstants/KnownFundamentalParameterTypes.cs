@@ -12,4 +12,5 @@ public static class KnownFundamentalParameterTypes
     public const string DividendYield = "DividendYield";
     public const string Roa = "Roa";
     public const string Pbv = "Pbv";
+    public const string Moex = "Moex";
 }

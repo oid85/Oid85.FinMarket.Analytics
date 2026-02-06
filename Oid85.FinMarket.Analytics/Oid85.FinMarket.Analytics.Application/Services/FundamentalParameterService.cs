@@ -18,6 +18,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var createOrUpdateFundamentalParameterRequest = new CreateOrUpdateFundamentalParameterRequest();
 
+            if (request.Moex.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Moex, Period = string.Empty, Value = request.Moex.Value });
+
             if (request.Pe2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2019, Value = request.Pe2019.Value });
             if (request.Pe2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2020, Value = request.Pe2020.Value });
             if (request.Pe2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2021, Value = request.Pe2021.Value });
@@ -149,6 +151,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameter.Ticker = instrument.Ticker;
                 fundamentalParameter.Name = instrument.Name;
 
+                fundamentalParameter.Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty);
+
                 fundamentalParameter.Price2019 = priceDictionary2019[instrument.Ticker];
                 fundamentalParameter.Price2020 = priceDictionary2020[instrument.Ticker];
                 fundamentalParameter.Price2021 = priceDictionary2021[instrument.Ticker];
@@ -156,7 +160,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameter.Price2023 = priceDictionary2023[instrument.Ticker];
                 fundamentalParameter.Price2024 = priceDictionary2024[instrument.Ticker];
                 fundamentalParameter.Price2025 = priceDictionary2025[instrument.Ticker];
-                fundamentalParameter.Price2026 = priceDictionary2026[instrument.Ticker];
+                fundamentalParameter.Price2026 = priceDictionary2026[instrument.Ticker];                
 
                 fundamentalParameter.Pe2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameter.Pe2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2020);
