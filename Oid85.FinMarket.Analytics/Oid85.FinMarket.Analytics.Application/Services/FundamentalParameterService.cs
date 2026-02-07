@@ -281,6 +281,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.EbitdaRevenue2025 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2025, fundamentalParameterItem.Revenue2025);
                 fundamentalParameterItem.EbitdaRevenue2026 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2026, fundamentalParameterItem.Revenue2026);
 
+                fundamentalParameterItem.DeltaMinMax2019 = GetDeltaMinMax(instrument.Ticker, 2019);
+                fundamentalParameterItem.DeltaMinMax2020 = GetDeltaMinMax(instrument.Ticker, 2020);
+                fundamentalParameterItem.DeltaMinMax2021 = GetDeltaMinMax(instrument.Ticker, 2021);
+                fundamentalParameterItem.DeltaMinMax2022 = GetDeltaMinMax(instrument.Ticker, 2022);
+                fundamentalParameterItem.DeltaMinMax2023 = GetDeltaMinMax(instrument.Ticker, 2023);
+                fundamentalParameterItem.DeltaMinMax2024 = GetDeltaMinMax(instrument.Ticker, 2024);
+                fundamentalParameterItem.DeltaMinMax2025 = GetDeltaMinMax(instrument.Ticker, 2025);
+                fundamentalParameterItem.DeltaMinMax2026 = GetDeltaMinMax(instrument.Ticker, 2026);
+
                 fundamentalParameterItems.Add(fundamentalParameterItem);                
             }
 
@@ -291,39 +300,54 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private static double? GetFundamentalParameterValue(List<GetFundamentalParameterListItemResponse> fundamentalParameters, string ticker, string type, string period)
         {
-            if (fundamentalParameters is null) return null;
-            var value = fundamentalParameters.Find(x => x.Ticker == ticker && x.Type == type && x.Period == period);
+            if (fundamentalParameters is null) 
+                return null;
+
+            var value = fundamentalParameters.Find(
+                x => 
+                    x.Ticker == ticker && 
+                    x.Type == type && 
+                    x.Period == period);
+
             return value?.Value;
         }
 
         private static double? GetEvEbitda(double? ev, double? ebitda)
         {
-            if (ev is null) return null;
-            if (ebitda is null) return null;
-            if (ev == 0.0) return 0.0;
-            if (ebitda == 0.0) return 0.0;
+            if (ev is null || ebitda is null) 
+                return null;
+
+            if (ev == 0.0 || ebitda == 0.0) 
+                return 0.0;
 
             return Math.Round(ev.Value / ebitda.Value, 2);
         }
 
         private static double? GetNetDebtEbitda(double? netDebt, double? ebitda)
         {
-            if (netDebt is null) return null;
-            if (ebitda is null) return null;
-            if (netDebt == 0.0) return 0.0;
-            if (ebitda == 0.0) return 0.0;
+            if (netDebt is null || ebitda is null)
+                return null;
+
+            if (netDebt == 0.0 || ebitda == 0.0)
+                return 0.0;
 
             return Math.Round(netDebt.Value / ebitda.Value, 2);
         }
 
         private static double? GetEbitdaRevenue(double? ebitda, double? revenue)
         {
-            if (ebitda is null) return null;
-            if (revenue is null) return null;
-            if (ebitda == 0.0) return 0.0;
-            if (revenue == 0.0) return 0.0;
+            if (revenue is null || ebitda is null)
+                return null;
+
+            if (revenue == 0.0 || ebitda == 0.0)
+                return 0.0;
 
             return Math.Round(ebitda.Value / revenue.Value, 2);
+        }
+
+        private static double? GetDeltaMinMax(string ticker, int year)
+        {
+            return 0.0;
         }
     }
 }

@@ -140,5 +140,14 @@
         public double? EbitdaRevenue2024 { get; set; }
         public double? EbitdaRevenue2025 { get; set; }
         public double? EbitdaRevenue2026 { get; set; }
+
+        public double? DeltaMinMax2019 { get; set; }
+        public double? DeltaMinMax2020 { get; set; }
+        public double? DeltaMinMax2021 { get; set; }
+        public double? DeltaMinMax2022 { get; set; }
+        public double? DeltaMinMax2023 { get; set; }
+        public double? DeltaMinMax2024 { get; set; }
+        public double? DeltaMinMax2025 { get; set; }
+        public double? DeltaMinMax2026 { get; set; }
     }
 }

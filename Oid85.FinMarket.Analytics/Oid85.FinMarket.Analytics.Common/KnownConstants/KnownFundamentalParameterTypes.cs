@@ -13,4 +13,5 @@ public static class KnownFundamentalParameterTypes
     public const string Roa = "Roa";
     public const string Pbv = "Pbv";
     public const string Moex = "Moex";
+    public const string DeltaMinMax = "DeltaMinMax";
 }
