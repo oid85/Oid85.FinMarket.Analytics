@@ -505,6 +505,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (parameter.DividendYield2024 is not null && parameter.DividendYield2025 is not null && parameter.DividendYield2025 > parameter.DividendYield2024) score++;
             if (parameter.DividendYield2025 is not null && parameter.DividendYield2026 is not null && parameter.DividendYield2026 > parameter.DividendYield2025) score++;
 
+            // ROA
+            if (parameter.Roa2019 is not null && parameter.Roa2019 > 15) score++;
+            if (parameter.Roa2020 is not null && parameter.Roa2020 > 15) score++;
+            if (parameter.Roa2021 is not null && parameter.Roa2021 > 15) score++;
+            if (parameter.Roa2022 is not null && parameter.Roa2022 > 15) score++;
+            if (parameter.Roa2023 is not null && parameter.Roa2023 > 15) score++;
+            if (parameter.Roa2024 is not null && parameter.Roa2024 > 15) score++;
+            if (parameter.Roa2025 is not null && parameter.Roa2025 > 15) score++;
+            if (parameter.Roa2026 is not null && parameter.Roa2026 > 15) score++;
+
             return score;
         }
     }
