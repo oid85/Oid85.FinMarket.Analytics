@@ -296,7 +296,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItems.Add(fundamentalParameterItem);                
             }
 
-            response.FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Moex)];
+            response.FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Score)];
 
             return response;
         }
@@ -378,9 +378,77 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 : Math.Abs(Math.Round((max - min) / min * 100.0, 2)); // Рост от минимума
         }
 
-        private static double? GetScore(GetAnalyticFundamentalParameterListItemResponse fundamentalParameterItem)
+        private static double? GetScore(GetAnalyticFundamentalParameterListItemResponse parameter)
         {
             double score = 0.0;
+
+            // P / E
+            const double PeLimit1 = 3.0;
+            const double PeLimit2 = 7.0;
+
+            if (parameter.Pe2022 is not null && parameter.Pe2022 <= PeLimit2) score++;
+            if (parameter.Pe2023 is not null && parameter.Pe2023 <= PeLimit2) score++;
+            if (parameter.Pe2024 is not null && parameter.Pe2024 <= PeLimit2) score++;
+            if (parameter.Pe2025 is not null && parameter.Pe2025 <= PeLimit2) score++;
+            if (parameter.Pe2026 is not null && parameter.Pe2026 <= PeLimit2) score++;
+
+            if (parameter.Pe2022 is not null && parameter.Pe2022 <= PeLimit1) score++;
+            if (parameter.Pe2023 is not null && parameter.Pe2023 <= PeLimit1) score++;
+            if (parameter.Pe2024 is not null && parameter.Pe2024 <= PeLimit1) score++;
+            if (parameter.Pe2025 is not null && parameter.Pe2025 <= PeLimit1) score++;
+            if (parameter.Pe2026 is not null && parameter.Pe2026 <= PeLimit1) score++;
+
+            // EV / EBITDA
+            const double EvEbitdaLimit1 = 3.0;
+            const double EvEbitdaLimit2 = 5.0;
+
+            if (parameter.EvEbitda2022 is not null && parameter.EvEbitda2022 <= EvEbitdaLimit2) score++;
+            if (parameter.EvEbitda2023 is not null && parameter.EvEbitda2023 <= EvEbitdaLimit2) score++;
+            if (parameter.EvEbitda2024 is not null && parameter.EvEbitda2024 <= EvEbitdaLimit2) score++;
+            if (parameter.EvEbitda2025 is not null && parameter.EvEbitda2025 <= EvEbitdaLimit2) score++;
+            if (parameter.EvEbitda2026 is not null && parameter.EvEbitda2026 <= EvEbitdaLimit2) score++;
+
+            if (parameter.EvEbitda2022 is not null && parameter.EvEbitda2022 <= EvEbitdaLimit1) score++;
+            if (parameter.EvEbitda2023 is not null && parameter.EvEbitda2023 <= EvEbitdaLimit1) score++;
+            if (parameter.EvEbitda2024 is not null && parameter.EvEbitda2024 <= EvEbitdaLimit1) score++;
+            if (parameter.EvEbitda2025 is not null && parameter.EvEbitda2025 <= EvEbitdaLimit1) score++;
+            if (parameter.EvEbitda2026 is not null && parameter.EvEbitda2026 <= EvEbitdaLimit1) score++;
+
+            // Net Debt / EBITDA
+            const double NetDebtEbitdaLimit1 = 1.5;
+            const double NetDebtEbitdaLimit2 = 3.0;
+
+            if (parameter.NetDebtEbitda2022 is not null && parameter.NetDebtEbitda2022 <= NetDebtEbitdaLimit2) score++;
+            if (parameter.NetDebtEbitda2023 is not null && parameter.NetDebtEbitda2023 <= NetDebtEbitdaLimit2) score++;
+            if (parameter.NetDebtEbitda2024 is not null && parameter.NetDebtEbitda2024 <= NetDebtEbitdaLimit2) score++;
+            if (parameter.NetDebtEbitda2025 is not null && parameter.NetDebtEbitda2025 <= NetDebtEbitdaLimit2) score++;
+            if (parameter.NetDebtEbitda2026 is not null && parameter.NetDebtEbitda2026 <= NetDebtEbitdaLimit2) score++;
+
+            if (parameter.NetDebtEbitda2022 is not null && parameter.NetDebtEbitda2022 <= NetDebtEbitdaLimit1) score++;
+            if (parameter.NetDebtEbitda2023 is not null && parameter.NetDebtEbitda2023 <= NetDebtEbitdaLimit1) score++;
+            if (parameter.NetDebtEbitda2024 is not null && parameter.NetDebtEbitda2024 <= NetDebtEbitdaLimit1) score++;
+            if (parameter.NetDebtEbitda2025 is not null && parameter.NetDebtEbitda2025 <= NetDebtEbitdaLimit1) score++;
+            if (parameter.NetDebtEbitda2026 is not null && parameter.NetDebtEbitda2026 <= NetDebtEbitdaLimit1) score++;
+
+            if (parameter.NetDebtEbitda2022 is not null && parameter.NetDebtEbitda2022 <= 0) score++;
+            if (parameter.NetDebtEbitda2023 is not null && parameter.NetDebtEbitda2023 <= 0) score++;
+            if (parameter.NetDebtEbitda2024 is not null && parameter.NetDebtEbitda2024 <= 0) score++;
+            if (parameter.NetDebtEbitda2025 is not null && parameter.NetDebtEbitda2025 <= 0) score++;
+            if (parameter.NetDebtEbitda2026 is not null && parameter.NetDebtEbitda2026 <= 0) score++;
+
+            // Revenue
+            if (parameter.Revenue2022 is not null && parameter.Revenue2022 > 0) score++;
+            if (parameter.Revenue2023 is not null && parameter.Revenue2023 > 0) score++;
+            if (parameter.Revenue2024 is not null && parameter.Revenue2024 > 0) score++;
+            if (parameter.Revenue2025 is not null && parameter.Revenue2025 > 0) score++;
+            if (parameter.Revenue2026 is not null && parameter.Revenue2026 > 0) score++;
+
+            // Net Profit
+            if (parameter.NetProfit2022 is not null && parameter.NetProfit2022 > 0) score++;
+            if (parameter.NetProfit2023 is not null && parameter.NetProfit2023 > 0) score++;
+            if (parameter.NetProfit2024 is not null && parameter.NetProfit2024 > 0) score++;
+            if (parameter.NetProfit2025 is not null && parameter.NetProfit2025 > 0) score++;
+            if (parameter.NetProfit2026 is not null && parameter.NetProfit2026 > 0) score++;
 
             return score;
         }
