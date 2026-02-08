@@ -11,6 +11,11 @@
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// Расчетный рейтинг
+        /// </summary>
+        public double? Score { get; set; }
+
+        /// <summary>
         /// Доля в индексе MOEX
         /// </summary>
         public double? Moex { get; set; }

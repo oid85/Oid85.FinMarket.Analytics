@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -281,14 +282,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.EbitdaRevenue2025 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2025, fundamentalParameterItem.Revenue2025);
                 fundamentalParameterItem.EbitdaRevenue2026 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2026, fundamentalParameterItem.Revenue2026);
 
-                fundamentalParameterItem.DeltaMinMax2019 = GetDeltaMinMax(instrument.Ticker, 2019);
-                fundamentalParameterItem.DeltaMinMax2020 = GetDeltaMinMax(instrument.Ticker, 2020);
-                fundamentalParameterItem.DeltaMinMax2021 = GetDeltaMinMax(instrument.Ticker, 2021);
-                fundamentalParameterItem.DeltaMinMax2022 = GetDeltaMinMax(instrument.Ticker, 2022);
-                fundamentalParameterItem.DeltaMinMax2023 = GetDeltaMinMax(instrument.Ticker, 2023);
-                fundamentalParameterItem.DeltaMinMax2024 = GetDeltaMinMax(instrument.Ticker, 2024);
-                fundamentalParameterItem.DeltaMinMax2025 = GetDeltaMinMax(instrument.Ticker, 2025);
-                fundamentalParameterItem.DeltaMinMax2026 = GetDeltaMinMax(instrument.Ticker, 2026);
+                fundamentalParameterItem.DeltaMinMax2019 = await GetDeltaMinMaxAsync(instrument.Ticker, 2019);
+                fundamentalParameterItem.DeltaMinMax2020 = await GetDeltaMinMaxAsync(instrument.Ticker, 2020);
+                fundamentalParameterItem.DeltaMinMax2021 = await GetDeltaMinMaxAsync(instrument.Ticker, 2021);
+                fundamentalParameterItem.DeltaMinMax2022 = await GetDeltaMinMaxAsync(instrument.Ticker, 2022);
+                fundamentalParameterItem.DeltaMinMax2023 = await GetDeltaMinMaxAsync(instrument.Ticker, 2023);
+                fundamentalParameterItem.DeltaMinMax2024 = await GetDeltaMinMaxAsync(instrument.Ticker, 2024);
+                fundamentalParameterItem.DeltaMinMax2025 = await GetDeltaMinMaxAsync(instrument.Ticker, 2025);
+                fundamentalParameterItem.DeltaMinMax2026 = await GetDeltaMinMaxAsync(instrument.Ticker, 2026);
+
+                fundamentalParameterItem.Score = GetScore(fundamentalParameterItem);
 
                 fundamentalParameterItems.Add(fundamentalParameterItem);                
             }
@@ -345,9 +348,41 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return Math.Round(ebitda.Value / revenue.Value, 2);
         }
 
-        private static double? GetDeltaMinMax(string ticker, int year)
+        private async Task<double?> GetDeltaMinMaxAsync(string ticker, int year)
         {
-            return 0.0;
+            var response = await finMarketStorageServiceApiClient.GetCandleListAsync(
+                new GetCandleListRequest
+                {
+                    Ticker = ticker,
+                    From = DateOnly.FromDateTime(new DateTime(year, 1, 1)),
+                    To = DateOnly.FromDateTime(new DateTime(year, 12, 31))
+                });
+
+            if (response?.Result?.Candles is null)
+                return null;
+
+            if (response?.Result?.Candles?.Count == 0)
+                return null;
+
+            var maxCandle = response?.Result?.Candles.MaxBy(x => x.Close);
+            var minCandle = response?.Result?.Candles.MinBy(x => x.Close);
+
+            if (maxCandle is null || minCandle is null)
+                return null;
+
+            double max = maxCandle.Close;
+            double min = minCandle.Close;
+
+            return maxCandle.Date < minCandle.Date
+                ? -1 * Math.Abs(Math.Round((max - min) / max * 100.0, 2)) // Падение от максимума
+                : Math.Abs(Math.Round((max - min) / min * 100.0, 2)); // Рост от минимума
+        }
+
+        private static double? GetScore(GetAnalyticFundamentalParameterListItemResponse fundamentalParameterItem)
+        {
+            double score = 0.0;
+
+            return score;
         }
     }
 }
