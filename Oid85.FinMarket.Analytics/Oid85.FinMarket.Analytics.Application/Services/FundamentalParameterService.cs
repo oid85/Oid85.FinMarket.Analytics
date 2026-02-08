@@ -383,72 +383,127 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             double score = 0.0;
 
             // P / E
-            const double PeLimit1 = 3.0;
-            const double PeLimit2 = 7.0;
+            if (parameter.Pe2019 is not null && parameter.Pe2019 > 0 && parameter.Pe2019 <= 7.0) score++;
+            if (parameter.Pe2020 is not null && parameter.Pe2020 > 0 && parameter.Pe2020 <= 7.0) score++;
+            if (parameter.Pe2021 is not null && parameter.Pe2021 > 0 && parameter.Pe2021 <= 7.0) score++;
+            if (parameter.Pe2022 is not null && parameter.Pe2022 > 0 && parameter.Pe2022 <= 7.0) score++;
+            if (parameter.Pe2023 is not null && parameter.Pe2023 > 0 && parameter.Pe2023 <= 7.0) score++;
+            if (parameter.Pe2024 is not null && parameter.Pe2024 > 0 && parameter.Pe2024 <= 7.0) score++;
+            if (parameter.Pe2025 is not null && parameter.Pe2025 > 0 && parameter.Pe2025 <= 7.0) score++;
+            if (parameter.Pe2026 is not null && parameter.Pe2026 > 0 && parameter.Pe2026 <= 7.0) score++;
 
-            if (parameter.Pe2022 is not null && parameter.Pe2022 <= PeLimit2) score++;
-            if (parameter.Pe2023 is not null && parameter.Pe2023 <= PeLimit2) score++;
-            if (parameter.Pe2024 is not null && parameter.Pe2024 <= PeLimit2) score++;
-            if (parameter.Pe2025 is not null && parameter.Pe2025 <= PeLimit2) score++;
-            if (parameter.Pe2026 is not null && parameter.Pe2026 <= PeLimit2) score++;
-
-            if (parameter.Pe2022 is not null && parameter.Pe2022 <= PeLimit1) score++;
-            if (parameter.Pe2023 is not null && parameter.Pe2023 <= PeLimit1) score++;
-            if (parameter.Pe2024 is not null && parameter.Pe2024 <= PeLimit1) score++;
-            if (parameter.Pe2025 is not null && parameter.Pe2025 <= PeLimit1) score++;
-            if (parameter.Pe2026 is not null && parameter.Pe2026 <= PeLimit1) score++;
+            if (parameter.Pe2019 is not null && parameter.Pe2019 > 0 && parameter.Pe2019 <= 3.0) score++;
+            if (parameter.Pe2020 is not null && parameter.Pe2020 > 0 && parameter.Pe2020 <= 3.0) score++;
+            if (parameter.Pe2021 is not null && parameter.Pe2021 > 0 && parameter.Pe2021 <= 3.0) score++;
+            if (parameter.Pe2022 is not null && parameter.Pe2022 > 0 && parameter.Pe2022 <= 3.0) score++;
+            if (parameter.Pe2023 is not null && parameter.Pe2023 > 0 && parameter.Pe2023 <= 3.0) score++;
+            if (parameter.Pe2024 is not null && parameter.Pe2024 > 0 && parameter.Pe2024 <= 3.0) score++;
+            if (parameter.Pe2025 is not null && parameter.Pe2025 > 0 && parameter.Pe2025 <= 3.0) score++;
+            if (parameter.Pe2026 is not null && parameter.Pe2026 > 0 && parameter.Pe2026 <= 3.0) score++;
 
             // EV / EBITDA
-            const double EvEbitdaLimit1 = 3.0;
-            const double EvEbitdaLimit2 = 5.0;
+            if (parameter.EvEbitda2019 is not null && parameter.EvEbitda2019 <= 5.0) score++;
+            if (parameter.EvEbitda2020 is not null && parameter.EvEbitda2020 <= 5.0) score++;
+            if (parameter.EvEbitda2021 is not null && parameter.EvEbitda2021 <= 5.0) score++;
+            if (parameter.EvEbitda2022 is not null && parameter.EvEbitda2022 <= 5.0) score++;
+            if (parameter.EvEbitda2023 is not null && parameter.EvEbitda2023 <= 5.0) score++;
+            if (parameter.EvEbitda2024 is not null && parameter.EvEbitda2024 <= 5.0) score++;
+            if (parameter.EvEbitda2025 is not null && parameter.EvEbitda2025 <= 5.0) score++;
+            if (parameter.EvEbitda2026 is not null && parameter.EvEbitda2026 <= 5.0) score++;
 
-            if (parameter.EvEbitda2022 is not null && parameter.EvEbitda2022 <= EvEbitdaLimit2) score++;
-            if (parameter.EvEbitda2023 is not null && parameter.EvEbitda2023 <= EvEbitdaLimit2) score++;
-            if (parameter.EvEbitda2024 is not null && parameter.EvEbitda2024 <= EvEbitdaLimit2) score++;
-            if (parameter.EvEbitda2025 is not null && parameter.EvEbitda2025 <= EvEbitdaLimit2) score++;
-            if (parameter.EvEbitda2026 is not null && parameter.EvEbitda2026 <= EvEbitdaLimit2) score++;
+            if (parameter.EvEbitda2019 is not null && parameter.EvEbitda2019 <= 3.0) score++;
+            if (parameter.EvEbitda2020 is not null && parameter.EvEbitda2020 <= 3.0) score++;
+            if (parameter.EvEbitda2021 is not null && parameter.EvEbitda2021 <= 3.0) score++;
+            if (parameter.EvEbitda2022 is not null && parameter.EvEbitda2022 <= 3.0) score++;
+            if (parameter.EvEbitda2023 is not null && parameter.EvEbitda2023 <= 3.0) score++;
+            if (parameter.EvEbitda2024 is not null && parameter.EvEbitda2024 <= 3.0) score++;
+            if (parameter.EvEbitda2025 is not null && parameter.EvEbitda2025 <= 3.0) score++;
+            if (parameter.EvEbitda2026 is not null && parameter.EvEbitda2026 <= 3.0) score++;
 
-            if (parameter.EvEbitda2022 is not null && parameter.EvEbitda2022 <= EvEbitdaLimit1) score++;
-            if (parameter.EvEbitda2023 is not null && parameter.EvEbitda2023 <= EvEbitdaLimit1) score++;
-            if (parameter.EvEbitda2024 is not null && parameter.EvEbitda2024 <= EvEbitdaLimit1) score++;
-            if (parameter.EvEbitda2025 is not null && parameter.EvEbitda2025 <= EvEbitdaLimit1) score++;
-            if (parameter.EvEbitda2026 is not null && parameter.EvEbitda2026 <= EvEbitdaLimit1) score++;
+            // Чистый долг / EBITDA
+            if (parameter.NetDebtEbitda2019 is not null && parameter.NetDebtEbitda2019 <= 3.0) score++;
+            if (parameter.NetDebtEbitda2020 is not null && parameter.NetDebtEbitda2020 <= 3.0) score++;
+            if (parameter.NetDebtEbitda2021 is not null && parameter.NetDebtEbitda2021 <= 3.0) score++;
+            if (parameter.NetDebtEbitda2022 is not null && parameter.NetDebtEbitda2022 <= 3.0) score++;
+            if (parameter.NetDebtEbitda2023 is not null && parameter.NetDebtEbitda2023 <= 3.0) score++;
+            if (parameter.NetDebtEbitda2024 is not null && parameter.NetDebtEbitda2024 <= 3.0) score++;
+            if (parameter.NetDebtEbitda2025 is not null && parameter.NetDebtEbitda2025 <= 3.0) score++;
+            if (parameter.NetDebtEbitda2026 is not null && parameter.NetDebtEbitda2026 <= 3.0) score++;
 
-            // Net Debt / EBITDA
-            const double NetDebtEbitdaLimit1 = 1.5;
-            const double NetDebtEbitdaLimit2 = 3.0;
+            if (parameter.NetDebtEbitda2019 is not null && parameter.NetDebtEbitda2019 <= 1.5) score++;
+            if (parameter.NetDebtEbitda2020 is not null && parameter.NetDebtEbitda2020 <= 1.5) score++;
+            if (parameter.NetDebtEbitda2021 is not null && parameter.NetDebtEbitda2021 <= 1.5) score++;
+            if (parameter.NetDebtEbitda2022 is not null && parameter.NetDebtEbitda2022 <= 1.5) score++;
+            if (parameter.NetDebtEbitda2023 is not null && parameter.NetDebtEbitda2023 <= 1.5) score++;
+            if (parameter.NetDebtEbitda2024 is not null && parameter.NetDebtEbitda2024 <= 1.5) score++;
+            if (parameter.NetDebtEbitda2025 is not null && parameter.NetDebtEbitda2025 <= 1.5) score++;
+            if (parameter.NetDebtEbitda2026 is not null && parameter.NetDebtEbitda2026 <= 1.5) score++;
 
-            if (parameter.NetDebtEbitda2022 is not null && parameter.NetDebtEbitda2022 <= NetDebtEbitdaLimit2) score++;
-            if (parameter.NetDebtEbitda2023 is not null && parameter.NetDebtEbitda2023 <= NetDebtEbitdaLimit2) score++;
-            if (parameter.NetDebtEbitda2024 is not null && parameter.NetDebtEbitda2024 <= NetDebtEbitdaLimit2) score++;
-            if (parameter.NetDebtEbitda2025 is not null && parameter.NetDebtEbitda2025 <= NetDebtEbitdaLimit2) score++;
-            if (parameter.NetDebtEbitda2026 is not null && parameter.NetDebtEbitda2026 <= NetDebtEbitdaLimit2) score++;
-
-            if (parameter.NetDebtEbitda2022 is not null && parameter.NetDebtEbitda2022 <= NetDebtEbitdaLimit1) score++;
-            if (parameter.NetDebtEbitda2023 is not null && parameter.NetDebtEbitda2023 <= NetDebtEbitdaLimit1) score++;
-            if (parameter.NetDebtEbitda2024 is not null && parameter.NetDebtEbitda2024 <= NetDebtEbitdaLimit1) score++;
-            if (parameter.NetDebtEbitda2025 is not null && parameter.NetDebtEbitda2025 <= NetDebtEbitdaLimit1) score++;
-            if (parameter.NetDebtEbitda2026 is not null && parameter.NetDebtEbitda2026 <= NetDebtEbitdaLimit1) score++;
-
+            if (parameter.NetDebtEbitda2019 is not null && parameter.NetDebtEbitda2019 <= 0) score++;
+            if (parameter.NetDebtEbitda2020 is not null && parameter.NetDebtEbitda2020 <= 0) score++;
+            if (parameter.NetDebtEbitda2021 is not null && parameter.NetDebtEbitda2021 <= 0) score++;
             if (parameter.NetDebtEbitda2022 is not null && parameter.NetDebtEbitda2022 <= 0) score++;
             if (parameter.NetDebtEbitda2023 is not null && parameter.NetDebtEbitda2023 <= 0) score++;
             if (parameter.NetDebtEbitda2024 is not null && parameter.NetDebtEbitda2024 <= 0) score++;
             if (parameter.NetDebtEbitda2025 is not null && parameter.NetDebtEbitda2025 <= 0) score++;
             if (parameter.NetDebtEbitda2026 is not null && parameter.NetDebtEbitda2026 <= 0) score++;
 
-            // Revenue
+            // Выручка
+            if (parameter.Revenue2019 is not null && parameter.Revenue2019 > 0) score++;
+            if (parameter.Revenue2020 is not null && parameter.Revenue2020 > 0) score++;
+            if (parameter.Revenue2021 is not null && parameter.Revenue2021 > 0) score++;
             if (parameter.Revenue2022 is not null && parameter.Revenue2022 > 0) score++;
             if (parameter.Revenue2023 is not null && parameter.Revenue2023 > 0) score++;
             if (parameter.Revenue2024 is not null && parameter.Revenue2024 > 0) score++;
             if (parameter.Revenue2025 is not null && parameter.Revenue2025 > 0) score++;
             if (parameter.Revenue2026 is not null && parameter.Revenue2026 > 0) score++;
 
-            // Net Profit
+            // Рост выручки
+            if (parameter.Revenue2019 is not null && parameter.Revenue2020 is not null && parameter.Revenue2020 > parameter.Revenue2019) score++;
+            if (parameter.Revenue2020 is not null && parameter.Revenue2021 is not null && parameter.Revenue2021 > parameter.Revenue2020) score++;
+            if (parameter.Revenue2021 is not null && parameter.Revenue2022 is not null && parameter.Revenue2022 > parameter.Revenue2021) score++;
+            if (parameter.Revenue2022 is not null && parameter.Revenue2023 is not null && parameter.Revenue2023 > parameter.Revenue2022) score++;
+            if (parameter.Revenue2023 is not null && parameter.Revenue2024 is not null && parameter.Revenue2024 > parameter.Revenue2023) score++;
+            if (parameter.Revenue2024 is not null && parameter.Revenue2025 is not null && parameter.Revenue2025 > parameter.Revenue2024) score++;
+            if (parameter.Revenue2025 is not null && parameter.Revenue2026 is not null && parameter.Revenue2026 > parameter.Revenue2025) score++;
+
+            // Чистая прибыль
+            if (parameter.NetProfit2019 is not null && parameter.NetProfit2019 > 0) score++;
+            if (parameter.NetProfit2020 is not null && parameter.NetProfit2020 > 0) score++;
+            if (parameter.NetProfit2021 is not null && parameter.NetProfit2021 > 0) score++;
             if (parameter.NetProfit2022 is not null && parameter.NetProfit2022 > 0) score++;
             if (parameter.NetProfit2023 is not null && parameter.NetProfit2023 > 0) score++;
             if (parameter.NetProfit2024 is not null && parameter.NetProfit2024 > 0) score++;
             if (parameter.NetProfit2025 is not null && parameter.NetProfit2025 > 0) score++;
             if (parameter.NetProfit2026 is not null && parameter.NetProfit2026 > 0) score++;
+
+            // Рост чистой прибыли
+            if (parameter.NetProfit2019 is not null && parameter.NetProfit2020 is not null && parameter.NetProfit2020 > parameter.NetProfit2019) score++;
+            if (parameter.NetProfit2020 is not null && parameter.NetProfit2021 is not null && parameter.NetProfit2021 > parameter.NetProfit2020) score++;
+            if (parameter.NetProfit2021 is not null && parameter.NetProfit2022 is not null && parameter.NetProfit2022 > parameter.NetProfit2021) score++;
+            if (parameter.NetProfit2022 is not null && parameter.NetProfit2023 is not null && parameter.NetProfit2023 > parameter.NetProfit2022) score++;
+            if (parameter.NetProfit2023 is not null && parameter.NetProfit2024 is not null && parameter.NetProfit2024 > parameter.NetProfit2023) score++;
+            if (parameter.NetProfit2024 is not null && parameter.NetProfit2025 is not null && parameter.NetProfit2025 > parameter.NetProfit2024) score++;
+            if (parameter.NetProfit2025 is not null && parameter.NetProfit2026 is not null && parameter.NetProfit2026 > parameter.NetProfit2025) score++;
+
+            // Дивидендная доходность
+            if (parameter.DividendYield2019 is not null && parameter.DividendYield2019 > 0) score++;
+            if (parameter.DividendYield2020 is not null && parameter.DividendYield2020 > 0) score++;
+            if (parameter.DividendYield2021 is not null && parameter.DividendYield2021 > 0) score++;
+            if (parameter.DividendYield2022 is not null && parameter.DividendYield2022 > 0) score++;
+            if (parameter.DividendYield2023 is not null && parameter.DividendYield2023 > 0) score++;
+            if (parameter.DividendYield2024 is not null && parameter.DividendYield2024 > 0) score++;
+            if (parameter.DividendYield2025 is not null && parameter.DividendYield2025 > 0) score++;
+            if (parameter.DividendYield2026 is not null && parameter.DividendYield2026 > 0) score++;
+
+            // Рост дивидендной доходности
+            if (parameter.DividendYield2019 is not null && parameter.DividendYield2020 is not null && parameter.DividendYield2020 > parameter.DividendYield2019) score++;
+            if (parameter.DividendYield2020 is not null && parameter.DividendYield2021 is not null && parameter.DividendYield2021 > parameter.DividendYield2020) score++;
+            if (parameter.DividendYield2021 is not null && parameter.DividendYield2022 is not null && parameter.DividendYield2022 > parameter.DividendYield2021) score++;
+            if (parameter.DividendYield2022 is not null && parameter.DividendYield2023 is not null && parameter.DividendYield2023 > parameter.DividendYield2022) score++;
+            if (parameter.DividendYield2023 is not null && parameter.DividendYield2024 is not null && parameter.DividendYield2024 > parameter.DividendYield2023) score++;
+            if (parameter.DividendYield2024 is not null && parameter.DividendYield2025 is not null && parameter.DividendYield2025 > parameter.DividendYield2024) score++;
+            if (parameter.DividendYield2025 is not null && parameter.DividendYield2026 is not null && parameter.DividendYield2026 > parameter.DividendYield2025) score++;
 
             return score;
         }
