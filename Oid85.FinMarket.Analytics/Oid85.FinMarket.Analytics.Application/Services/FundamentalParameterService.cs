@@ -515,6 +515,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (parameter.Roa2025 is not null && parameter.Roa2025 > 15) score++;
             if (parameter.Roa2026 is not null && parameter.Roa2026 > 15) score++;
 
+            // EBITDA / Revenue
+            if (parameter.EbitdaRevenue2019 is not null && parameter.EbitdaRevenue2019 > 0.15) score++;
+            if (parameter.EbitdaRevenue2020 is not null && parameter.EbitdaRevenue2020 > 0.15) score++;
+            if (parameter.EbitdaRevenue2021 is not null && parameter.EbitdaRevenue2021 > 0.15) score++;
+            if (parameter.EbitdaRevenue2022 is not null && parameter.EbitdaRevenue2022 > 0.15) score++;
+            if (parameter.EbitdaRevenue2023 is not null && parameter.EbitdaRevenue2023 > 0.15) score++;
+            if (parameter.EbitdaRevenue2024 is not null && parameter.EbitdaRevenue2024 > 0.15) score++;
+            if (parameter.EbitdaRevenue2025 is not null && parameter.EbitdaRevenue2025 > 0.15) score++;
+            if (parameter.EbitdaRevenue2026 is not null && parameter.EbitdaRevenue2026 > 0.15) score++;
+
             return score;
         }
     }
