@@ -1,5 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Core.Requests;
-using Oid85.FinMarket.Analytics.Core.Responses;
+﻿using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
+using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
 {

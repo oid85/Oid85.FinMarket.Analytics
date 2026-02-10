@@ -1,4 +1,4 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Requests
+﻿namespace Oid85.FinMarket.Analytics.Core.Requests.ApiClient
 {
     public class GetCandleListRequest
     {
