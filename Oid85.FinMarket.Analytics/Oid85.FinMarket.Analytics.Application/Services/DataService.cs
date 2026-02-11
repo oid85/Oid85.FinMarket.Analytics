@@ -1,7 +1,7 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Core.Models;
-using Oid85.FinMarket.Analytics.Core.Requests;
+using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {

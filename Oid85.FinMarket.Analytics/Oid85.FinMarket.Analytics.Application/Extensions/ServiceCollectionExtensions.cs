@@ -11,6 +11,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IDataService, DataService>();
         services.AddTransient<ITrendDynamicService, TrendDynamicService>();
+        services.AddTransient<IWeekTrendService, WeekTrendService>();
         services.AddTransient<ICompareTrendService, CompareTrendService>();
         services.AddTransient<IInstrumentService, InstrumentService>();
         services.AddTransient<IFundamentalParameterService, FundamentalParameterService>();

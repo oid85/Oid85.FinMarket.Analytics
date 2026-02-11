@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Common.Utils
+﻿using System.Globalization;
+
+namespace Oid85.FinMarket.Analytics.Common.Utils
 {
     public static class DateUtils
     {
@@ -14,6 +16,46 @@
             }
 
             return dates;
+        }
+
+        public static List<(int WeekNumber, DateOnly WeekStartDay, DateOnly WeekEndDay)> GetWeeks(DateOnly from, DateOnly to)
+        {
+            var result = new List<(int, DateOnly, DateOnly)>();
+
+            var startDate = from.ToDateTime(TimeOnly.MinValue);
+            var endDate = to.ToDateTime(TimeOnly.MinValue);
+
+            // Обходим каждую неделю начиная с начальной даты
+            while (startDate <= endDate)
+            {
+                int weekNumber = GetIso8601WeekOfYear(startDate); // Номер недели ISO
+
+                // Определяем первый и последний дни недели
+                DayOfWeek firstDayOfWeek = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+                var monday = startDate.AddDays((firstDayOfWeek - startDate.DayOfWeek + 7) % 7);
+                var sunday = monday.AddDays(6);
+
+                // Проверяем, входит ли воскресенье в диапазон дат
+                if (sunday > endDate)
+                    break;
+
+                result.Add(new (weekNumber, DateOnly.FromDateTime(monday), DateOnly.FromDateTime(sunday)));
+
+                // Переход к следующей неделе
+                startDate = sunday.AddDays(1);
+            }
+
+            return result;
+        }
+
+        private static int GetIso8601WeekOfYear(DateTime dateTime)
+        {
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(dateTime);
+
+            if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+                dateTime = dateTime.AddDays(3);
+
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
     }
 }

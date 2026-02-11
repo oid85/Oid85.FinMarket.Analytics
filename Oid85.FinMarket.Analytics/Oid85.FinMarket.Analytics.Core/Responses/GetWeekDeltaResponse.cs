@@ -1,0 +1,27 @@
+﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+{
+    public class GetWeekDeltaResponse
+    {
+        public List<WeekDeltaHeaderItem> Headers { get; set; } = [];
+        public List<WeekDeltaData> Data { get; set; } = [];
+    }
+
+    public class WeekDeltaData
+    {
+        public string Ticker { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public List<WeekDeltaDataItem> Items { get; set; } = [];
+    }
+
+    public class WeekDeltaHeaderItem
+    {
+        public int? WeekNumber { get; set; }
+        public DateOnly? WeekStartDay { get; set; }
+        public DateOnly? WeekEndDay { get; set; }
+    }
+
+    public class WeekDeltaDataItem
+    {
+        public double? Delta { get; set; }
+    }
+}
