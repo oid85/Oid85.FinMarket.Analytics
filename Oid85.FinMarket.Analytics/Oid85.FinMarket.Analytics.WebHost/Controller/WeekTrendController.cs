@@ -19,7 +19,7 @@ public class WeekTrendController(
     /// <summary>
     /// Получить изменения цены по неделям
     /// </summary>
-    [HttpPost("week-delta")]
+    [HttpPost("delta")]
     [ProducesResponseType(typeof(BaseResponse<GetWeekDeltaResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BaseResponse<GetWeekDeltaResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(BaseResponse<GetWeekDeltaResponse>), StatusCodes.Status500InternalServerError)]
