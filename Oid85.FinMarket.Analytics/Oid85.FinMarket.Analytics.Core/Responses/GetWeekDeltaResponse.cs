@@ -2,8 +2,9 @@
 {
     public class GetWeekDeltaResponse
     {
-        public List<WeekDeltaHeaderItem> Headers { get; set; } = [];
-        public List<WeekDeltaData> Data { get; set; } = [];
+        public List<WeekDeltaHeaderItem> Weeks { get; set; } = [];
+        public List<WeekDeltaData> Indexes { get; set; } = [];
+        public List<WeekDeltaData> Shares { get; set; } = [];
     }
 
     public class WeekDeltaData
@@ -23,5 +24,6 @@
     public class WeekDeltaDataItem
     {
         public double? Delta { get; set; }
+        public double? Price { get; set; }
     }
 }

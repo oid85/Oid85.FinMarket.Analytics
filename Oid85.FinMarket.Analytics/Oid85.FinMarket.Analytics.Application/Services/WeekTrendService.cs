@@ -1,5 +1,6 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
+using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -19,13 +20,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var today = DateOnly.FromDateTime(DateTime.Today);
 
             var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
+            var indexes = instruments.Where(x => x.Type == KnownInstrumentTypes.Index).ToList();
+            var shares = instruments.Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var weeks = DateUtils.GetWeeks(startDate, today);
 
             var response = new GetWeekDeltaResponse
             {
-                Headers = [.. weeks.Select(x =>
+                Weeks = [.. weeks.Select(x =>
                 new WeekDeltaHeaderItem
                 {
                     WeekNumber = x.WeekNumber,
@@ -34,21 +37,37 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 })]
             };
 
-            var data = new List<WeekDeltaData>();
+            var sharesData = new List<WeekDeltaData>();
 
-            foreach (var instrument in instruments)
+            foreach (var share in shares)
             {
                 var dataItem = new WeekDeltaData
                 {
-                    Ticker = instrument.Ticker,
-                    Name = instrument.Name,
-                    Items = [.. weeks.Select(x => GetWeekDeltaDataItem(instrument.Ticker, x.WeekStartDay, x.WeekEndDay))]
+                    Ticker = share.Ticker,
+                    Name = share.Name,
+                    Items = [.. weeks.Select(x => GetWeekDeltaDataItem(share.Ticker, x.WeekStartDay, x.WeekEndDay))]
                 };
 
-                data.Add(dataItem);
+                sharesData.Add(dataItem);
             }
 
-            response.Data = [.. data.OrderBy(x => x.Ticker)];
+            response.Shares = [.. sharesData.OrderBy(x => x.Ticker)];
+
+            var indexesData = new List<WeekDeltaData>();
+
+            foreach (var index in indexes)
+            {
+                var dataItem = new WeekDeltaData
+                {
+                    Ticker = index.Ticker,
+                    Name = index.Name,
+                    Items = [.. weeks.Select(x => GetWeekDeltaDataItem(index.Ticker, x.WeekStartDay, x.WeekEndDay))]
+                };
+
+                indexesData.Add(dataItem);
+            }
+
+            response.Indexes = [.. indexesData.OrderBy(x => x.Ticker)];
 
             return response;
 
@@ -67,7 +86,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 double delta = Math.Round((lastPrice - firstPrice) / firstPrice * 100.0, 2);
 
-                return new WeekDeltaDataItem() { Delta = delta };
+                return new WeekDeltaDataItem() { Delta = delta, Price = lastPrice };
             }
         }        
     }
