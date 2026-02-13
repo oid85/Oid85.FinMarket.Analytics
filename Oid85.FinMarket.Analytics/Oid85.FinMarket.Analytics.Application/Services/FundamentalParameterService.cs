@@ -119,7 +119,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetAnalyticFundamentalParameterListResponse> GetAnalyticFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request)
         {
-            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;            
+            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
             
             var instruments = (await instrumentService.GetStorageInstrumentAsync()).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();            
             
@@ -297,6 +297,44 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             response.FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Score)];
+
+            return response;
+        }
+
+        /// <inheritdoc />
+        public async Task<GetAnalyticFundamentalParameterBubbleDiagramResponse> GetAnalyticFundamentalParameterBubbleDiagramAsync(GetAnalyticFundamentalParameterBubbleDiagramRequest request)
+        {
+            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
+
+            var instruments = (await instrumentService.GetStorageInstrumentAsync()).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+
+            var tickers = instruments.Select(x => x.Ticker).ToList();
+
+            var response = new GetAnalyticFundamentalParameterBubbleDiagramResponse();
+
+            foreach (var instrument in instruments)
+            {
+                var ebitda = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, request.Year.ToString());
+                var ev = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, request.Year.ToString());
+                var netDebt = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, request.Year.ToString());
+                var marketCap = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, request.Year.ToString());
+
+                var evEbitda = GetEvEbitda(ev, ebitda);
+                var netDebtEbitda = GetNetDebtEbitda(netDebt, ebitda);
+
+                if (!evEbitda.HasValue) continue;
+                if (!netDebtEbitda.HasValue) continue;
+                if (!marketCap.HasValue) continue;
+
+                response.Data.Add(
+                    new GetAnalyticFundamentalParameterBubbleDiagramPointResponse
+                    {
+                        Ticker = instrument.Ticker,
+                        EvEbitda = evEbitda.Value,
+                        NetDebtEbitda = netDebtEbitda.Value,
+                        MarketCap = marketCap.Value
+                    });
+            }
 
             return response;
         }

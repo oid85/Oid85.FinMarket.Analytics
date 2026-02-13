@@ -14,6 +14,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<CreateOrUpdateAnalyticFundamentalParameterResponse> CreateOrUpdateAnalyticFundamentalParameterAsync(CreateOrUpdateAnalyticFundamentalParameterRequest request);
 
         /// <summary>
+        /// Пузырьковая диаграмма
+        /// </summary>
+        Task<GetAnalyticFundamentalParameterBubbleDiagramResponse> GetAnalyticFundamentalParameterBubbleDiagramAsync(GetAnalyticFundamentalParameterBubbleDiagramRequest request);
+
+        /// <summary>
         /// Получить список фундаментальных параметров
         /// </summary>
         Task<GetAnalyticFundamentalParameterListResponse> GetAnalyticFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request);
