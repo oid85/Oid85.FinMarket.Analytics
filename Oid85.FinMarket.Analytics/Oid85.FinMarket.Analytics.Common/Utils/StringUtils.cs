@@ -1,4 +1,7 @@
-﻿namespace Oid85.FinMarket.Analytics.Common.Utils;
+﻿using System.Security.Cryptography;
+using System.Text;
+
+namespace Oid85.FinMarket.Analytics.Common.Utils;
 
 public static class StringUtils
 {
@@ -9,4 +12,13 @@ public static class StringUtils
     public static string Base64Decode(string base64) =>
         System.Text.Encoding.UTF8.GetString(
             Convert.FromBase64String(base64));
+
+    public static string GetMd5(string input)
+    {
+        var bytes = Encoding.UTF8.GetBytes(input);
+        var hashBytes = MD5.HashData(bytes);
+        var result = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+        return result;
+    }
 }
