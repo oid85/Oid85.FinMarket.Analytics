@@ -52,7 +52,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var moexIndexCandle = moexIndexCandles.FirstOrDefault(x => x.Date >= date);
 
                 if (consumerPriceIndexChange is not null)
-                    macroParameterItem.ConsumerPriceIndexChange = consumerPriceIndexChange.Value;
+                    macroParameterItem.ConsumerPriceIndexChange = consumerPriceIndexChange.Value - 100.0;
 
                 if (monetaryAggregate is not null)
                 {
@@ -66,7 +66,29 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     macroParameterItem.KeyRate = keyRate.Value;
 
                 if (moexIndexCandle is not null)
-                    macroParameterItem.IMOEX = moexIndexCandle.Close;
+                    macroParameterItem.MoexIndex = moexIndexCandle.Close;
+
+                if (macroParameterItem.M2X.HasValue && macroParameterItem.M2.HasValue)
+                    macroParameterItem.Currency = macroParameterItem.M2X - macroParameterItem.M2;
+
+                if (macroParameterItem.M2.HasValue && macroParameterItem.M1.HasValue)
+                    macroParameterItem.Deposits = macroParameterItem.M2 - macroParameterItem.M1;
+
+                if (macroParameterItems.Count > 0)
+                {
+                    var lastMacroParameterItem = macroParameterItems.Last();
+
+                    macroParameterItem.MoexIndexChange = GetChange(lastMacroParameterItem.MoexIndex, macroParameterItem.MoexIndex);
+                    macroParameterItem.M0 = GetChange(lastMacroParameterItem.M0, macroParameterItem.M0);
+                    macroParameterItem.M1 = GetChange(lastMacroParameterItem.M1, macroParameterItem.M1);
+                    macroParameterItem.M2 = GetChange(lastMacroParameterItem.M2, macroParameterItem.M2);
+                    macroParameterItem.M2X = GetChange(lastMacroParameterItem.M2X, macroParameterItem.M2X);
+                    macroParameterItem.Currency = GetChange(lastMacroParameterItem.Currency, macroParameterItem.Currency);
+                    macroParameterItem.Deposits = GetChange(lastMacroParameterItem.Deposits, macroParameterItem.Deposits);
+
+                    if (macroParameterItem.M1Change.HasValue && macroParameterItem.ConsumerPriceIndexChange.HasValue)
+                        macroParameterItem.M1ConsumerPriceIndexDifferenceChange = macroParameterItem.M1Change - macroParameterItem.ConsumerPriceIndexChange;
+                }
 
                 macroParameterItems.Add(macroParameterItem);
             }
@@ -77,6 +99,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             };
 
             return response;
+        }
+
+        private static double? GetChange(double? prevValue, double? value)
+        {
+            if (!prevValue.HasValue) return null;
+            if (!value.HasValue) return null;
+
+            var change = (value.Value - prevValue.Value) / prevValue.Value * 100.0;
+
+            return Math.Round(change, 2);
         }
     }
 }
