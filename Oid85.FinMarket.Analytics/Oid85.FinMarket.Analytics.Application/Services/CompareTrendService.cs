@@ -27,7 +27,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var series = new List<GetCompareTrendSeriesResponse>();
 
-            var benchmarkValues = ultimateSmootherData[KnownBenchmarkTickers.MCFTR].Where(x => x.Date >= startDate && x.Date <= today).ToList();
+            var benchmarkValues = ultimateSmootherData[KnownIndexTickers.MCFTR].Where(x => x.Date >= startDate && x.Date <= today).ToList();
             var benchmarkChange = benchmarkValues.Last().Value / benchmarkValues.First().Value;
 
             foreach (var pair in ultimateSmootherData)
@@ -48,7 +48,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (data.Count == 0)
                     return KnownColors.Blue;
 
-                if (name == KnownBenchmarkTickers.MCFTR)
+                if (name == KnownIndexTickers.MCFTR)
                     return KnownColors.Blue;
 
                 if (data.Last(x => x.Value is not null).Value > benchmarkChange)

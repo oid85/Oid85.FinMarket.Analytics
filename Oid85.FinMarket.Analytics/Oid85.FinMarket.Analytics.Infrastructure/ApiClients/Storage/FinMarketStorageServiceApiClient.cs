@@ -7,6 +7,8 @@ using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Exceptions;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
+using Oid85.FinMarket.Storage.Core.Requests;
+using Oid85.FinMarket.Storage.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
 {
@@ -35,6 +37,30 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
         /// <inheritdoc />
         public async Task<CreateOrUpdateFundamentalParameterResponse> CreateOrUpdateFundamentalParameterAsync(CreateOrUpdateFundamentalParameterRequest request) =>
             await GetResponseAsync<CreateOrUpdateFundamentalParameterRequest, CreateOrUpdateFundamentalParameterResponse>("/api/fundamental-parameters/create-or-update", request);
+
+        /// <inheritdoc />
+        public async Task<GetConsumerPriceIndexChangeListResponse> GetConsumerPriceIndexChangeListAsync(GetConsumerPriceIndexChangeListRequest request) =>
+            await GetResponseAsync<GetConsumerPriceIndexChangeListRequest, GetConsumerPriceIndexChangeListResponse>("/api/consumer-price-indexes/list", request);
+
+        /// <inheritdoc />
+        public async Task<CreateOrUpdateConsumerPriceIndexChangeResponse> CreateOrUpdateConsumerPriceIndexChangeAsync(CreateOrUpdateConsumerPriceIndexChangeRequest request) =>
+            await GetResponseAsync<CreateOrUpdateConsumerPriceIndexChangeRequest, CreateOrUpdateConsumerPriceIndexChangeResponse>("/api/consumer-price-indexes/create-or-update", request);
+
+        /// <inheritdoc />
+        public async Task<GetMonetaryAggregateListResponse> GetMonetaryAggregateListAsync(GetMonetaryAggregateListRequest request) =>
+            await GetResponseAsync<GetMonetaryAggregateListRequest, GetMonetaryAggregateListResponse>("/api/monetary-aggregates/list", request);
+
+        /// <inheritdoc />
+        public async Task<CreateOrUpdateMonetaryAggregateResponse> CreateOrUpdateMonetaryAggregateAsync(CreateOrUpdateMonetaryAggregateRequest request) =>
+            await GetResponseAsync<CreateOrUpdateMonetaryAggregateRequest, CreateOrUpdateMonetaryAggregateResponse>("/api/monetary-aggregates/create-or-update", request);
+
+        /// <inheritdoc />
+        public async Task<GetKeyRateListResponse> GetKeyRateListAsync(GetKeyRateListRequest request) =>
+            await GetResponseAsync<GetKeyRateListRequest, GetKeyRateListResponse>("/api/key-rates/list", request);
+
+        /// <inheritdoc />
+        public async Task<CreateOrUpdateKeyRateResponse> CreateOrUpdateKeyRateAsync(CreateOrUpdateKeyRateRequest request) =>
+            await GetResponseAsync<CreateOrUpdateKeyRateRequest, CreateOrUpdateKeyRateResponse>("/api/key-rates/create-or-update", request);
 
         private async Task<TResponse> GetCachedDataAsync<TRequest, TResponse>(string url, TRequest request) where TResponse : new()
         {

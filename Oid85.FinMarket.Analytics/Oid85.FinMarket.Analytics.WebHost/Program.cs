@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using Oid85.FinMarket.Analytics.Application.Extensions;
 using Oid85.FinMarket.Analytics.Common.Converters;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
-using Oid85.FinMarket.Analytics.Infrastructure.Database.Extensions;
+using Oid85.FinMarket.Analytics.Infrastructure.Extensions;
 using Oid85.FinMarket.Analytics.WebHost.Extensions;
 
 namespace Oid85.FinMarket.Analytics.WebHost

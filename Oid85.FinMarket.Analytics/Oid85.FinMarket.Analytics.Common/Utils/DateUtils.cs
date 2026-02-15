@@ -18,6 +18,20 @@ namespace Oid85.FinMarket.Analytics.Common.Utils
             return dates;
         }
 
+        public static List<DateOnly> GetMonthDates(DateOnly from, DateOnly to)
+        {
+            var curDate = new DateOnly(from.Year, from.Month, 1);
+            var dates = new List<DateOnly>();
+
+            while (curDate <= to)
+            {
+                dates.Add(curDate);
+                curDate = curDate.AddMonths(1);
+            }
+
+            return dates;
+        }
+
         public static List<(int WeekNumber, DateOnly WeekStartDay, DateOnly WeekEndDay)> GetWeeks(DateOnly from, DateOnly to)
         {
             var result = new List<(int WeekNumber, DateOnly WeekStartDay, DateOnly WeekEndDay)>();

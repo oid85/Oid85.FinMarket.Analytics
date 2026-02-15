@@ -141,9 +141,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var priceDictionary2023 = tickers.Zip(lastCandleList2023, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2024 = tickers.Zip(lastCandleList2024, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2025 = tickers.Zip(lastCandleList2025, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
-            var priceDictionary2026 = tickers.Zip(lastCandleList2026, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
-
-            var response = new GetAnalyticFundamentalParameterListResponse();
+            var priceDictionary2026 = tickers.Zip(lastCandleList2026, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);            
 
             var fundamentalParameterItems = new List<GetAnalyticFundamentalParameterListItemResponse>();
 
@@ -296,7 +294,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItems.Add(fundamentalParameterItem);                
             }
 
-            response.FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Score)];
+            var response = new GetAnalyticFundamentalParameterListResponse
+            {
+                FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Score)]
+            };
 
             return response;
         }

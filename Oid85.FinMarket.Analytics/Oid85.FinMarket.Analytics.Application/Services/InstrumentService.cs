@@ -45,7 +45,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var benchmarkIncrement = GetIncrement(KnownBenchmarkTickers.MCFTR);
+            var benchmarkIncrement = GetIncrement(KnownIndexTickers.MCFTR);
 
             var items = new List<GetAnalyticInstrumentListItemResponse>();
 

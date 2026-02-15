@@ -6,9 +6,10 @@ using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage;
+using Oid85.FinMarket.Analytics.Infrastructure.Database;
 using Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories;
 
-namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Extensions;
+namespace Oid85.FinMarket.Analytics.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
