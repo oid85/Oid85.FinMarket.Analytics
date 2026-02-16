@@ -18,26 +18,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetAnalyticInstrumentListResponse> GetAnalyticInstrumentListAsync(GetAnalyticInstrumentListRequest request)
         {
-            var analyticInstruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
-            var storageInstruments = (await GetStorageInstrumentAsync()) ?? [];
-
-            // Добавляем новые
-            foreach (var storageInstrument in storageInstruments)
-                if (!analyticInstruments.Select(x => x.Ticker).Contains(storageInstrument.Ticker))
-                    await instrumentRepository.AddAsync(
-                        new Instrument
-                        {
-                            Ticker = storageInstrument.Ticker,
-                            Name = storageInstrument.Name,
-                            Type = storageInstrument.Type,
-                            IsSelected = true
-                        });
-
-            // Удаляем неактуальные
-            foreach (var analyticInstrument in analyticInstruments)
-                if (!storageInstruments.Select(x => x.Ticker).Contains(analyticInstrument.Ticker))
-                    await instrumentRepository.DeleteByTickerAsync(analyticInstrument.Ticker);
-
             var instruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
@@ -113,6 +93,30 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Type = x.Type
                 })
                 .ToList();
+        }
+
+        /// <inheritdoc />
+        public async Task SyncInstrumentListAsync()
+        {
+            var analyticInstruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
+            var storageInstruments = (await GetStorageInstrumentAsync()) ?? [];
+
+            // Добавляем новые
+            foreach (var storageInstrument in storageInstruments)
+                if (!analyticInstruments.Select(x => x.Ticker).Contains(storageInstrument.Ticker))
+                    await instrumentRepository.AddAsync(
+                        new Instrument
+                        {
+                            Ticker = storageInstrument.Ticker,
+                            Name = storageInstrument.Name,
+                            Type = storageInstrument.Type,
+                            IsSelected = true
+                        });
+
+            // Удаляем неактуальные
+            foreach (var analyticInstrument in analyticInstruments)
+                if (!storageInstruments.Select(x => x.Ticker).Contains(analyticInstrument.Ticker))
+                    await instrumentRepository.DeleteByTickerAsync(analyticInstrument.Ticker);
         }
     }
 }

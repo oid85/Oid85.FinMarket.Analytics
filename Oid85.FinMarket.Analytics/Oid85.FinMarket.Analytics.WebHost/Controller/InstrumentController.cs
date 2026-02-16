@@ -41,4 +41,14 @@ public class InstrumentController(
         GetResponseAsync(
             () => instrumentService.SelectInstrumentAsync(request),
             result => new BaseResponse<SelectInstrumentResponse> { Result = result });
+
+    /// <summary>
+    /// Синхронизировать инструменты со Storage
+    /// </summary>
+    [HttpPost("sync")]
+    public async Task<IActionResult> SyncInstrumentListAsync()
+    {
+        await instrumentService.SyncInstrumentListAsync();
+        return Ok();
+    }
 }
