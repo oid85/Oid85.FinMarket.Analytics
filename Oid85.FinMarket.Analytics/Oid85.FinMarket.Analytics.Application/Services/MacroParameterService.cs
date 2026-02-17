@@ -130,22 +130,22 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private static double GetConsumerPriceIndexYearChange(GetAnalyticMacroParameterItemListResponse macroParameterItem, List<GetAnalyticMacroParameterItemListResponse> macroParameterItems)
         {
-            double result = (macroParameterItem.ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 1].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 2].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 3].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 4].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 5].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 6].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 7].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 8].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 9].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 10].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
-            result *= (macroParameterItems[macroParameterItems.Count - 11].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            double result = 1.0;
 
-            result =- 1;
+            if (macroParameterItem.ConsumerPriceIndexChange.HasValue) result = (macroParameterItem.ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 1].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 1].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 2].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 2].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 3].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 3].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 4].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 4].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 5].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 5].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 6].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 6].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 7].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 7].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 8].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 8].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 9].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 9].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 10].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 10].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            if (macroParameterItems[macroParameterItems.Count - 11].ConsumerPriceIndexChange.HasValue) result *= (macroParameterItems[macroParameterItems.Count - 11].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
 
-            return Math.Round(result, 2);
+            return Math.Round((result - 1.0) * 100.0, 2);
         }
 
         private static double? GetChange(double? prevValue, double? value)
