@@ -34,7 +34,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var keyRates = (await finMarketStorageServiceApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).ToList();
             var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-5));
             var to = DateOnly.FromDateTime(DateTime.Today);
-            var moexIndexCandles = (await finMarketStorageServiceApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.IMOEX, From = from, To = to })).Result.Candles;
+            var moexIndexCandles = (await finMarketStorageServiceApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.IMOEX, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
+            var rgbiIndexCandles = (await finMarketStorageServiceApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.RGBI, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
             var dates = DateUtils.GetMonthDates(from, to);
             
             var macroParameterItems = new List<GetAnalyticMacroParameterItemListResponse>();
@@ -50,6 +51,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var monetaryAggregate = monetaryAggregates.FirstOrDefault(x => x.Date == date);
                 var keyRate = keyRates.LastOrDefault(x => x.Date <= date);
                 var moexIndexCandle = moexIndexCandles.FirstOrDefault(x => x.Date >= date);
+                var rgbiIndexCandle = rgbiIndexCandles.FirstOrDefault(x => x.Date >= date);
 
                 if (consumerPriceIndexChange is not null)
                 {
@@ -73,30 +75,46 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (moexIndexCandle is not null)
                     macroParameterItem.MoexIndex = moexIndexCandle.Close;
 
+                if (rgbiIndexCandle is not null)
+                    macroParameterItem.RgbiIndex = rgbiIndexCandle.Close;
+
                 if (macroParameterItem.M2X.HasValue && macroParameterItem.M2.HasValue)
                     macroParameterItem.Currency = macroParameterItem.M2X - macroParameterItem.M2;
 
                 if (macroParameterItem.M2.HasValue && macroParameterItem.M1.HasValue)
                     macroParameterItem.Deposits = macroParameterItem.M2 - macroParameterItem.M1;
 
+                int count = macroParameterItems.Count;
+
                 if (macroParameterItems.Count > 0)
                 {
-                    var lastMacroParameterItem = macroParameterItems.Last();
+                    var prevMonth = macroParameterItems[count - 1];
 
-                    macroParameterItem.MoexIndexChange = GetChange(lastMacroParameterItem.MoexIndex, macroParameterItem.MoexIndex);
-                    macroParameterItem.M0Change = GetChange(lastMacroParameterItem.M0, macroParameterItem.M0);
-                    macroParameterItem.M1Change = GetChange(lastMacroParameterItem.M1, macroParameterItem.M1);
-                    macroParameterItem.M2Change = GetChange(lastMacroParameterItem.M2, macroParameterItem.M2);
-                    macroParameterItem.M2XChange = GetChange(lastMacroParameterItem.M2X, macroParameterItem.M2X);
-                    macroParameterItem.CurrencyChange = GetChange(lastMacroParameterItem.Currency, macroParameterItem.Currency);
-                    macroParameterItem.DepositsChange = GetChange(lastMacroParameterItem.Deposits, macroParameterItem.Deposits);
+                    macroParameterItem.MoexIndexChange = GetChange(prevMonth.MoexIndex, macroParameterItem.MoexIndex);
+                    macroParameterItem.RgbiIndexChange = GetChange(prevMonth.RgbiIndex, macroParameterItem.RgbiIndex);
+                    macroParameterItem.M0Change = GetChange(prevMonth.M0, macroParameterItem.M0);
+                    macroParameterItem.M1Change = GetChange(prevMonth.M1, macroParameterItem.M1);
+                    macroParameterItem.M2Change = GetChange(prevMonth.M2, macroParameterItem.M2);
+                    macroParameterItem.M2XChange = GetChange(prevMonth.M2X, macroParameterItem.M2X);
+                    macroParameterItem.CurrencyChange = GetChange(prevMonth.Currency, macroParameterItem.Currency);
+                    macroParameterItem.DepositsChange = GetChange(prevMonth.Deposits, macroParameterItem.Deposits);                    
+                    macroParameterItem.M1ConsumerPriceIndexDifference = GetDifference(macroParameterItem.M1Change, macroParameterItem.ConsumerPriceIndexChange);
+                }
 
-                    if (macroParameterItem.M1Change.HasValue && macroParameterItem.ConsumerPriceIndexChange.HasValue)
-                        if (macroParameterItem.M1Change.HasValue && macroParameterItem.ConsumerPriceIndexChange.HasValue)
-                        {
-                            var m1ConsumerPriceIndexDifferenceChangeValue = macroParameterItem.M1Change.Value - macroParameterItem.ConsumerPriceIndexChange.Value;
-                            macroParameterItem.M1ConsumerPriceIndexDifferenceChange = Math.Round(m1ConsumerPriceIndexDifferenceChangeValue, 2);
-                        }
+                if (macroParameterItems.Count > 11)
+                {
+                    var prevYear = macroParameterItems[count - 12];
+
+                    macroParameterItem.MoexIndexYearChange = GetChange(prevYear.MoexIndex, macroParameterItem.MoexIndex);
+                    macroParameterItem.RgbiIndexYearChange = GetChange(prevYear.RgbiIndex, macroParameterItem.RgbiIndex);
+                    macroParameterItem.M0YearChange = GetChange(prevYear.M0, macroParameterItem.M0);
+                    macroParameterItem.M1YearChange = GetChange(prevYear.M1, macroParameterItem.M1);
+                    macroParameterItem.M2YearChange = GetChange(prevYear.M2, macroParameterItem.M2);
+                    macroParameterItem.M2XYearChange = GetChange(prevYear.M2X, macroParameterItem.M2X);
+                    macroParameterItem.CurrencyYearChange = GetChange(prevYear.Currency, macroParameterItem.Currency);
+                    macroParameterItem.DepositsYearChange = GetChange(prevYear.Deposits, macroParameterItem.Deposits);
+                    macroParameterItem.ConsumerPriceIndexYearChange = GetConsumerPriceIndexYearChange(macroParameterItem, macroParameterItems);
+                    macroParameterItem.M1ConsumerPriceIndexYearDifference = GetDifference(macroParameterItem.M1YearChange, macroParameterItem.ConsumerPriceIndexYearChange);
                 }
 
                 macroParameterItems.Add(macroParameterItem);
@@ -110,6 +128,26 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return response;
         }
 
+        private static double GetConsumerPriceIndexYearChange(GetAnalyticMacroParameterItemListResponse macroParameterItem, List<GetAnalyticMacroParameterItemListResponse> macroParameterItems)
+        {
+            double result = (macroParameterItem.ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 1].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 2].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 3].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 4].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 5].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 6].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 7].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 8].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 9].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 10].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+            result *= (macroParameterItems[macroParameterItems.Count - 11].ConsumerPriceIndexChange.Value + 100.0) / 100.0;
+
+            result =- 1;
+
+            return Math.Round(result, 2);
+        }
+
         private static double? GetChange(double? prevValue, double? value)
         {
             if (!prevValue.HasValue) return null;
@@ -118,6 +156,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var change = (value.Value - prevValue.Value) / prevValue.Value * 100.0;
 
             return Math.Round(change, 2);
+        }
+
+        private static double? GetDifference(double? firstValue, double? secondValue)
+        {
+            if (!firstValue.HasValue) return null;
+            if (!secondValue.HasValue) return null;
+
+            var difference = firstValue.Value - secondValue.Value;
+
+            return Math.Round(difference, 2);
         }
     }
 }
