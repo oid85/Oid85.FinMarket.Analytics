@@ -109,8 +109,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         {
                             Ticker = storageInstrument.Ticker,
                             Name = storageInstrument.Name,
-                            Type = storageInstrument.Type,
-                            IsSelected = true
+                            Type = storageInstrument.Type
                         });
 
             // Удаляем неактуальные
