@@ -30,7 +30,7 @@ public class InstrumentController(
             result => new BaseResponse<GetAnalyticInstrumentListResponse> { Result = result });
 
     /// <summary>
-    /// Выделить инструмент по идентификатору
+    /// Выделить инструмент
     /// </summary>
     [HttpPost("select")]
     [ProducesResponseType(typeof(BaseResponse<SelectInstrumentResponse>), StatusCodes.Status200OK)]
@@ -41,6 +41,19 @@ public class InstrumentController(
         GetResponseAsync(
             () => instrumentService.SelectInstrumentAsync(request),
             result => new BaseResponse<SelectInstrumentResponse> { Result = result });
+
+    /// <summary>
+    /// Выделить инструмент в портфеле
+    /// </summary>
+    [HttpPost("portfolio")]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioInstrumentResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioInstrumentResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioInstrumentResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> PortfolioInstrumentAsync(
+        [FromBody] PortfolioInstrumentRequest request) =>
+        GetResponseAsync(
+            () => instrumentService.PortfolioInstrumentAsync(request),
+            result => new BaseResponse<PortfolioInstrumentResponse> { Result = result });
 
     /// <summary>
     /// Синхронизировать инструменты со Storage
