@@ -72,13 +72,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<SelectInstrumentResponse> SelectInstrumentAsync(SelectInstrumentRequest request)
         {
-            var instrument = await instrumentRepository.GetInstrumentByIdAsync(request.Id);
+            var instrument = await instrumentRepository.GetInstrumentByTickerAsync(request.Ticker);
 
             instrument!.IsSelected = !instrument!.IsSelected;
 
             await instrumentRepository.EditInstrumentAsync(instrument);
 
-            return new SelectInstrumentResponse() { Id = request.Id };
+            return new SelectInstrumentResponse() { Id = instrument.Id };
         }
 
         public async Task<List<Instrument>> GetStorageInstrumentAsync()

@@ -30,7 +30,7 @@ public class InstrumentController(
             result => new BaseResponse<GetAnalyticInstrumentListResponse> { Result = result });
 
     /// <summary>
-    /// Выделить инструмент
+    /// Выделить инструмент по идентификатору
     /// </summary>
     [HttpPost("select")]
     [ProducesResponseType(typeof(BaseResponse<SelectInstrumentResponse>), StatusCodes.Status200OK)]

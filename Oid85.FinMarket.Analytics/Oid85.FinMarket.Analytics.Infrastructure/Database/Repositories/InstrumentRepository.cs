@@ -79,6 +79,27 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
             return model;
         }
 
+        public async Task<Instrument?> GetInstrumentByTickerAsync(string ticker)
+        {
+            await using var context = await contextFactory.CreateDbContextAsync();
+
+            var entity = await context.InstrumentEntities.FirstOrDefaultAsync(x => x.Ticker == ticker);
+
+            if (entity is null)
+                return null;
+
+            var model = new Instrument
+            {
+                Id = entity.Id,
+                Ticker = entity.Ticker,
+                Name = entity.Name,
+                Type = entity.Type,
+                IsSelected = entity.IsSelected
+            };
+
+            return model;
+        }
+
         public async Task<List<Instrument>?> GetInstrumentsAsync()
         {
             await using var context = await contextFactory.CreateDbContextAsync();

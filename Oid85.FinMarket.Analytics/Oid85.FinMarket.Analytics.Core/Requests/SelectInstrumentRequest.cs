@@ -2,6 +2,6 @@
 {
     public class SelectInstrumentRequest
     {
-        public Guid Id { get; set; }
+        public string Ticker { get; set; }
     }
 }
