@@ -23,6 +23,11 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Entities
         public bool IsSelected { get; set; }
 
         /// <summary>
+        /// Инструмент в портфеле
+        /// </summary>
+        public bool InPortfolio { get; set; }
+
+        /// <summary>
         /// Тип
         /// </summary>
         public string Type { get; set; }

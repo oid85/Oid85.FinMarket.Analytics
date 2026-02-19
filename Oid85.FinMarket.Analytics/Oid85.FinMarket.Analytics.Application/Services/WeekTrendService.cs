@@ -9,7 +9,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
     public class WeekTrendService(
-        IInstrumentService instrumentService,
+        IInstrumentRepository instrumentRepository,
         IDataService dataService)
         : IWeekTrendService
     {
@@ -19,7 +19,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-7 * (request.LastWeeksCount + 1)));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var instruments = ((await instrumentService.GetStorageInstrumentAsync()) ?? []).ToList();
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).ToList();
             var indexes = instruments.Where(x => x.Type == KnownInstrumentTypes.Index).ToList();
             var shares = instruments.Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
             var tickers = instruments!.Select(x => x.Ticker).ToList();

@@ -15,5 +15,7 @@
         public string Ticker { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
+        public bool IsSelected { get; set; }
+        public bool InPortfolio { get; set; }
     }
 }

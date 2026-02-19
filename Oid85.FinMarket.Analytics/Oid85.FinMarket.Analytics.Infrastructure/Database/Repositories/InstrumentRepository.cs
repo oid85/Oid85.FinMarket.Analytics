@@ -24,7 +24,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Ticker = instrument.Ticker,
                 Name = instrument.Name,
                 Type = instrument.Type,
-                IsSelected = instrument.IsSelected
+                IsSelected = instrument.IsSelected,
+                InPortfolio = instrument.InPortfolio
             };
 
             await context.AddAsync(entity);
@@ -51,7 +52,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         .SetProperty(entity => entity.Ticker, model.Ticker)
                         .SetProperty(entity => entity.Name, model.Name)
                         .SetProperty(entity => entity.Type, model.Type)
-                        .SetProperty(entity => entity.IsSelected, model.IsSelected));
+                        .SetProperty(entity => entity.IsSelected, model.IsSelected)
+                        .SetProperty(entity => entity.InPortfolio, model.InPortfolio));
 
             await context.SaveChangesAsync();
 
@@ -73,7 +75,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Ticker = entity.Ticker,
                 Name = entity.Name,
                 Type = entity.Type,
-                IsSelected = entity.IsSelected
+                IsSelected = entity.IsSelected,
+                InPortfolio = entity.InPortfolio
             };
 
             return model;
@@ -94,7 +97,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Ticker = entity.Ticker,
                 Name = entity.Name,
                 Type = entity.Type,
-                IsSelected = entity.IsSelected
+                IsSelected = entity.IsSelected,
+                InPortfolio = entity.InPortfolio
             };
 
             return model;
@@ -117,7 +121,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         Ticker = x.Ticker,
                         Name = x.Name,
                         Type = x.Type,
-                        IsSelected = x.IsSelected
+                        IsSelected = x.IsSelected,
+                        InPortfolio = x.InPortfolio
                     })
                 .ToList();
 

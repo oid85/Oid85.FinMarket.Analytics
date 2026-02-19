@@ -1,4 +1,5 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Requests;
@@ -11,6 +12,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class FundamentalParameterService(
         IInstrumentService instrumentService,
+        IInstrumentRepository instrumentRepository,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
         : IFundamentalParameterService
     {
@@ -121,7 +123,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
             
-            var instruments = (await instrumentService.GetStorageInstrumentAsync()).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();            
+            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();            
             
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
@@ -151,6 +153,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 fundamentalParameterItem.Ticker = instrument.Ticker;
                 fundamentalParameterItem.Name = instrument.Name;
+                fundamentalParameterItem.IsSelected = instrument.IsSelected;
+                fundamentalParameterItem.InPortfolio = instrument.InPortfolio;
 
                 fundamentalParameterItem.Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty);
 
@@ -307,7 +311,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
 
-            var instruments = (await instrumentService.GetStorageInstrumentAsync()).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
