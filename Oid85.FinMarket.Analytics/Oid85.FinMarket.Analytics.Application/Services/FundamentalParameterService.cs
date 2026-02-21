@@ -123,7 +123,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
 
-            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();            
+            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 50 })).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();            
             
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
