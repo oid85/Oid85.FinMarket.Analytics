@@ -14,6 +14,7 @@
         public string Ticker { get; set; }
         public string Name { get; set; }
         public List<TrendDynamicDataItem> Items { get; set; }
+        public bool InPortfolio { get; set; }
     }
 
     public class TrendDynamicDataItem

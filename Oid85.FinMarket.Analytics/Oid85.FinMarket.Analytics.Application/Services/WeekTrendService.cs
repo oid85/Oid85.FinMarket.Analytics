@@ -19,7 +19,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-7 * (request.LastWeeksCount + 1)));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).ToList();
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
             var indexes = instruments.Where(x => x.Type == KnownInstrumentTypes.Index).ToList();
             var shares = instruments.Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
             var tickers = instruments!.Select(x => x.Ticker).ToList();
@@ -45,6 +45,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Ticker = share.Ticker,
                     Name = share.Name,
+                    InPortfolio = share.InPortfolio,
                     Items = [.. weeks.Select(x => GetWeekDeltaDataItem(share.Ticker, x.WeekStartDay, x.WeekEndDay))]
                 };
 
@@ -61,6 +62,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Ticker = index.Ticker,
                     Name = index.Name,
+                    InPortfolio = index.InPortfolio,
                     Items = [.. weeks.Select(x => GetWeekDeltaDataItem(index.Ticker, x.WeekStartDay, x.WeekEndDay))]
                 };
 
