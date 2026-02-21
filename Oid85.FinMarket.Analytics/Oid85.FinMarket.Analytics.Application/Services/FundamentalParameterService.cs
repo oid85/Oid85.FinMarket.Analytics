@@ -10,8 +10,7 @@ using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
-    public class FundamentalParameterService(
-        IInstrumentService instrumentService,
+    public class FundamentalParameterService(        
         IInstrumentRepository instrumentRepository,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
         : IFundamentalParameterService
