@@ -10,8 +10,9 @@ using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
-    public class FundamentalParameterService(        
+    public class FundamentalParameterService(
         IInstrumentRepository instrumentRepository,
+        IInstrumentService instrumentService,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
         : IFundamentalParameterService
     {
@@ -121,8 +122,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetAnalyticFundamentalParameterListResponse> GetAnalyticFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request)
         {
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
-            
-            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();            
+
+            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();            
             
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
@@ -154,6 +155,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Name = instrument.Name;
                 fundamentalParameterItem.IsSelected = instrument.IsSelected;
                 fundamentalParameterItem.InPortfolio = instrument.InPortfolio;
+
+                fundamentalParameterItem.BenchmarkChange = instrument.BenchmarkChange;
 
                 fundamentalParameterItem.Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty);
 

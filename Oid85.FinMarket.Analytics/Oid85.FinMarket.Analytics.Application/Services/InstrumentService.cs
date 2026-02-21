@@ -30,18 +30,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var items = new List<GetAnalyticInstrumentListItemResponse>();
 
             foreach (var instrument in instruments)
-            {
-                var item = new GetAnalyticInstrumentListItemResponse();
-
-                item.Id = instrument.Id;
-                item.Ticker = instrument.Ticker;
-                item.Name = instrument.Name;
-                item.IsSelected = instrument.IsSelected;
-                item.Type = instrument.Type;
-                item.BenchmarkChange = Math.Round(GetIncrement(instrument.Ticker) - benchmarkIncrement, 2);
-
-                items.Add(item);
-            }
+                items.Add(new GetAnalyticInstrumentListItemResponse
+                {
+                    Id = instrument.Id,
+                    Ticker = instrument.Ticker,
+                    Name = instrument.Name,
+                    IsSelected = instrument.IsSelected,
+                    InPortfolio = instrument.InPortfolio,
+                    Type = instrument.Type,
+                    BenchmarkChange = Math.Round(GetIncrement(instrument.Ticker) - benchmarkIncrement, 2)
+                });
 
             var response = new GetAnalyticInstrumentListResponse()
             {

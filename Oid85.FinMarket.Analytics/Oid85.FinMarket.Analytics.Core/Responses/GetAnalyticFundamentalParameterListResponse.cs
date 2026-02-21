@@ -23,6 +23,11 @@
         /// </summary>
         public double? Moex { get; set; }
 
+        /// <summary>
+        /// Изменение относительно индекса полной доходности
+        /// </summary>
+        public double BenchmarkChange { get; set; }
+
         public double? Price2019 { get; set; }
         public double? Price2020 { get; set; }
         public double? Price2021 { get; set; }
