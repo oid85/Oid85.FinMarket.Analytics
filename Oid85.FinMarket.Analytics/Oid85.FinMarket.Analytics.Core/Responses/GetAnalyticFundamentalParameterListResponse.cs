@@ -7,6 +7,7 @@
 
     public class GetAnalyticFundamentalParameterListItemResponse
     {
+        public int Number { get; set; }
         public string Ticker { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public bool IsSelected { get; set; }
@@ -155,6 +156,6 @@
         public double? DeltaMinMax2023 { get; set; }
         public double? DeltaMinMax2024 { get; set; }
         public double? DeltaMinMax2025 { get; set; }
-        public double? DeltaMinMax2026 { get; set; }
+        public double? DeltaMinMax2026 { get; set; }        
     }
 }

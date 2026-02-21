@@ -145,12 +145,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var priceDictionary2025 = tickers.Zip(lastCandleList2025, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2026 = tickers.Zip(lastCandleList2026, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);            
 
-            var fundamentalParameterItems = new List<GetAnalyticFundamentalParameterListItemResponse>();
+            var fundamentalParameterItems = new List<GetAnalyticFundamentalParameterListItemResponse>();            
 
             foreach (var instrument in instruments)
             {
                 var fundamentalParameterItem = new GetAnalyticFundamentalParameterListItemResponse();
-
+                
                 fundamentalParameterItem.Ticker = instrument.Ticker;
                 fundamentalParameterItem.Name = instrument.Name;
                 fundamentalParameterItem.IsSelected = instrument.IsSelected;
@@ -302,6 +302,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Score)]
             };
+
+            int number = 1;
+
+            foreach (var fundamentalParameterItem in response.FundamentalParameters)
+                fundamentalParameterItem.Number = number++;
 
             return response;
         }
