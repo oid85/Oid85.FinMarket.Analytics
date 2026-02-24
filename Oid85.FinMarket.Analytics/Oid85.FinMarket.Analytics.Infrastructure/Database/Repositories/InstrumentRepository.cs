@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities;
+using static Grpc.Core.Metadata;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {
@@ -25,7 +26,9 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Name = instrument.Name,
                 Type = instrument.Type,
                 IsSelected = instrument.IsSelected,
-                InPortfolio = instrument.InPortfolio
+                InPortfolio = instrument.InPortfolio,
+                DividendCoefficient = instrument.DividendCoefficient,
+                ManualCoefficient = instrument.ManualCoefficient
             };
 
             await context.AddAsync(entity);
@@ -53,7 +56,9 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         .SetProperty(entity => entity.Name, model.Name)
                         .SetProperty(entity => entity.Type, model.Type)
                         .SetProperty(entity => entity.IsSelected, model.IsSelected)
-                        .SetProperty(entity => entity.InPortfolio, model.InPortfolio));
+                        .SetProperty(entity => entity.InPortfolio, model.InPortfolio)
+                        .SetProperty(entity => entity.DividendCoefficient, model.DividendCoefficient)
+                        .SetProperty(entity => entity.ManualCoefficient, model.ManualCoefficient));
 
             await context.SaveChangesAsync();
 
@@ -76,7 +81,9 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Name = entity.Name,
                 Type = entity.Type,
                 IsSelected = entity.IsSelected,
-                InPortfolio = entity.InPortfolio
+                InPortfolio = entity.InPortfolio,
+                DividendCoefficient = entity.DividendCoefficient,
+                ManualCoefficient = entity.ManualCoefficient
             };
 
             return model;
@@ -98,7 +105,9 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Name = entity.Name,
                 Type = entity.Type,
                 IsSelected = entity.IsSelected,
-                InPortfolio = entity.InPortfolio
+                InPortfolio = entity.InPortfolio,
+                DividendCoefficient = entity.DividendCoefficient,
+                ManualCoefficient = entity.ManualCoefficient
             };
 
             return model;
@@ -122,7 +131,9 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         Name = x.Name,
                         Type = x.Type,
                         IsSelected = x.IsSelected,
-                        InPortfolio = x.InPortfolio
+                        InPortfolio = x.InPortfolio,
+                        DividendCoefficient = x.DividendCoefficient,
+                        ManualCoefficient = x.ManualCoefficient
                     })
                 .ToList();
 

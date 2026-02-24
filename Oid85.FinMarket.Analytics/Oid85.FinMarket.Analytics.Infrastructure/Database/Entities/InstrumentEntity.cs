@@ -31,5 +31,15 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Entities
         /// Тип
         /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// Дивидендный коэффициент
+        /// </summary>
+        public double DividendCoefficient { get; set; } = 1.0;
+
+        /// <summary>
+        /// Ручной коэффициент
+        /// </summary>
+        public double ManualCoefficient { get; set; } = 1.0;
     }
 }
