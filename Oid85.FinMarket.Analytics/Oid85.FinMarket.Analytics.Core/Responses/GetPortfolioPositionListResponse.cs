@@ -8,6 +8,11 @@
     public class GetPortfolioPositionListItemResponse
     {
         /// <summary>
+        /// Номер
+        /// </summary>
+        public int Number { get; set; }
+
+        /// <summary>
         /// Тикер
         /// </summary>
         public string Ticker { get; set; } = string.Empty;
@@ -60,6 +65,6 @@
         /// <summary>
         /// Информационное сообщение
         /// </summary>
-        public string Message { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;        
     }
 }

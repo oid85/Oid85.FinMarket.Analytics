@@ -88,7 +88,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         break;
                 }
 
-                portfolioPosition.ResultCoefficient = portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient * portfolioPosition.TrendCoefficient;
+                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient * portfolioPosition.TrendCoefficient, 2);
                 
                 portfolioPositions.Add(portfolioPosition);
             }
@@ -108,6 +108,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             { 
                 PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)]
             };
+
+            int number = 1;
+
+            foreach (var portfolioPosition in response.PortfolioPositions)
+                portfolioPosition.Number = number++;
 
             return response;
 
