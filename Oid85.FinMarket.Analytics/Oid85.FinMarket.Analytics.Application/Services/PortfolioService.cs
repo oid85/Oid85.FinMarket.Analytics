@@ -62,18 +62,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         portfolioPosition.TrendCoefficient = 1.3;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
+                        portfolioPosition.Message = "Тренд";
                         break;
 
                     case TrendState.StrongTrend:
                         portfolioPosition.TrendCoefficient = 1.6;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
+                        portfolioPosition.Message = "Сильный тренд";
                         break;
 
                     case TrendState.BreakTrend:
                         portfolioPosition.TrendCoefficient = 0.5;
                         portfolioPosition.DividendCoefficient = 1.0;
                         portfolioPosition.ManualCoefficient = 1.0;
+                        portfolioPosition.Message = "Слом тренда";
                         break;
 
                     case TrendState.Unknown:
@@ -81,6 +84,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         portfolioPosition.TrendCoefficient = 1.0;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
+                        portfolioPosition.Message = "Тренд не определен";
                         break;
                 }
 
@@ -94,7 +98,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             foreach (var portfolioPosition in portfolioPositions)
             {
                 portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient, 2);
-                portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum, 2);
+                portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
                 if (portfolioPosition.Price.HasValue)
                     portfolioPosition.Size = Convert.ToInt32(Math.Round(portfolioPosition.Cost / portfolioPosition.Price.Value, 0));
