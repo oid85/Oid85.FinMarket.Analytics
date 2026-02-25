@@ -8,6 +8,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database;
 public class FinMarketContext(DbContextOptions<FinMarketContext> options) : DbContext(options)
 {
     public DbSet<InstrumentEntity> InstrumentEntities { get; set; }
+    public DbSet<ParameterEntity> ParameterEntities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

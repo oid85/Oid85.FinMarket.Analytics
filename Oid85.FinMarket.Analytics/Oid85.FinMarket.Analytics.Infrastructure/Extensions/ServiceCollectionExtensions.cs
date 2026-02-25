@@ -28,6 +28,7 @@ public static class ServiceCollectionExtensions
                 .EnableServiceProviderCaching(false), poolSize: 32);
 
         services.AddTransient<IInstrumentRepository, InstrumentRepository>();
+        services.AddTransient<IParameterRepository, ParameterRepository>();
     }
 
     public static void ConfigureFinMarketStorageServiceApiClient(

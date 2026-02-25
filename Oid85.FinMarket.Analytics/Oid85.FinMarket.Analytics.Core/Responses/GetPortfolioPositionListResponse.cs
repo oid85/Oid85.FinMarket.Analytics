@@ -2,6 +2,7 @@
 {
     public class GetPortfolioPositionListResponse
     {
+        public double TotalSum { get; set; }
         public List<GetPortfolioPositionListItemResponse> PortfolioPositions { get; set; } = [];
     }
 

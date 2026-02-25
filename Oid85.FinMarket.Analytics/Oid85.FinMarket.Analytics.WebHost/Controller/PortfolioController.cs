@@ -41,4 +41,17 @@ public class PortfolioController(
         GetResponseAsync(
             () => portfolioService.EditPortfolioPositionAsync(request),
             result => new BaseResponse<EditPortfolioPositionResponse> { Result = result });
+
+    /// <summary>
+    /// Редактировать сумму портфеля
+    /// </summary>
+    [HttpPost("total-sum/edit")]
+    [ProducesResponseType(typeof(BaseResponse<EditPortfolioTotalSumResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<EditPortfolioTotalSumResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<EditPortfolioTotalSumResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> EditPortfolioTotalSumAsync(
+        [FromBody] EditPortfolioTotalSumRequest request) =>
+        GetResponseAsync(
+            () => portfolioService.EditPortfolioTotalSumAsync(request),
+            result => new BaseResponse<EditPortfolioTotalSumResponse> { Result = result });
 }

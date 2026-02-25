@@ -10,6 +10,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class PortfolioService(
         IInstrumentRepository instrumentRepository,
+        IParameterRepository parameterRepository,
         IInstrumentService instrumentService,
         IWeekTrendService weekTrendService) 
         : IPortfolioService
@@ -28,10 +29,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
-        {            
-            double totalSum = 3_300_000.0;
+        public async Task<EditPortfolioTotalSumResponse> EditPortfolioTotalSumAsync(EditPortfolioTotalSumRequest request)
+        {
+            await parameterRepository.SetParameterValueAsync(KnownParameters.TotalSum, request.TotalSum.ToString("N0"));
+            return new();
+        }
 
+        /// <inheritdoc />
+        public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
+        {                       
             var weekDeltaDataItems = (await weekTrendService.GetWeekDeltaAsync(new GetWeekDeltaRequest { LastWeeksCount = 5 })).Shares;
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
@@ -93,6 +99,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPositions.Add(portfolioPosition);
             }
 
+            string parameterTotalSum = (await parameterRepository.GetParameterValueAsync(KnownParameters.TotalSum)) ?? "0";
+            double totalSum = Convert.ToDouble(parameterTotalSum);
+
             var baseUnit = totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
 
             foreach (var portfolioPosition in portfolioPositions)
@@ -106,6 +115,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var response = new GetPortfolioPositionListResponse()
             { 
+                TotalSum = totalSum,
                 PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)]
             };
 

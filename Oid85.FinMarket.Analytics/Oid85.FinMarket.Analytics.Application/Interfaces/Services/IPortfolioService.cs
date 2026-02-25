@@ -14,6 +14,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<EditPortfolioPositionResponse> EditPortfolioPositionAsync(EditPortfolioPositionRequest request);
 
         /// <summary>
+        /// Редактировать сумму портфеля
+        /// </summary>
+        Task<EditPortfolioTotalSumResponse> EditPortfolioTotalSumAsync(EditPortfolioTotalSumRequest request);
+
+        /// <summary>
         /// Получить список позиций портфеля
         /// </summary>
         Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request);
