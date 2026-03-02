@@ -19,6 +19,10 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
         : IFinMarketStorageServiceApiClient
     {
         /// <inheritdoc />
+        public async Task<GetBondCouponListResponse> GetBondCouponListAsync(GetBondCouponListRequest request) =>
+            await GetCachedDataAsync<GetBondCouponListRequest, GetBondCouponListResponse>("/api/bond-coupons/list", request);
+
+        /// <inheritdoc />
         public async Task<GetCandleListResponse> GetCandleListAsync(GetCandleListRequest request) =>
             await GetCachedDataAsync<GetCandleListRequest, GetCandleListResponse>("/api/candles/list", request);
 

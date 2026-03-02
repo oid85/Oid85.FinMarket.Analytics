@@ -5,10 +5,12 @@ using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
+    /// <inheritdoc />
     public class DataService(
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IDataService
     {
+        /// <inheritdoc />
         public async Task<Dictionary<string, List<Candle>>> GetCandleDataAsync(List<string> tickers)
         {
             var data = new Dictionary<string, List<Candle>>();
@@ -22,6 +24,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return data;
         }
 
+        /// <inheritdoc />
         public async Task<Dictionary<string, List<DateValue<double>>>> GetUltimateSmootherDataAsync(List<string> tickers)
         {
             var candleData = await GetCandleDataAsync(tickers);

@@ -17,5 +17,6 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IFundamentalParameterService, FundamentalParameterService>();
         services.AddTransient<IMacroParameterService, MacroParameterService>();
         services.AddTransient<IPortfolioService, PortfolioService>();
+        services.AddTransient<IBondAnalyticService, BondAnalyticService>();
     }
 }

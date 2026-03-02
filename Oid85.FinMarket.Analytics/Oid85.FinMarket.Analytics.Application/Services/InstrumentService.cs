@@ -102,7 +102,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Ticker = x.Ticker,
                     Name = x.Name,
-                    Type = x.Type
+                    Type = x.Type,
+                    Nkd = x.Nkd,
+                    LastPrice = x.LastPrice
                 })
                 .ToList();
         }

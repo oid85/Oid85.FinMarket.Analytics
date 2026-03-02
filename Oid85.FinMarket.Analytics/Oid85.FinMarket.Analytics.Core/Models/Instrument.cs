@@ -44,5 +44,15 @@
         /// Ручной коэффициент
         /// </summary>
         public double ManualCoefficient { get; set; }
+
+        /// <summary>
+        /// НКД
+        /// </summary>
+        public double? Nkd { get; set; }
+
+        /// <summary>
+        /// Цена
+        /// </summary>
+        public double? LastPrice { get; set; }
     }
 }

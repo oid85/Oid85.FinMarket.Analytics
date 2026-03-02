@@ -11,6 +11,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
     public interface IFinMarketStorageServiceApiClient
     {
         /// <summary>
+        /// Получить купоны
+        /// </summary>
+        Task<GetBondCouponListResponse> GetBondCouponListAsync(GetBondCouponListRequest request);
+
+        /// <summary>
         /// Получить инструменты
         /// </summary>
         Task<GetInstrumentListResponse> GetInstrumentListAsync(GetInstrumentListRequest request);
