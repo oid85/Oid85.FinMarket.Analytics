@@ -104,7 +104,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Name = x.Name,
                     Type = x.Type,
                     Nkd = x.Nkd,
-                    LastPrice = x.LastPrice
+                    LastPrice = x.LastPrice,
+                    MaturityDate = x.MaturityDate
                 })
                 .ToList();
         }

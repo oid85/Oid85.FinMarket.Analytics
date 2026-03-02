@@ -54,5 +54,10 @@
         /// Цена
         /// </summary>
         public double? LastPrice { get; set; }
+
+        /// <summary>
+        /// Дата погашения
+        /// </summary>
+        public DateOnly? MaturityDate { get; set; }
     }
 }

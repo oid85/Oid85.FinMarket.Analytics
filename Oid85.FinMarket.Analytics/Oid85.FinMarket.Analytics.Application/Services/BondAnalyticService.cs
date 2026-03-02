@@ -38,6 +38,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Nkd = instrument.Nkd ?? 0.0
                 };
 
+                if (instrument.MaturityDate.HasValue)
+                    bondAnalyticItem.DaysToMaturity = (instrument.MaturityDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
+
                 var coupons = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(new GetBondCouponListRequest { Ticker = instrument.Ticker, From = from, To = to })).Result.BondCoupons;
 
                 foreach (var date in dates)
