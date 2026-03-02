@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Oid85.FinMarket.Analytics.Core.Requests
 {
-    public class GetBondAnalyticRequest
+    public class GetBondAnalyseRequest
     {
     }
 }

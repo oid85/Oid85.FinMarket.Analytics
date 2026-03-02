@@ -1,5 +1,4 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
-using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
@@ -10,27 +9,26 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
-    public class BondAnalyticService(
-        IInstrumentRepository instrumentRepository,
+    public class BondAnalyseService(
         IInstrumentService instrumentService,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
-        : IBondAnalyticService
+        : IBondAnalyseService
     {
         /// <inheritdoc />
-        public async Task<GetBondAnalyticResponse> GetBondAnalyticAsync(GetBondAnalyticRequest request)
+        public async Task<GetBondAnalyseResponse> GetBondAnalyseAsync(GetBondAnalyseRequest request)
         {
             var instruments = (await instrumentService.GetStorageInstrumentAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Bond).OrderBy(x => x.Ticker).ToList();
             var from = DateOnly.FromDateTime(DateTime.Today);
             var to = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
             var dates = DateUtils.GetMonthDates(from, to);
 
-            var response = new GetBondAnalyticResponse();
+            var response = new GetBondAnalyseResponse();
 
-            var bondAnalyticItems = new List<GetBondAnalyticItemResponse>();
+            var bondAnalyseItems = new List<GetBondAnalyseItemResponse>();
 
             foreach (var instrument in instruments)
             {
-                var bondAnalyticItem = new GetBondAnalyticItemResponse
+                var bondAnalyseItem = new GetBondAnalyseItemResponse
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
@@ -39,7 +37,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 };
 
                 if (instrument.MaturityDate.HasValue)
-                    bondAnalyticItem.DaysToMaturity = (instrument.MaturityDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
+                    bondAnalyseItem.DaysToMaturity = (instrument.MaturityDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
 
                 var coupons = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(new GetBondCouponListRequest { Ticker = instrument.Ticker, From = from, To = to })).Result.BondCoupons;
 
@@ -47,7 +45,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     var coupon = coupons.Find(x => x.CouponDate.Month == date.Month && x.CouponDate.Year == date.Year);
 
-                    bondAnalyticItem.Coupons.Add(new GetBondAnalyticCouponData 
+                    bondAnalyseItem.Coupons.Add(new GetBondAnalyseCouponData 
                     { 
                         Date = date, 
                         CouponSum = coupon?.PayOneBond
@@ -57,12 +55,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var couponTotalSum = coupons.Sum(x => x.PayOneBond);
 
                 if (instrument.LastPrice.HasValue && instrument.Nkd.HasValue)
-                    bondAnalyticItem.Yield = Math.Round(couponTotalSum / (instrument.LastPrice.Value + instrument.Nkd.Value) * 100.0, 2);
+                    bondAnalyseItem.Yield = Math.Round(couponTotalSum / (instrument.LastPrice.Value + instrument.Nkd.Value) * 100.0, 2);
 
-                bondAnalyticItems.Add(bondAnalyticItem);
+                bondAnalyseItems.Add(bondAnalyseItem);
             }            
 
-            response.Items = [.. bondAnalyticItems.OrderByDescending(x => x.Yield)];
+            response.Items = [.. bondAnalyseItems.OrderByDescending(x => x.Yield)];
 
             return response;
         }
