@@ -2,6 +2,7 @@
 {
     public class GetBondAnalyseResponse
     {
+        public List<DateOnly> Dates { get; set; } = [];
         public List<GetBondAnalyseItemResponse> Items { get; set; } = [];
     }
 

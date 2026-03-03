@@ -22,7 +22,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var to = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
             var dates = DateUtils.GetMonthDates(from, to);
 
-            var response = new GetBondAnalyseResponse();
+            var response = new GetBondAnalyseResponse() { Dates = dates };
 
             var bondAnalyseItems = new List<GetBondAnalyseItemResponse>();
 
