@@ -39,13 +39,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (instrument.MaturityDate.HasValue)
                     bondAnalyseItem.DaysToMaturity = (instrument.MaturityDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
 
-                var coupons = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(new GetBondCouponListRequest { Ticker = instrument.Ticker, From = from, To = to })).Result.BondCoupons;
+                var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
+                    new GetBondCouponListRequest 
+                    { 
+                        Ticker = instrument.Ticker, 
+                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)), 
+                        To = DateOnly.FromDateTime(DateTime.Today.AddYears(1))
+                    })).Result.BondCoupons;
 
-                for (int i = 1; i < coupons.Count; i++)
-                {
-                    if (coupons[i].PayOneBond == 0)
-                        coupons[i].PayOneBond = coupons[i - 1].PayOneBond;
-                }
+                for (int i = 1; i < couponsTwoYear.Count; i++)
+                    if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
+
+                var coupons = couponsTwoYear.Where(x => x.CouponDate >= from && x.CouponDate <= to).ToList();
 
                 foreach (var date in dates)
                 {
