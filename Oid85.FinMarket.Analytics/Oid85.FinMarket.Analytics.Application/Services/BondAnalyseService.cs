@@ -32,8 +32,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
-                    Price = instrument.LastPrice.HasValue ? Math.Round(instrument.LastPrice.Value) : 0.0,
-                    Nkd = instrument.Nkd.HasValue ? Math.Round(instrument.Nkd.Value) : 0.0
+                    Price = instrument.LastPrice.HasValue ? Math.Round(instrument.LastPrice.Value, 2) : 0.0,
+                    Nkd = instrument.Nkd.HasValue ? Math.Round(instrument.Nkd.Value, 2) : 0.0
                 };
 
                 if (instrument.MaturityDate.HasValue)
