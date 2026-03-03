@@ -41,6 +41,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 var coupons = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(new GetBondCouponListRequest { Ticker = instrument.Ticker, From = from, To = to })).Result.BondCoupons;
 
+                for (int i = 1; i < coupons.Count; i++)
+                {
+                    if (coupons[i].PayOneBond == 0)
+                        coupons[i].PayOneBond = coupons[i - 1].PayOneBond;
+                }
+
                 foreach (var date in dates)
                 {
                     var coupon = coupons.Find(x => x.CouponDate.Month == date.Month && x.CouponDate.Year == date.Year);
