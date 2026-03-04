@@ -17,9 +17,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetBondAnalyseResponse> GetBondAnalyseAsync(GetBondAnalyseRequest request)
         {
-            var instruments = (await instrumentService.GetStorageInstrumentAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Bond).OrderBy(x => x.Ticker).ToList();
+            var instruments = (await instrumentService.GetStorageInstrumentAsync() ?? [])
+                .Where(x => x.Type == KnownInstrumentTypes.Bond)
+                .Where(x => x.LastPrice is not null)
+                .Where(x => x.Nominal is not null)
+                .Where(x => x.Currency is not null)
+                .Where(x => x.LastPrice > 0)
+                .Where(x => x.Nominal == 1000)
+                .Where(x => x.Currency == KnownCurrencies.Rub)
+                .OrderBy(x => x.Ticker)
+                .ToList();
+
             var from = DateOnly.FromDateTime(DateTime.Today);
             var to = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
+
             var dates = DateUtils.GetMonthDates(from, to);
 
             var response = new GetBondAnalyseResponse() { Dates = dates };

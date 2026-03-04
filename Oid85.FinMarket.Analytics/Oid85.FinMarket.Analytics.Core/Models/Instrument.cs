@@ -59,5 +59,15 @@
         /// Дата погашения
         /// </summary>
         public DateOnly? MaturityDate { get; set; }
+
+        /// <summary>
+        /// Номинал
+        /// </summary>
+        public double? Nominal { get; set; } = null;
+
+        /// <summary>
+        /// Валюта
+        /// </summary>
+        public string? Currency { get; set; } = null;
     }
 }

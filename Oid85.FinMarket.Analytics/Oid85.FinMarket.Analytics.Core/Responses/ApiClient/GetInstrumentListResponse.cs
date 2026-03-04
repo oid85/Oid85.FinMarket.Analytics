@@ -51,5 +51,15 @@
         /// Цена
         /// </summary>
         public double? LastPrice { get; set; } = null;
+
+        /// <summary>
+        /// Номинал
+        /// </summary>
+        public double? Nominal { get; set; } = null;
+
+        /// <summary>
+        /// Валюта
+        /// </summary>
+        public string? Currency { get; set; } = null;
     }
 }
