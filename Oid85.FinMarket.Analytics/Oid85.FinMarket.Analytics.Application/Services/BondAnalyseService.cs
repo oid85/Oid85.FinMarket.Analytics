@@ -24,7 +24,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .Where(x => x.Currency is not null)
                 .Where(x => x.LastPrice > 0)
                 .Where(x => x.Nominal == 1000)
-                .Where(x => x.Currency == KnownCurrencies.Rub)
+                .Where(x => string.Equals(x.Currency, KnownCurrencies.Rub, StringComparison.InvariantCultureIgnoreCase))
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
