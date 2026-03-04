@@ -83,12 +83,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (candles.Count == 0)
                     return new WeekDeltaDataItem() { Delta = null };
 
-                double firstPrice = Math.Round(candles.First().Close, 4);
-                double lastPrice = Math.Round(candles.Last().Close, 4);
+                double firstPrice = candles.First().Close;
+                double lastPrice = candles.Last().Close;
 
                 double delta = Math.Round((lastPrice - firstPrice) / firstPrice * 100.0, 2);
 
-                return new WeekDeltaDataItem() { Delta = delta, Price = lastPrice };
+                return new WeekDeltaDataItem() { Delta = delta, Price = Math.Round(lastPrice, 4) };
             }
         }        
     }
