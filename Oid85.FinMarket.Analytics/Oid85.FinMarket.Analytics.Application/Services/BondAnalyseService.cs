@@ -61,7 +61,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 for (int i = 1; i < couponsTwoYear.Count; i++)
                     if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
 
-                var coupons = couponsTwoYear.Where(x => x.CouponDate >= from && x.CouponDate <= to).ToList();
+                var coupons = couponsTwoYear.Where(x => x.CouponDate > from && x.CouponDate <= to).ToList();
 
                 foreach (var date in dates)
                 {
