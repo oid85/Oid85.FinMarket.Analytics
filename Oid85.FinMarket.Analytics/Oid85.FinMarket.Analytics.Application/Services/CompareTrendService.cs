@@ -18,12 +18,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetCompareTrendResponse> GetCompareTrendAsync(GetCompareTrendRequest request)
         {
             var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
-            var today = DateOnly.FromDateTime(DateTime.Today);
+            var today = DateOnly.FromDateTime(DateTime.Today);           
 
-            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? [])
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
-                .Where(x => x.InPortfolio)
-                .ToList();
+            var allInstruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).ToList();
+            var sharesInPortfolio = allInstruments.Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.InPortfolio).ToList();
+            var benchmarkInsrtument = allInstruments.Find(x => x.Ticker == KnownIndexTickers.MCFTR);
+            List<Instrument> instruments = [.. sharesInPortfolio, benchmarkInsrtument];
 
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
