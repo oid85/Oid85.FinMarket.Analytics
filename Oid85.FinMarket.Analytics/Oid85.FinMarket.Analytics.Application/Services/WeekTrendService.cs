@@ -22,6 +22,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
             var indexes = instruments.Where(x => x.Type == KnownInstrumentTypes.Index).ToList();
             var shares = instruments.Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
+            var futures = instruments.Where(x => x.Type == KnownInstrumentTypes.Future).ToList();
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var weeks = DateUtils.GetWeeks(startDate, today);
@@ -70,6 +71,23 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             response.Indexes = [.. indexesData.OrderBy(x => x.Ticker)];
+
+            var futuresData = new List<WeekDeltaData>();
+
+            foreach (var future in futures)
+            {
+                var dataItem = new WeekDeltaData
+                {
+                    Ticker = future.Ticker,
+                    Name = future.Name,
+                    InPortfolio = future.InPortfolio,
+                    Items = [.. weeks.Select(x => GetWeekDeltaDataItem(future.Ticker, x.WeekStartDay, x.WeekEndDay))]
+                };
+
+                futuresData.Add(dataItem);
+            }
+
+            response.Futures = [.. futuresData.OrderBy(x => x.Ticker)];
 
             return response;
 

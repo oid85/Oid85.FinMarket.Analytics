@@ -5,6 +5,7 @@
         public List<WeekDeltaHeaderItem> Weeks { get; set; } = [];
         public List<WeekDeltaData> Indexes { get; set; } = [];
         public List<WeekDeltaData> Shares { get; set; } = [];
+        public List<WeekDeltaData> Futures { get; set; } = [];
     }
 
     public class WeekDeltaData

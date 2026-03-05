@@ -8,7 +8,7 @@ using Oid85.FinMarket.Analytics.WebHost.Controller.Base;
 namespace Oid85.FinMarket.Analytics.WebHost.Controller;
 
 /// <summary>
-/// Моделирование портфеля
+/// Моделирование портфеля акций
 /// </summary>
 [Route("api/portfolio")]
 [ApiController]
