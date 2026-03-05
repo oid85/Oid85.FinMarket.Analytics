@@ -49,7 +49,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Name = instrument.Name,
                     Price = instrument.LastPrice.HasValue ? Math.Round(instrument.LastPrice.Value, 2) : 0.0,
                     Nkd = instrument.Nkd.HasValue ? Math.Round(instrument.Nkd.Value, 2) : 0.0,
-                    InPortfolio = analyticInstrument is not null ? analyticInstrument.InPortfolio : false
+                    InPortfolio = analyticInstrument is not null && analyticInstrument.InPortfolio
                 };
 
                 if (instrument.MaturityDate.HasValue)
