@@ -75,7 +75,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     bondAnalyseItem.Coupons.Add(new GetBondAnalyseCouponData
                     {
                         Date = date,
-                        CouponSum = coupon?.PayOneBond
+                        CouponSum = coupon is null ? null : Math.Round(coupon.PayOneBond, 2)
                     });
                 }
 
