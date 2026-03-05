@@ -20,7 +20,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.InPortfolio).ToList();
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dates = DateUtils.GetDates(startDate, today);
