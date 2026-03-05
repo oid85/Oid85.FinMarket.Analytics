@@ -32,6 +32,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Синхронизировать инструменты со Storage
         /// </summary>
-        Task SyncInstrumentListAsync();        
+        Task SyncInstrumentListAsync();
     }
 }

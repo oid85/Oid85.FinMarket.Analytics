@@ -90,6 +90,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 return new WeekDeltaDataItem() { Delta = Math.Round(delta, 2), Price = Math.Round(lastPrice, 4) };
             }
-        }        
+        }
     }
 }

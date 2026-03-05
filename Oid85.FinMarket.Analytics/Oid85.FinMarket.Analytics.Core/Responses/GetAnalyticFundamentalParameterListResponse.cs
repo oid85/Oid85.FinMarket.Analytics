@@ -161,6 +161,6 @@
         public double? DeltaMinMax2023 { get; set; }
         public double? DeltaMinMax2024 { get; set; }
         public double? DeltaMinMax2025 { get; set; }
-        public double? DeltaMinMax2026 { get; set; }        
+        public double? DeltaMinMax2026 { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Enums;
@@ -12,7 +13,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         IInstrumentService instrumentService,
-        IWeekTrendService weekTrendService) 
+        IWeekTrendService weekTrendService)
         : IPortfolioService
     {
         /// <inheritdoc />
@@ -37,7 +38,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         /// <inheritdoc />
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
-        {                       
+        {
             var weekDeltaDataItems = (await weekTrendService.GetWeekDeltaAsync(new GetWeekDeltaRequest { LastWeeksCount = 5 })).Shares;
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
@@ -59,8 +60,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     ManualCoefficient = instrument.ManualCoefficient,
                     Price = weekDeltaData!.Items.Last().Price
                 };
-               
-                var trendState = GetTrendState(weekDeltaData);
+
+                var trendState = TrendStateHelper.GetTrendState(weekDeltaData);
 
                 switch (trendState)
                 {
@@ -95,7 +96,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 }
 
                 portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient * portfolioPosition.TrendCoefficient, 2);
-                
+
                 portfolioPositions.Add(portfolioPosition);
             }
 
@@ -114,7 +115,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             var response = new GetPortfolioPositionListResponse()
-            { 
+            {
                 TotalSum = totalSum,
                 PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)]
             };
@@ -125,34 +126,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.Number = number++;
 
             return response;
-
-            static TrendState GetTrendState(WeekDeltaData weekDeltaData)
-            {
-                var delta1 = weekDeltaData.Items[^1].Delta;
-                var delta2 = weekDeltaData.Items[^2].Delta;
-                var delta3 = weekDeltaData.Items[^3].Delta;
-
-                if (weekDeltaData.Items[^1].Delta == 0)
-                {
-                    delta1 = weekDeltaData.Items[^2].Delta;
-                    delta2 = weekDeltaData.Items[^3].Delta;
-                    delta3 = weekDeltaData.Items[^4].Delta;
-                }
-
-                if (delta1.HasValue && delta2.HasValue && delta3.HasValue)
-                {
-                    if (delta1 < -2)
-                        return TrendState.BreakTrend;
-
-                    if (delta1 > 0 && delta2 > 0 && delta3 > 0)
-                        return TrendState.StrongTrend;
-
-                    if (delta1 > 0)
-                        return TrendState.Trend;
-                }
-
-                return TrendState.Unknown;
-            }
         }
     }
 }

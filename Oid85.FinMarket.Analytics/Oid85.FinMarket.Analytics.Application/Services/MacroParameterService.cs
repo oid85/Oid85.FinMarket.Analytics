@@ -10,7 +10,7 @@ using Oid85.FinMarket.Storage.Core.Requests;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class MacroParameterService(
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IMacroParameterService
     {
         public async Task<CreateOrUpdateAnalyticMacroParameterResponse> CreateOrUpdateAnalyticMacroParameterAsync(CreateOrUpdateAnalyticMacroParameterRequest request)
@@ -37,7 +37,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var moexIndexCandles = (await finMarketStorageServiceApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.IMOEX, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
             var rgbiIndexCandles = (await finMarketStorageServiceApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.RGBI, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
             var dates = DateUtils.GetMonthDates(from, to);
-            
+
             var macroParameterItems = new List<GetAnalyticMacroParameterItemListResponse>();
 
             foreach (var date in dates)
@@ -97,7 +97,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     macroParameterItem.M2Change = GetChange(prevMonth.M2, macroParameterItem.M2);
                     macroParameterItem.M2XChange = GetChange(prevMonth.M2X, macroParameterItem.M2X);
                     macroParameterItem.CurrencyChange = GetChange(prevMonth.Currency, macroParameterItem.Currency);
-                    macroParameterItem.DepositsChange = GetChange(prevMonth.Deposits, macroParameterItem.Deposits);                    
+                    macroParameterItem.DepositsChange = GetChange(prevMonth.Deposits, macroParameterItem.Deposits);
                     macroParameterItem.M1ConsumerPriceIndexDifference = GetDifference(macroParameterItem.M1Change, macroParameterItem.ConsumerPriceIndexChange);
                 }
 

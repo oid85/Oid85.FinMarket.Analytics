@@ -2,7 +2,7 @@
 {
     public class GetFundamentalParameterListResponse
     {
-        public GetFundamentalParameterListResult Result { get; set; }        
+        public GetFundamentalParameterListResult Result { get; set; }
     }
 
     public class GetFundamentalParameterListResult

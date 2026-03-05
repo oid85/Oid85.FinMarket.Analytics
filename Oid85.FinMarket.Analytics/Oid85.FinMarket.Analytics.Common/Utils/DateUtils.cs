@@ -54,7 +54,7 @@ namespace Oid85.FinMarket.Analytics.Common.Utils
                 // Проверяем, входит ли воскресенье в диапазон дат
                 if (sunday > endDate)
                     break;
-                
+
                 // Переход к следующей неделе
                 startDate = sunday.AddDays(1);
             }

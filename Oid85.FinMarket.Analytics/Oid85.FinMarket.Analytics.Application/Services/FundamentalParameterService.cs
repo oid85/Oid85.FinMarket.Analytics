@@ -13,7 +13,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class FundamentalParameterService(
         IInstrumentRepository instrumentRepository,
         IInstrumentService instrumentService,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IFundamentalParameterService
     {
         /// <inheritdoc />
@@ -124,7 +124,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
 
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
-            
+
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
             var lastCandleList2019 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2019, 12, 31)) })).Result.Candles;
@@ -143,14 +143,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var priceDictionary2023 = tickers.Zip(lastCandleList2023, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2024 = tickers.Zip(lastCandleList2024, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2025 = tickers.Zip(lastCandleList2025, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
-            var priceDictionary2026 = tickers.Zip(lastCandleList2026, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);            
+            var priceDictionary2026 = tickers.Zip(lastCandleList2026, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
 
-            var fundamentalParameterItems = new List<GetAnalyticFundamentalParameterListItemResponse>();            
+            var fundamentalParameterItems = new List<GetAnalyticFundamentalParameterListItemResponse>();
 
             foreach (var instrument in instruments)
             {
                 var fundamentalParameterItem = new GetAnalyticFundamentalParameterListItemResponse();
-                
+
                 fundamentalParameterItem.Ticker = instrument.Ticker;
                 fundamentalParameterItem.Name = instrument.Name;
                 fundamentalParameterItem.IsSelected = instrument.IsSelected;
@@ -167,7 +167,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Price2023 = priceDictionary2023[instrument.Ticker];
                 fundamentalParameterItem.Price2024 = priceDictionary2024[instrument.Ticker];
                 fundamentalParameterItem.Price2025 = priceDictionary2025[instrument.Ticker];
-                fundamentalParameterItem.Price2026 = priceDictionary2026[instrument.Ticker];                
+                fundamentalParameterItem.Price2026 = priceDictionary2026[instrument.Ticker];
 
                 fundamentalParameterItem.Pe2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.Pe2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2020);
@@ -297,7 +297,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 fundamentalParameterItem.Score = GetScore(fundamentalParameterItem);
 
-                fundamentalParameterItems.Add(fundamentalParameterItem);                
+                fundamentalParameterItems.Add(fundamentalParameterItem);
             }
 
             var response = new GetAnalyticFundamentalParameterListResponse
@@ -353,13 +353,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private static double? GetFundamentalParameterValue(List<GetFundamentalParameterListItemResponse> fundamentalParameters, string ticker, string type, string period)
         {
-            if (fundamentalParameters is null) 
+            if (fundamentalParameters is null)
                 return null;
 
             var value = fundamentalParameters.Find(
-                x => 
-                    x.Ticker == ticker && 
-                    x.Type == type && 
+                x =>
+                    x.Ticker == ticker &&
+                    x.Type == type &&
                     x.Period == period);
 
             return value?.Value;
@@ -367,10 +367,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private static double? GetEvEbitda(double? ev, double? ebitda)
         {
-            if (ev is null || ebitda is null) 
+            if (ev is null || ebitda is null)
                 return null;
 
-            if (ev == 0.0 || ebitda == 0.0) 
+            if (ev == 0.0 || ebitda == 0.0)
                 return 0.0;
 
             return Math.Round(ev.Value / ebitda.Value, 2);

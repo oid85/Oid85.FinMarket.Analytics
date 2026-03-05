@@ -50,12 +50,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
-                var trendDynamicData = new TrendDynamicData() 
-                { 
+                var trendDynamicData = new TrendDynamicData()
+                {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     InPortfolio = instrument.InPortfolio,
-                    Items = [] 
+                    Items = []
                 };
 
                 var ultimateSmootherValues = ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= from && x.Date <= to).ToList();

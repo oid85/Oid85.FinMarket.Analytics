@@ -11,7 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class BondAnalyseService(
         IInstrumentService instrumentService,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IBondAnalyseService
     {
         /// <inheritdoc />
@@ -51,10 +51,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     bondAnalyseItem.DaysToMaturity = (instrument.MaturityDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
 
                 var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
-                    new GetBondCouponListRequest 
-                    { 
-                        Ticker = instrument.Ticker, 
-                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)), 
+                    new GetBondCouponListRequest
+                    {
+                        Ticker = instrument.Ticker,
+                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)),
                         To = DateOnly.FromDateTime(DateTime.Today.AddYears(1))
                     })).Result.BondCoupons;
 
@@ -67,9 +67,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     var coupon = coupons.Find(x => x.CouponDate.Month == date.Month && x.CouponDate.Year == date.Year);
 
-                    bondAnalyseItem.Coupons.Add(new GetBondAnalyseCouponData 
-                    { 
-                        Date = date, 
+                    bondAnalyseItem.Coupons.Add(new GetBondAnalyseCouponData
+                    {
+                        Date = date,
                         CouponSum = coupon?.PayOneBond
                     });
                 }
@@ -85,7 +85,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 }
 
                 bondAnalyseItems.Add(bondAnalyseItem);
-            }            
+            }
 
             response.Items = [.. bondAnalyseItems.OrderByDescending(x => x.Yield)];
 
