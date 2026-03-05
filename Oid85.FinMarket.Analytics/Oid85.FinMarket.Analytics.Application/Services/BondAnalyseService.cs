@@ -28,6 +28,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
+            var analyticInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new GetAnalyticInstrumentListRequest { LastDaysCount = 50 })).Instruments;
+
             var from = DateOnly.FromDateTime(DateTime.Today);
             var to = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
 
@@ -39,13 +41,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
+                var analyticInstrument = analyticInstruments.Find(x => x.Ticker == instrument.Ticker);
+
                 var bondAnalyseItem = new GetBondAnalyseItemResponse
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     Price = instrument.LastPrice.HasValue ? Math.Round(instrument.LastPrice.Value, 2) : 0.0,
                     Nkd = instrument.Nkd.HasValue ? Math.Round(instrument.Nkd.Value, 2) : 0.0,
-                    InPortfolio = instrument.InPortfolio
+                    InPortfolio = analyticInstrument is not null ? analyticInstrument.InPortfolio : false
                 };
 
                 if (instrument.MaturityDate.HasValue)
