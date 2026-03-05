@@ -6,7 +6,6 @@
         public List<TrendDynamicData> Indexes { get; set; }
         public List<TrendDynamicData> Shares { get; set; }
         public List<TrendDynamicData> Futures { get; set; }
-        public List<TrendDynamicData> Bonds { get; set; }
     }
 
     public class TrendDynamicData
