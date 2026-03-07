@@ -40,7 +40,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
         {
             var weekDeltaDataItems = (await weekTrendService.GetWeekDeltaAsync(new GetWeekDeltaRequest { LastWeeksCount = 5 })).Shares;
+
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
+                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.InPortfolio)
+                .OrderBy(x => x.Ticker)
+                .ToList();
+
+            foreach (var instrument in instruments)
+            {
+                if (instrument.DividendCoefficient == 0 || instrument.ManualCoefficient == 0)
+                    await EditPortfolioPositionAsync(new EditPortfolioPositionRequest { Ticker = instrument.Ticker, DividendCoefficient = 1, ManualCoefficient = 1 });
+            }
+
+            instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
@@ -101,7 +114,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             string parameterTotalSum = (await parameterRepository.GetParameterValueAsync(KnownParameters.TotalSum)) ?? "0";
-            double totalSum = Convert.ToDouble(parameterTotalSum);
+            double totalSum = Convert.ToDouble(parameterTotalSum.Replace(" ", "").Trim());
 
             var baseUnit = totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
 
