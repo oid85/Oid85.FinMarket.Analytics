@@ -87,11 +87,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var portfolioPosition in portfolioPositions)
             {
+                var storageInstrument = storageInstruments.Find(x => x.Ticker == portfolioPosition.Ticker);
                 portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient, 2);
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
-                if (portfolioPosition.Price.HasValue)
-                    portfolioPosition.Size = Convert.ToInt32(Math.Round(portfolioPosition.Cost / portfolioPosition.Price.Value, 0));
+                if (portfolioPosition.Price.HasValue && storageInstrument is not null && storageInstrument.Nkd.HasValue)
+                    portfolioPosition.Size = Convert.ToInt32(Math.Round(portfolioPosition.Cost / (portfolioPosition.Price.Value + storageInstrument.Nkd.Value), 0));
             }
 
             var response = new GetBondPortfolioPositionListResponse()
