@@ -1,9 +1,11 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Enums;
 using Oid85.FinMarket.Analytics.Core.Requests;
+using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
@@ -13,7 +15,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         IInstrumentService instrumentService,
-        IWeekTrendService weekTrendService)
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IBondPortfolioService
     {
         /// <inheritdoc />
@@ -105,6 +107,31 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var portfolioPosition in response.PortfolioPositions)
                 portfolioPosition.Number = number++;
+
+            double yearCouponSum = 0.0;
+
+            foreach (var portfolioPosition in response.PortfolioPositions)
+            {
+                var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
+                    new GetBondCouponListRequest
+                    {
+                        Ticker = portfolioPosition.Ticker,
+                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)),
+                        To = DateOnly.FromDateTime(DateTime.Today.AddYears(1))
+                    })).Result.BondCoupons;
+
+                for (int i = 1; i < couponsTwoYear.Count; i++)
+                    if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
+
+                var coupons = couponsTwoYear.Where(x => x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) && x.CouponDate <= DateOnly.FromDateTime(DateTime.Today.AddYears(1))).ToList();
+
+                double couponSum = coupons.Sum(x => x.PayOneBond);
+                yearCouponSum += couponSum * portfolioPosition.Size;
+            }
+
+            response.YearCouponSum = Math.Round(yearCouponSum, 2);
+            response.YearCouponPrc = Math.Round(yearCouponSum / totalSum * 100.0, 2);
+            response.MonthCouponSum = Math.Round(yearCouponSum / 12.0, 2);
 
             return response;
         }
