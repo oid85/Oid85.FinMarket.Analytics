@@ -18,6 +18,11 @@
         BreakTrend,
 
         /// <summary>
+        /// Нет тренда
+        /// </summary>
+        NoTrend,
+
+        /// <summary>
         /// Не определено
         /// </summary>
         Unknown

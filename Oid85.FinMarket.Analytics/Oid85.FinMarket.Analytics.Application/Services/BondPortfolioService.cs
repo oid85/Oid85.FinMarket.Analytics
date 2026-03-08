@@ -89,12 +89,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var portfolioPosition in portfolioPositions)
             {
-                var storageInstrument = storageInstruments.Find(x => x.Ticker == portfolioPosition.Ticker);
                 portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient, 2);
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
-                if (portfolioPosition.Price.HasValue && storageInstrument is not null && storageInstrument.Nkd.HasValue)
-                    portfolioPosition.Size = Convert.ToInt32(Math.Round(portfolioPosition.Cost / (portfolioPosition.Price.Value + storageInstrument.Nkd.Value), 0));
+                if (portfolioPosition.Price.HasValue)
+                    portfolioPosition.Size = Convert.ToInt32(Math.Round(portfolioPosition.Cost / portfolioPosition.Price.Value, 0));
             }
 
             var response = new GetBondPortfolioPositionListResponse()
@@ -126,7 +125,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var coupons = couponsTwoYear.Where(x => x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) && x.CouponDate <= DateOnly.FromDateTime(DateTime.Today.AddYears(1))).ToList();
 
                 double couponSum = coupons.Sum(x => x.PayOneBond);
-                yearCouponSum += couponSum * portfolioPosition.Size;
+                double yearCoupon = couponSum * portfolioPosition.Size;
+                yearCouponSum += yearCoupon;
+
+                portfolioPosition.YearCoupon = Math.Round(yearCoupon, 2);
             }
 
             response.YearCouponSum = Math.Round(yearCouponSum, 2);

@@ -47,6 +47,11 @@
         public int Size { get; set; }
 
         /// <summary>
+        /// Годовой купон
+        /// </summary>
+        public double YearCoupon { get; set; }
+
+        /// <summary>
         /// Доля, %
         /// </summary>
         public double Percent { get; set; }
