@@ -27,6 +27,16 @@
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// Купонный коэффициент
+        /// </summary>
+        public double CouponCoefficient { get; set; }
+
+        /// <summary>
+        /// Временной коэффициент
+        /// </summary>
+        public double TimeCoefficient { get; set; }
+
+        /// <summary>
         /// Ручной коэффициент
         /// </summary>
         public double ManualCoefficient { get; set; }

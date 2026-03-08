@@ -7,6 +7,7 @@ using Oid85.FinMarket.Analytics.Core.Enums;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
+using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
@@ -63,12 +64,32 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
+            var couponDictionary = new Dictionary<string, List<GetBondCouponListItemResponse>>();
+
+            foreach (var instrument in instruments)
+            {
+                var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
+                    new GetBondCouponListRequest
+                    {
+                        Ticker = instrument.Ticker,
+                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)),
+                        To = DateOnly.FromDateTime(DateTime.Today.AddYears(1))
+                    })).Result.BondCoupons;
+
+                for (int i = 1; i < couponsTwoYear.Count; i++)
+                    if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
+
+                var coupons = couponsTwoYear.Where(x => x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) && x.CouponDate <= DateOnly.FromDateTime(DateTime.Today.AddYears(1))).ToList();
+
+                couponDictionary.Add(instrument.Ticker, coupons);
+            }
+
             var portfolioPositions = new List<GetBondPortfolioPositionListItemResponse>();
 
             foreach (var instrument in instruments)
             {
                 var storageInstrument = storageInstruments.Find(x => x.Ticker == instrument.Ticker);
-
+                
                 var portfolioPosition = new GetBondPortfolioPositionListItemResponse()
                 {
                     Ticker = instrument.Ticker,
@@ -77,7 +98,40 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Price = storageInstrument?.LastPrice
                 };
 
-                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.ManualCoefficient, 2);
+                double timeCoefficient = 1.0;
+
+                if (storageInstrument is not null && storageInstrument.MaturityDate.HasValue)
+                {
+                    var daysToMaturity = (storageInstrument.MaturityDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
+
+                    if (daysToMaturity > 365 * 5) timeCoefficient = 1.4;
+                    else if (daysToMaturity > 365 * 2) timeCoefficient = 1.2;
+                    else timeCoefficient = 1.0;
+                }
+
+                portfolioPosition.TimeCoefficient = timeCoefficient;
+
+                double couponCoefficient = 1.0;
+
+                if (storageInstrument is not null && storageInstrument.LastPrice.HasValue && storageInstrument.Nkd.HasValue)
+                {
+                    const double loLimitCoefficient = 1.0;
+                    const double hiLimitCoefficient = 2.0;
+                    const double loLimitYield = 10.0;
+                    const double hiLimitYield = 20.0;
+
+                    var coupons = couponDictionary[portfolioPosition.Ticker];
+                    double couponSum = coupons.Sum(x => x.PayOneBond);
+                    double yield = couponSum / (storageInstrument.LastPrice.Value + storageInstrument.Nkd.Value) * 100.0;
+
+                    if (yield >= hiLimitYield) couponCoefficient = hiLimitCoefficient;
+                    else if (yield <= loLimitYield) couponCoefficient = loLimitCoefficient;
+                    else couponCoefficient = (yield - loLimitYield) * (hiLimitCoefficient - loLimitCoefficient) / (hiLimitYield - loLimitYield) + loLimitCoefficient;
+                }
+
+                portfolioPosition.CouponCoefficient = Math.Round(couponCoefficient, 2);
+
+                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.CouponCoefficient * portfolioPosition.TimeCoefficient * portfolioPosition.ManualCoefficient, 2);
 
                 portfolioPositions.Add(portfolioPosition);
             }
@@ -93,7 +147,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
                 if (portfolioPosition.Price.HasValue)
-                    portfolioPosition.Size = Convert.ToInt32(Math.Round(portfolioPosition.Cost / portfolioPosition.Price.Value, 0));
+                    portfolioPosition.Size = Convert.ToInt32(Math.Truncate(portfolioPosition.Cost / portfolioPosition.Price.Value));
             }
 
             var response = new GetBondPortfolioPositionListResponse()
@@ -111,18 +165,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var portfolioPosition in response.PortfolioPositions)
             {
-                var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
-                    new GetBondCouponListRequest
-                    {
-                        Ticker = portfolioPosition.Ticker,
-                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)),
-                        To = DateOnly.FromDateTime(DateTime.Today.AddYears(1))
-                    })).Result.BondCoupons;
-
-                for (int i = 1; i < couponsTwoYear.Count; i++)
-                    if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
-
-                var coupons = couponsTwoYear.Where(x => x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) && x.CouponDate <= DateOnly.FromDateTime(DateTime.Today.AddYears(1))).ToList();
+                var coupons = couponDictionary[portfolioPosition.Ticker];
 
                 double couponSum = coupons.Sum(x => x.PayOneBond);
                 double yearCoupon = couponSum * portfolioPosition.Size;

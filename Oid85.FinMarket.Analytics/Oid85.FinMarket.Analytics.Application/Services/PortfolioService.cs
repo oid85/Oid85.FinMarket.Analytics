@@ -125,7 +125,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
                 if (portfolioPosition.Price.HasValue)
-                    portfolioPosition.Size = Convert.ToInt32(Math.Round(portfolioPosition.Cost / portfolioPosition.Price.Value, 0));
+                    portfolioPosition.Size = Convert.ToInt32(Math.Truncate(portfolioPosition.Cost / portfolioPosition.Price.Value));
             }
 
             var response = new GetPortfolioPositionListResponse()
