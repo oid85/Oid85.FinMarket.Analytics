@@ -14,6 +14,7 @@
         public string Name { get; set; } = string.Empty;
         public List<WeekDeltaDataItem> Items { get; set; } = [];
         public bool InPortfolio { get; set; }
+        public string TrendState { get; set; } = string.Empty;
     }
 
     public class WeekDeltaHeaderItem

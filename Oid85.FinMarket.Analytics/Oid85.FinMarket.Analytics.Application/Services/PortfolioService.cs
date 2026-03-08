@@ -74,37 +74,38 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Price = weekDeltaData!.Items.Last().Price
                 };
 
-                var trendState = TrendStateHelper.GetTrendState(weekDeltaData);
+                var trendState = TrendStateHelper.GetTrendState(weekDeltaData.Items);
 
-                switch (trendState)
+                switch (trendState.TrendState)
                 {
                     case TrendState.Trend:
                         portfolioPosition.TrendCoefficient = 1.3;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
-                        portfolioPosition.Message = "Тренд";
+                        portfolioPosition.Message = trendState.Message;
                         break;
 
                     case TrendState.StrongTrend:
                         portfolioPosition.TrendCoefficient = 1.6;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
-                        portfolioPosition.Message = "Сильный тренд";
+                        portfolioPosition.Message = trendState.Message;
                         break;
 
                     case TrendState.BreakTrend:
                         portfolioPosition.TrendCoefficient = 0.5;
                         portfolioPosition.DividendCoefficient = 1.0;
                         portfolioPosition.ManualCoefficient = 1.0;
-                        portfolioPosition.Message = "Слом тренда";
+                        portfolioPosition.Message = trendState.Message;
                         break;
 
+                    case TrendState.NoTrend:
                     case TrendState.Unknown:
                     default:
                         portfolioPosition.TrendCoefficient = 1.0;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
-                        portfolioPosition.Message = "Тренд не определен";
+                        portfolioPosition.Message = trendState.Message;
                         break;
                 }
 

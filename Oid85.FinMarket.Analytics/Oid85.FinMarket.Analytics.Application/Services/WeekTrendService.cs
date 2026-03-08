@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
@@ -42,12 +43,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var share in shares)
             {
+                List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(share.Ticker, x.WeekStartDay, x.WeekEndDay))];
+
                 var dataItem = new WeekDeltaData
                 {
                     Ticker = share.Ticker,
                     Name = share.Name,
-                    InPortfolio = share.InPortfolio,
-                    Items = [.. weeks.Select(x => GetWeekDeltaDataItem(share.Ticker, x.WeekStartDay, x.WeekEndDay))]
+                    InPortfolio = share.InPortfolio,                    
+                    Items = weekDeltaData,
+                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message
                 };
 
                 sharesData.Add(dataItem);
@@ -59,12 +63,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var index in indexes)
             {
+                List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(index.Ticker, x.WeekStartDay, x.WeekEndDay))];
+
                 var dataItem = new WeekDeltaData
                 {
                     Ticker = index.Ticker,
                     Name = index.Name,
                     InPortfolio = index.InPortfolio,
-                    Items = [.. weeks.Select(x => GetWeekDeltaDataItem(index.Ticker, x.WeekStartDay, x.WeekEndDay))]
+                    Items = weekDeltaData,
+                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message
                 };
 
                 indexesData.Add(dataItem);
@@ -76,12 +83,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var future in futures)
             {
+                List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(future.Ticker, x.WeekStartDay, x.WeekEndDay))];
+
                 var dataItem = new WeekDeltaData
                 {
                     Ticker = future.Ticker,
                     Name = future.Name,
                     InPortfolio = future.InPortfolio,
-                    Items = [.. weeks.Select(x => GetWeekDeltaDataItem(future.Ticker, x.WeekStartDay, x.WeekEndDay))]
+                    Items = weekDeltaData,
+                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message
                 };
 
                 futuresData.Add(dataItem);
