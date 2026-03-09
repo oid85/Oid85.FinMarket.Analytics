@@ -45,13 +45,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(share.Ticker, x.WeekStartDay, x.WeekEndDay))];
 
+                var candles = candleData[share.Ticker].Where(x => x.Date >= startDate).ToList();
+                double maxPrice = candles.Select(x => x.Close).Max();
+                double lastCandlePrice = candles.Last().Close;
+                double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
+
                 var dataItem = new WeekDeltaData
                 {
                     Ticker = share.Ticker,
                     Name = share.Name,
                     InPortfolio = share.InPortfolio,                    
                     Items = weekDeltaData,
-                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message
+                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message,
+                    FallingFromMax = Math.Round(fallingFromMax, 2)
                 };
 
                 sharesData.Add(dataItem);
@@ -65,13 +71,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(index.Ticker, x.WeekStartDay, x.WeekEndDay))];
 
+                var candles = candleData[index.Ticker].Where(x => x.Date >= startDate).ToList();
+                double maxPrice = candles.Select(x => x.Close).Max();
+                double lastCandlePrice = candles.Last().Close;
+                double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
+
                 var dataItem = new WeekDeltaData
                 {
                     Ticker = index.Ticker,
                     Name = index.Name,
                     InPortfolio = index.InPortfolio,
                     Items = weekDeltaData,
-                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message
+                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message,
+                    FallingFromMax = Math.Round(fallingFromMax, 2)
                 };
 
                 indexesData.Add(dataItem);
@@ -85,13 +97,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(future.Ticker, x.WeekStartDay, x.WeekEndDay))];
 
+                var candles = candleData[future.Ticker].Where(x => x.Date >= startDate).ToList();
+                double maxPrice = candles.Select(x => x.Close).Max();
+                double lastCandlePrice = candles.Last().Close;
+                double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
+
                 var dataItem = new WeekDeltaData
                 {
                     Ticker = future.Ticker,
                     Name = future.Name,
                     InPortfolio = future.InPortfolio,
                     Items = weekDeltaData,
-                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message
+                    TrendState = TrendStateHelper.GetTrendState(weekDeltaData).Message,
+                    FallingFromMax = Math.Round(fallingFromMax, 2)
                 };
 
                 futuresData.Add(dataItem);
