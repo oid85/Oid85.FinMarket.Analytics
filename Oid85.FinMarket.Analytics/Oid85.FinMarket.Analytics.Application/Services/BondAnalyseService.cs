@@ -19,6 +19,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var instruments = (await instrumentService.GetStorageInstrumentAsync() ?? [])
                 .Where(x => x.Type == KnownInstrumentTypes.Bond)
+                .Where(x => x.MaturityDate >= DateOnly.FromDateTime(DateTime.Today))
                 .Where(x => x.LastPrice is not null)
                 .Where(x => x.Nominal is not null)
                 .Where(x => x.Currency is not null)
