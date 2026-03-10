@@ -10,6 +10,7 @@
         public string Ticker { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public List<GetClosePriceDiagramDateValueResponse> Data { get; set; } = [];
+        public bool InPortfolio { get; set; }
     }
 
     public class GetClosePriceDiagramDateValueResponse
