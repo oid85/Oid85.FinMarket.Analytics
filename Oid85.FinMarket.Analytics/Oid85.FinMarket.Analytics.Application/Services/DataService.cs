@@ -36,7 +36,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<Dictionary<string, List<DateValue<double>>>> GetClosePriceDiagramDataAsync(List<string> tickers)
         {
-            var from = DateOnly.FromDateTime(DateTime.Today.AddMonths(-3));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddMonths(-6));
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             var candleData = await GetCandleDataAsync(tickers);
