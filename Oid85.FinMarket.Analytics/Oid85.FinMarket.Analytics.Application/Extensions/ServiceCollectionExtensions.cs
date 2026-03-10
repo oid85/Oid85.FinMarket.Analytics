@@ -19,5 +19,6 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IPortfolioService, PortfolioService>();
         services.AddTransient<IBondPortfolioService, BondPortfolioService>();
         services.AddTransient<IBondAnalyseService, BondAnalyseService>();
+        services.AddTransient<IDiagramService, DiagramService>();
     }
 }

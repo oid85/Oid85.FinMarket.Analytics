@@ -16,5 +16,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить данные по индикатору Ultimate Smoother
         /// </summary>
         Task<Dictionary<string, List<DateValue<double>>>> GetUltimateSmootherDataAsync(List<string> tickers);
+
+        /// <summary>
+        /// Получить данные для диаграммы временного ряда
+        /// </summary>
+        Task<Dictionary<string, List<DateValue<double>>>> GetClosePriceDiagramDataAsync(List<string> tickers);
     }
 }

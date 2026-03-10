@@ -1,9 +1,7 @@
-﻿using Oid85.FinMarket.Analytics.Application.Helpers;
-using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
-using Oid85.FinMarket.Analytics.Core.Enums;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -153,7 +151,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var response = new GetBondPortfolioPositionListResponse()
             {
                 TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)]
+                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.Name)]
             };
 
             int number = 1;

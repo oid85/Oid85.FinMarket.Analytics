@@ -33,6 +33,27 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return ultimateSmootherData;
         }
 
+        /// <inheritdoc />
+        public async Task<Dictionary<string, List<DateValue<double>>>> GetClosePriceDiagramDataAsync(List<string> tickers)
+        {
+            var from = DateOnly.FromDateTime(DateTime.Today.AddMonths(-3));
+            var to = DateOnly.FromDateTime(DateTime.Today);
+
+            var candleData = await GetCandleDataAsync(tickers);
+
+            var data = new Dictionary<string, List<DateValue<double>>>();
+
+            foreach (var ticker in tickers)
+            {
+                var candles = candleData[ticker].Where(x => x.Date >= from && x.Date <= to);
+                var dateValues = candles.Select(x => new DateValue<double> { Date = x.Date, Value = x.Close}).ToList();
+
+                data.Add(ticker, dateValues);
+            }
+
+            return data;
+        }
+
         private async Task<List<Candle>> GetCandleByTickerAsync(string ticker)
         {
             var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
