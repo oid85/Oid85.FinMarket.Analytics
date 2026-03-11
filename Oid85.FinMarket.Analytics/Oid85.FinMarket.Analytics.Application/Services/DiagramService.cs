@@ -8,11 +8,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class DiagramService(
         IInstrumentService instrumentService,
-        IDataService dataService) 
+        IDataService dataService,
+        IWeekTrendService weekTrendService) 
         : IDiagramService
     {
         public async Task<GetClosePriceDiagramResponse> GetClosePriceDiagramAsync(GetClosePriceDiagramRequest request)
         {
+            var getWeekDeltaResponse = await weekTrendService.GetWeekDeltaAsync(new() { LastWeeksCount = 10 });
+            
             var allInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
                 .ToList();
 
@@ -52,7 +55,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     InPortfolio = instrument.InPortfolio,
-                    Data = [.. data[instrument.Ticker].Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value})]
+                    Data = [.. data[instrument.Ticker].Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
+                    TrendState = getWeekDeltaResponse.Shares.Find(x => x.Ticker == instrument.Ticker)?.TrendState ?? string.Empty
                 });
             }
 
