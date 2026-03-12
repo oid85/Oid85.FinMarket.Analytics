@@ -79,14 +79,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 switch (trendState.TrendState)
                 {
                     case TrendState.Trend:
-                        portfolioPosition.TrendCoefficient = 1.3;
+                        portfolioPosition.TrendCoefficient = 1.0;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
                         portfolioPosition.Message = trendState.Message;
                         break;
 
                     case TrendState.StrongTrend:
-                        portfolioPosition.TrendCoefficient = 1.6;
+                        portfolioPosition.TrendCoefficient = 1.0;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
                         portfolioPosition.Message = trendState.Message;
@@ -102,14 +102,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     case TrendState.NoTrend:
                     case TrendState.Unknown:
                     default:
-                        portfolioPosition.TrendCoefficient = 1.0;
+                        portfolioPosition.TrendCoefficient = 0.7;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
                         portfolioPosition.Message = trendState.Message;
                         break;
                 }
 
-                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient * portfolioPosition.TrendCoefficient, 2);
+                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient, 2);
 
                 portfolioPositions.Add(portfolioPosition);
             }
@@ -121,7 +121,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var portfolioPosition in portfolioPositions)
             {
-                portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient, 2);
+                portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient * portfolioPosition.TrendCoefficient, 2);
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
                 if (portfolioPosition.Price.HasValue)
