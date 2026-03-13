@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<IInstrumentRepository, InstrumentRepository>();
         services.AddTransient<IParameterRepository, ParameterRepository>();
+        services.AddTransient<ILifePortfolioPositionRepository, LifePortfolioPositionRepository>();
     }
 
     public static void ConfigureFinMarketStorageServiceApiClient(

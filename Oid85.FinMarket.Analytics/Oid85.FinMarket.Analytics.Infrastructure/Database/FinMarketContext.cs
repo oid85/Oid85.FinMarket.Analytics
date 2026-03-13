@@ -9,6 +9,7 @@ public class FinMarketContext(DbContextOptions<FinMarketContext> options) : DbCo
 {
     public DbSet<InstrumentEntity> InstrumentEntities { get; set; }
     public DbSet<ParameterEntity> ParameterEntities { get; set; }
+    public DbSet<LifePortfolioPositionEntity> LifePortfolioPositionEntities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
