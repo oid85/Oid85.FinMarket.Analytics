@@ -13,6 +13,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class BondPortfolioService(
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
+        ILifePortfolioPositionRepository lifePortfolioPositionRepository,
         IInstrumentService instrumentService,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IBondPortfolioService
@@ -21,10 +22,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<EditBondPortfolioPositionResponse> EditBondPortfolioPositionAsync(EditBondPortfolioPositionRequest request)
         {
             var instrument = await instrumentRepository.GetInstrumentByTickerAsync(request.Ticker);
-
             instrument!.ManualCoefficient = request.ManualCoefficient;
-
             await instrumentRepository.EditInstrumentAsync(instrument);
+
+            await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
 
             return new();
         }
@@ -39,6 +40,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetBondPortfolioPositionListResponse> GetBondPortfolioPositionListAsync(GetBondPortfolioPositionListRequest request)
         {
+            var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
+
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Bond)
                 .OrderBy(x => x.Ticker)
@@ -146,6 +149,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 if (portfolioPosition.Price.HasValue)
                     portfolioPosition.Size = Convert.ToInt32(Math.Truncate(portfolioPosition.Cost / portfolioPosition.Price.Value));
+
+                portfolioPosition.LifeSize = lifePortfolioPositions.Find(x => x.Ticker == portfolioPosition.Ticker)?.Size ?? 0;
             }
 
             var response = new GetBondPortfolioPositionListResponse()

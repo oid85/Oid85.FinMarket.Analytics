@@ -4,5 +4,6 @@
     {
         public string Ticker { get; set; }
         public double ManualCoefficient { get; set; }
+        public int LifeSize { get; set; }
     }
 }

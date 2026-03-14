@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿using Oid85.FinMarket.Analytics.Core.Models;
+
+namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class GetBondPortfolioPositionListResponse
     {
@@ -75,5 +77,10 @@
         /// Информационное сообщение
         /// </summary>
         public string Message { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Позиция в реальном портфеле
+        /// </summary>
+        public int LifeSize { get; set; }
     }
 }
