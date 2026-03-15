@@ -12,6 +12,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class PortfolioService(
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
+        ILifePortfolioPositionRepository lifePortfolioPositionRepository,
         IInstrumentService instrumentService,
         IWeekTrendService weekTrendService)
         : IPortfolioService
@@ -20,11 +21,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<EditPortfolioPositionResponse> EditPortfolioPositionAsync(EditPortfolioPositionRequest request)
         {
             var instrument = await instrumentRepository.GetInstrumentByTickerAsync(request.Ticker);
-
             instrument!.DividendCoefficient = request.DividendCoefficient;
             instrument.ManualCoefficient = request.ManualCoefficient;
-
             await instrumentRepository.EditInstrumentAsync(instrument);
+
+            await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
 
             return new();
         }
@@ -39,6 +40,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
         {
+            var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
+
             var weekDeltaDataItems = (await weekTrendService.GetWeekDeltaAsync(new GetWeekDeltaRequest { LastWeeksCount = 5 })).Shares;
 
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
@@ -126,6 +129,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 if (portfolioPosition.Price.HasValue)
                     portfolioPosition.Size = Convert.ToInt32(Math.Truncate(portfolioPosition.Cost / portfolioPosition.Price.Value));
+
+                portfolioPosition.LifeSize = lifePortfolioPositions.Find(x => x.Ticker == portfolioPosition.Ticker)?.Size ?? 0;
             }
 
             var response = new GetPortfolioPositionListResponse()

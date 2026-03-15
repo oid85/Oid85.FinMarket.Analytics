@@ -67,5 +67,10 @@
         /// Информационное сообщение
         /// </summary>
         public string Message { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Позиция в реальном портфеле
+        /// </summary>
+        public int LifeSize { get; set; }
     }
 }
