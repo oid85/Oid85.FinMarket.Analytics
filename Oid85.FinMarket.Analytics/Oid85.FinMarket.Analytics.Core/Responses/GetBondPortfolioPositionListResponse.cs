@@ -5,10 +5,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
     public class GetBondPortfolioPositionListResponse
     {
         public double TotalSum { get; set; }
+        public double TotalSumLongOfz { get; set; }
         public double YearCouponSum { get; set; }
         public double YearCouponPrc { get; set; }
         public double MonthCouponSum { get; set; }
-        public List<GetBondPortfolioPositionListItemResponse> PortfolioPositions { get; set; } = [];
+        public List<GetBondPortfolioPositionListItemResponse> PortfolioPositions { get; set; } = [];        
     }
 
     public class GetBondPortfolioPositionListItemResponse
