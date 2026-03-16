@@ -1,7 +1,9 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using System.Diagnostics.Metrics;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
+using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
@@ -10,6 +12,44 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IDataService
     {
+        /// <inheritdoc />
+        public async Task<Dictionary<string, List<BondCoupon>>> GetBondCouponsAsync(List<string> tickers)
+        {
+            var couponDictionary = new Dictionary<string, List<BondCoupon>>();
+
+            foreach (var ticker in tickers)
+            {
+                var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
+                    new GetBondCouponListRequest
+                    {
+                        Ticker = ticker,
+                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)),
+                        To = DateOnly.FromDateTime(DateTime.Today.AddYears(1))
+                    })).Result.BondCoupons;
+
+                for (int i = 1; i < couponsTwoYear.Count; i++)
+                    if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
+
+                var coupons = couponsTwoYear
+                    .Where(x => 
+                        x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) && 
+                        x.CouponDate <= DateOnly.FromDateTime(DateTime.Today.AddYears(1)))
+                    .Select(x => new BondCoupon 
+                    {
+                        Ticker = x.Ticker,
+                        CouponNumber = x.CouponNumber,
+                        CouponPeriod = x.CouponPeriod,
+                        CouponDate = x.CouponDate,
+                        PayOneBond = x.PayOneBond
+                    })
+                    .ToList();
+
+                couponDictionary.Add(ticker, coupons);
+            }
+
+            return couponDictionary;
+        }
+
         /// <inheritdoc />
         public async Task<Dictionary<string, List<Candle>>> GetCandleDataAsync(List<string> tickers)
         {

@@ -15,7 +15,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IParameterRepository parameterRepository,
         ILifePortfolioPositionRepository lifePortfolioPositionRepository,
         IInstrumentService instrumentService,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
+        IDataService dataService)
         : IBondPortfolioService
     {
         /// <inheritdoc />
@@ -43,15 +44,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
 
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
-                .Where(x => x.Type == KnownInstrumentTypes.Bond)
-                .OrderBy(x => x.Ticker)
-                .ToList();
+                .Where(x => x.Type == KnownInstrumentTypes.Bond).OrderBy(x => x.Ticker).ToList();
 
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 0 })).Instruments
-                .Where(x => x.Type == KnownInstrumentTypes.Bond)
-                .Where(x => x.InPortfolio)
-                .OrderBy(x => x.Ticker)
-                .ToList();
+                .Where(x => x.Type == KnownInstrumentTypes.Bond).Where(x => x.InPortfolio).OrderBy(x => x.Ticker).ToList();
 
             foreach (var instrument in instruments)
             {
@@ -59,31 +55,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     await EditBondPortfolioPositionAsync(new EditBondPortfolioPositionRequest { Ticker = instrument.Ticker, ManualCoefficient = 1 });
             }
 
-            instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 0 })).Instruments
-                .Where(x => x.Type == KnownInstrumentTypes.Bond)
-                .Where(x => x.InPortfolio)
-                .OrderBy(x => x.Ticker)
-                .ToList();
+            instruments = [.. (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 0 })).Instruments
+                .Where(x => x.Type == KnownInstrumentTypes.Bond).Where(x => x.InPortfolio).OrderBy(x => x.Ticker)];
 
-            var couponDictionary = new Dictionary<string, List<GetBondCouponListItemResponse>>();
-
-            foreach (var instrument in instruments)
-            {
-                var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
-                    new GetBondCouponListRequest
-                    {
-                        Ticker = instrument.Ticker,
-                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)),
-                        To = DateOnly.FromDateTime(DateTime.Today.AddYears(1))
-                    })).Result.BondCoupons;
-
-                for (int i = 1; i < couponsTwoYear.Count; i++)
-                    if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
-
-                var coupons = couponsTwoYear.Where(x => x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) && x.CouponDate <= DateOnly.FromDateTime(DateTime.Today.AddYears(1))).ToList();
-
-                couponDictionary.Add(instrument.Ticker, coupons);
-            }
+            var couponDictionary = await dataService.GetBondCouponsAsync([.. instruments.Select(x => x.Ticker)]);
 
             var portfolioPositions = new List<GetBondPortfolioPositionListItemResponse>();
 
