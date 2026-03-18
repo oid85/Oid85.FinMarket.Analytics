@@ -28,6 +28,10 @@
         /// </summary>
         public double BenchmarkChange { get; set; }
 
+        public double? Price2015 { get; set; }
+        public double? Price2016 { get; set; }
+        public double? Price2017 { get; set; }
+        public double? Price2018 { get; set; }
         public double? Price2019 { get; set; }
         public double? Price2020 { get; set; }
         public double? Price2021 { get; set; }
@@ -37,6 +41,10 @@
         public double? Price2025 { get; set; }
         public double? Price2026 { get; set; }
 
+        public double? Pe2015 { get; set; }
+        public double? Pe2016 { get; set; }
+        public double? Pe2017 { get; set; }
+        public double? Pe2018 { get; set; }
         public double? Pe2019 { get; set; }
         public double? Pe2020 { get; set; }
         public double? Pe2021 { get; set; }
@@ -46,6 +54,10 @@
         public double? Pe2025 { get; set; }
         public double? Pe2026 { get; set; }
 
+        public double? Ebitda2015 { get; set; }
+        public double? Ebitda2016 { get; set; }
+        public double? Ebitda2017 { get; set; }
+        public double? Ebitda2018 { get; set; }
         public double? Ebitda2019 { get; set; }
         public double? Ebitda2020 { get; set; }
         public double? Ebitda2021 { get; set; }
@@ -55,6 +67,10 @@
         public double? Ebitda2025 { get; set; }
         public double? Ebitda2026 { get; set; }
 
+        public double? Revenue2015 { get; set; }
+        public double? Revenue2016 { get; set; }
+        public double? Revenue2017 { get; set; }
+        public double? Revenue2018 { get; set; }
         public double? Revenue2019 { get; set; }
         public double? Revenue2020 { get; set; }
         public double? Revenue2021 { get; set; }
@@ -64,6 +80,10 @@
         public double? Revenue2025 { get; set; }
         public double? Revenue2026 { get; set; }
 
+        public double? NetProfit2015 { get; set; }
+        public double? NetProfit2016 { get; set; }
+        public double? NetProfit2017 { get; set; }
+        public double? NetProfit2018 { get; set; }
         public double? NetProfit2019 { get; set; }
         public double? NetProfit2020 { get; set; }
         public double? NetProfit2021 { get; set; }
@@ -73,6 +93,10 @@
         public double? NetProfit2025 { get; set; }
         public double? NetProfit2026 { get; set; }
 
+        public double? Ev2015 { get; set; }
+        public double? Ev2016 { get; set; }
+        public double? Ev2017 { get; set; }
+        public double? Ev2018 { get; set; }
         public double? Ev2019 { get; set; }
         public double? Ev2020 { get; set; }
         public double? Ev2021 { get; set; }
@@ -82,6 +106,10 @@
         public double? Ev2025 { get; set; }
         public double? Ev2026 { get; set; }
 
+        public double? NetDebt2015 { get; set; }
+        public double? NetDebt2016 { get; set; }
+        public double? NetDebt2017 { get; set; }
+        public double? NetDebt2018 { get; set; }
         public double? NetDebt2019 { get; set; }
         public double? NetDebt2020 { get; set; }
         public double? NetDebt2021 { get; set; }
@@ -91,6 +119,10 @@
         public double? NetDebt2025 { get; set; }
         public double? NetDebt2026 { get; set; }
 
+        public double? MarketCap2015 { get; set; }
+        public double? MarketCap2016 { get; set; }
+        public double? MarketCap2017 { get; set; }
+        public double? MarketCap2018 { get; set; }
         public double? MarketCap2019 { get; set; }
         public double? MarketCap2020 { get; set; }
         public double? MarketCap2021 { get; set; }
@@ -100,6 +132,10 @@
         public double? MarketCap2025 { get; set; }
         public double? MarketCap2026 { get; set; }
 
+        public double? DividendYield2015 { get; set; }
+        public double? DividendYield2016 { get; set; }
+        public double? DividendYield2017 { get; set; }
+        public double? DividendYield2018 { get; set; }
         public double? DividendYield2019 { get; set; }
         public double? DividendYield2020 { get; set; }
         public double? DividendYield2021 { get; set; }
@@ -109,6 +145,10 @@
         public double? DividendYield2025 { get; set; }
         public double? DividendYield2026 { get; set; }
 
+        public double? Roa2015 { get; set; }
+        public double? Roa2016 { get; set; }
+        public double? Roa2017 { get; set; }
+        public double? Roa2018 { get; set; }
         public double? Roa2019 { get; set; }
         public double? Roa2020 { get; set; }
         public double? Roa2021 { get; set; }
@@ -118,6 +158,10 @@
         public double? Roa2025 { get; set; }
         public double? Roa2026 { get; set; }
 
+        public double? Pbv2015 { get; set; }
+        public double? Pbv2016 { get; set; }
+        public double? Pbv2017 { get; set; }
+        public double? Pbv2018 { get; set; }
         public double? Pbv2019 { get; set; }
         public double? Pbv2020 { get; set; }
         public double? Pbv2021 { get; set; }
@@ -127,6 +171,10 @@
         public double? Pbv2025 { get; set; }
         public double? Pbv2026 { get; set; }
 
+        public double? EvEbitda2015 { get; set; }
+        public double? EvEbitda2016 { get; set; }
+        public double? EvEbitda2017 { get; set; }
+        public double? EvEbitda2018 { get; set; }
         public double? EvEbitda2019 { get; set; }
         public double? EvEbitda2020 { get; set; }
         public double? EvEbitda2021 { get; set; }
@@ -136,6 +184,10 @@
         public double? EvEbitda2025 { get; set; }
         public double? EvEbitda2026 { get; set; }
 
+        public double? NetDebtEbitda2015 { get; set; }
+        public double? NetDebtEbitda2016 { get; set; }
+        public double? NetDebtEbitda2017 { get; set; }
+        public double? NetDebtEbitda2018 { get; set; }
         public double? NetDebtEbitda2019 { get; set; }
         public double? NetDebtEbitda2020 { get; set; }
         public double? NetDebtEbitda2021 { get; set; }
@@ -145,6 +197,10 @@
         public double? NetDebtEbitda2025 { get; set; }
         public double? NetDebtEbitda2026 { get; set; }
 
+        public double? EbitdaRevenue2015 { get; set; }
+        public double? EbitdaRevenue2016 { get; set; }
+        public double? EbitdaRevenue2017 { get; set; }
+        public double? EbitdaRevenue2018 { get; set; }
         public double? EbitdaRevenue2019 { get; set; }
         public double? EbitdaRevenue2020 { get; set; }
         public double? EbitdaRevenue2021 { get; set; }
@@ -154,6 +210,10 @@
         public double? EbitdaRevenue2025 { get; set; }
         public double? EbitdaRevenue2026 { get; set; }
 
+        public double? DeltaMinMax2015 { get; set; }
+        public double? DeltaMinMax2016 { get; set; }
+        public double? DeltaMinMax2017 { get; set; }
+        public double? DeltaMinMax2018 { get; set; }
         public double? DeltaMinMax2019 { get; set; }
         public double? DeltaMinMax2020 { get; set; }
         public double? DeltaMinMax2021 { get; set; }

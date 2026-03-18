@@ -2,6 +2,10 @@
 
 public static class KnownFundamentalParameterPeriods
 {
+    public const string _2015 = "2015";
+    public const string _2016 = "2016";
+    public const string _2017 = "2017";
+    public const string _2018 = "2018";
     public const string _2019 = "2019";
     public const string _2020 = "2020";
     public const string _2021 = "2021";

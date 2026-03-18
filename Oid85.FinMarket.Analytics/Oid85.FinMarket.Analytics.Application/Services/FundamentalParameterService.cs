@@ -23,6 +23,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (request.Moex.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Moex, Period = string.Empty, Value = request.Moex.Value });
 
+            if (request.Pe2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2015, Value = request.Pe2015.Value });
+            if (request.Pe2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2016, Value = request.Pe2016.Value });
+            if (request.Pe2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2017, Value = request.Pe2017.Value });
+            if (request.Pe2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2018, Value = request.Pe2018.Value });
             if (request.Pe2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2019, Value = request.Pe2019.Value });
             if (request.Pe2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2020, Value = request.Pe2020.Value });
             if (request.Pe2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2021, Value = request.Pe2021.Value });
@@ -32,6 +36,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.Pe2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2025, Value = request.Pe2025.Value });
             if (request.Pe2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pe, Period = KnownFundamentalParameterPeriods._2026, Value = request.Pe2026.Value });
 
+            if (request.Ebitda2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2015, Value = request.Ebitda2015.Value });
+            if (request.Ebitda2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2016, Value = request.Ebitda2016.Value });
+            if (request.Ebitda2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2017, Value = request.Ebitda2017.Value });
+            if (request.Ebitda2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2018, Value = request.Ebitda2018.Value });
             if (request.Ebitda2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2019, Value = request.Ebitda2019.Value });
             if (request.Ebitda2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2020, Value = request.Ebitda2020.Value });
             if (request.Ebitda2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2021, Value = request.Ebitda2021.Value });
@@ -41,6 +49,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.Ebitda2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2025, Value = request.Ebitda2025.Value });
             if (request.Ebitda2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ebitda, Period = KnownFundamentalParameterPeriods._2026, Value = request.Ebitda2026.Value });
 
+            if (request.Revenue2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2015, Value = request.Revenue2015.Value });
+            if (request.Revenue2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2016, Value = request.Revenue2016.Value });
+            if (request.Revenue2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2017, Value = request.Revenue2017.Value });
+            if (request.Revenue2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2018, Value = request.Revenue2018.Value });
             if (request.Revenue2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2019, Value = request.Revenue2019.Value });
             if (request.Revenue2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2020, Value = request.Revenue2020.Value });
             if (request.Revenue2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2021, Value = request.Revenue2021.Value });
@@ -50,6 +62,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.Revenue2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2025, Value = request.Revenue2025.Value });
             if (request.Revenue2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Revenue, Period = KnownFundamentalParameterPeriods._2026, Value = request.Revenue2026.Value });
 
+            if (request.NetProfit2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2015, Value = request.NetProfit2015.Value });
+            if (request.NetProfit2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2016, Value = request.NetProfit2016.Value });
+            if (request.NetProfit2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2017, Value = request.NetProfit2017.Value });
+            if (request.NetProfit2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2018, Value = request.NetProfit2018.Value });
             if (request.NetProfit2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2019, Value = request.NetProfit2019.Value });
             if (request.NetProfit2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2020, Value = request.NetProfit2020.Value });
             if (request.NetProfit2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2021, Value = request.NetProfit2021.Value });
@@ -59,6 +75,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.NetProfit2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2025, Value = request.NetProfit2025.Value });
             if (request.NetProfit2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetProfit, Period = KnownFundamentalParameterPeriods._2026, Value = request.NetProfit2026.Value });
 
+            if (request.Ev2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2015, Value = request.Ev2015.Value });
+            if (request.Ev2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2016, Value = request.Ev2016.Value });
+            if (request.Ev2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2017, Value = request.Ev2017.Value });
+            if (request.Ev2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2018, Value = request.Ev2018.Value });
             if (request.Ev2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2019, Value = request.Ev2019.Value });
             if (request.Ev2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2020, Value = request.Ev2020.Value });
             if (request.Ev2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2021, Value = request.Ev2021.Value });
@@ -68,6 +88,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.Ev2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2025, Value = request.Ev2025.Value });
             if (request.Ev2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Ev, Period = KnownFundamentalParameterPeriods._2026, Value = request.Ev2026.Value });
 
+            if (request.NetDebt2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2015, Value = request.NetDebt2015.Value });
+            if (request.NetDebt2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2016, Value = request.NetDebt2016.Value });
+            if (request.NetDebt2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2017, Value = request.NetDebt2017.Value });
+            if (request.NetDebt2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2018, Value = request.NetDebt2018.Value });
             if (request.NetDebt2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2019, Value = request.NetDebt2019.Value });
             if (request.NetDebt2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2020, Value = request.NetDebt2020.Value });
             if (request.NetDebt2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2021, Value = request.NetDebt2021.Value });
@@ -77,6 +101,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.NetDebt2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2025, Value = request.NetDebt2025.Value });
             if (request.NetDebt2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.NetDebt, Period = KnownFundamentalParameterPeriods._2026, Value = request.NetDebt2026.Value });
 
+            if (request.MarketCap2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2015, Value = request.MarketCap2015.Value });
+            if (request.MarketCap2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2016, Value = request.MarketCap2016.Value });
+            if (request.MarketCap2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2017, Value = request.MarketCap2017.Value });
+            if (request.MarketCap2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2018, Value = request.MarketCap2018.Value });
             if (request.MarketCap2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2019, Value = request.MarketCap2019.Value });
             if (request.MarketCap2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2020, Value = request.MarketCap2020.Value });
             if (request.MarketCap2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2021, Value = request.MarketCap2021.Value });
@@ -86,6 +114,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.MarketCap2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2025, Value = request.MarketCap2025.Value });
             if (request.MarketCap2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2026, Value = request.MarketCap2026.Value });
 
+            if (request.DividendYield2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2015, Value = request.DividendYield2015.Value });
+            if (request.DividendYield2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2016, Value = request.DividendYield2016.Value });
+            if (request.DividendYield2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2017, Value = request.DividendYield2017.Value });
+            if (request.DividendYield2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2018, Value = request.DividendYield2018.Value });
             if (request.DividendYield2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2019, Value = request.DividendYield2019.Value });
             if (request.DividendYield2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2020, Value = request.DividendYield2020.Value });
             if (request.DividendYield2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2021, Value = request.DividendYield2021.Value });
@@ -95,6 +127,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.DividendYield2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2025, Value = request.DividendYield2025.Value });
             if (request.DividendYield2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2026, Value = request.DividendYield2026.Value });
 
+            if (request.Roa2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2015, Value = request.Roa2015.Value });
+            if (request.Roa2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2016, Value = request.Roa2016.Value });
+            if (request.Roa2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2017, Value = request.Roa2017.Value });
+            if (request.Roa2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2018, Value = request.Roa2018.Value });
             if (request.Roa2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2019, Value = request.Roa2019.Value });
             if (request.Roa2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2020, Value = request.Roa2020.Value });
             if (request.Roa2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2021, Value = request.Roa2021.Value });
@@ -104,6 +140,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.Roa2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2025, Value = request.Roa2025.Value });
             if (request.Roa2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2026, Value = request.Roa2026.Value });
 
+            if (request.Pbv2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pbv, Period = KnownFundamentalParameterPeriods._2015, Value = request.Pbv2015.Value });
+            if (request.Pbv2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pbv, Period = KnownFundamentalParameterPeriods._2016, Value = request.Pbv2016.Value });
+            if (request.Pbv2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pbv, Period = KnownFundamentalParameterPeriods._2017, Value = request.Pbv2017.Value });
+            if (request.Pbv2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pbv, Period = KnownFundamentalParameterPeriods._2018, Value = request.Pbv2018.Value });
             if (request.Pbv2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pbv, Period = KnownFundamentalParameterPeriods._2019, Value = request.Pbv2019.Value });
             if (request.Pbv2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pbv, Period = KnownFundamentalParameterPeriods._2020, Value = request.Pbv2020.Value });
             if (request.Pbv2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Pbv, Period = KnownFundamentalParameterPeriods._2021, Value = request.Pbv2021.Value });
@@ -127,6 +167,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
+            var lastCandleList2015 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2015, 12, 31)) })).Result.Candles;
+            var lastCandleList2016 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2016, 12, 31)) })).Result.Candles;
+            var lastCandleList2017 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2017, 12, 31)) })).Result.Candles;
+            var lastCandleList2018 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2018, 12, 31)) })).Result.Candles;
             var lastCandleList2019 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2019, 12, 31)) })).Result.Candles;
             var lastCandleList2020 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2020, 12, 31)) })).Result.Candles;
             var lastCandleList2021 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2021, 12, 31)) })).Result.Candles;
@@ -136,6 +180,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var lastCandleList2025 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2025, 12, 31)) })).Result.Candles;
             var lastCandleList2026 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2026, 12, 31)) })).Result.Candles;
 
+            var priceDictionary2015 = tickers.Zip(lastCandleList2019, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
+            var priceDictionary2016 = tickers.Zip(lastCandleList2020, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
+            var priceDictionary2017 = tickers.Zip(lastCandleList2021, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
+            var priceDictionary2018 = tickers.Zip(lastCandleList2022, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2019 = tickers.Zip(lastCandleList2019, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2020 = tickers.Zip(lastCandleList2020, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2021 = tickers.Zip(lastCandleList2021, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
@@ -160,6 +208,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 fundamentalParameterItem.Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty);
 
+                fundamentalParameterItem.Price2015 = priceDictionary2015[instrument.Ticker];
+                fundamentalParameterItem.Price2016 = priceDictionary2016[instrument.Ticker];
+                fundamentalParameterItem.Price2017 = priceDictionary2017[instrument.Ticker];
+                fundamentalParameterItem.Price2018 = priceDictionary2018[instrument.Ticker];
                 fundamentalParameterItem.Price2019 = priceDictionary2019[instrument.Ticker];
                 fundamentalParameterItem.Price2020 = priceDictionary2020[instrument.Ticker];
                 fundamentalParameterItem.Price2021 = priceDictionary2021[instrument.Ticker];
@@ -169,6 +221,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Price2025 = priceDictionary2025[instrument.Ticker];
                 fundamentalParameterItem.Price2026 = priceDictionary2026[instrument.Ticker];
 
+                fundamentalParameterItem.Pe2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.Pe2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.Pe2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.Pe2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.Pe2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.Pe2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.Pe2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2021);
@@ -178,6 +234,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Pe2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.Pe2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.Ebitda2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.Ebitda2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.Ebitda2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.Ebitda2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.Ebitda2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.Ebitda2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.Ebitda2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2021);
@@ -187,6 +247,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Ebitda2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.Ebitda2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.Revenue2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.Revenue2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.Revenue2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.Revenue2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.Revenue2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.Revenue2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.Revenue2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2021);
@@ -196,6 +260,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Revenue2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.Revenue2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.NetProfit2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.NetProfit2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.NetProfit2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.NetProfit2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.NetProfit2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.NetProfit2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.NetProfit2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2021);
@@ -205,6 +273,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.NetProfit2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.NetProfit2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.Ev2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.Ev2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.Ev2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.Ev2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.Ev2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.Ev2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.Ev2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2021);
@@ -214,6 +286,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Ev2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.Ev2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.NetDebt2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.NetDebt2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.NetDebt2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.NetDebt2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.NetDebt2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.NetDebt2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.NetDebt2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2021);
@@ -223,6 +299,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.NetDebt2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.NetDebt2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.MarketCap2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.MarketCap2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.MarketCap2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.MarketCap2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.MarketCap2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.MarketCap2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.MarketCap2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2021);
@@ -232,6 +312,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.MarketCap2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.MarketCap2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.DividendYield2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.DividendYield2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.DividendYield2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.DividendYield2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.DividendYield2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.DividendYield2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.DividendYield2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2021);
@@ -241,6 +325,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.DividendYield2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.DividendYield2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.Roa2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.Roa2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.Roa2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.Roa2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.Roa2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.Roa2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.Roa2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2021);
@@ -250,6 +338,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Roa2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.Roa2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.Pbv2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.Pbv2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.Pbv2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.Pbv2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2018);
                 fundamentalParameterItem.Pbv2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2019);
                 fundamentalParameterItem.Pbv2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2020);
                 fundamentalParameterItem.Pbv2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2021);
@@ -259,6 +351,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.Pbv2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.Pbv2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, KnownFundamentalParameterPeriods._2026);
 
+                fundamentalParameterItem.EvEbitda2015 = GetEvEbitda(fundamentalParameterItem.Ev2015, fundamentalParameterItem.Ebitda2015);
+                fundamentalParameterItem.EvEbitda2016 = GetEvEbitda(fundamentalParameterItem.Ev2016, fundamentalParameterItem.Ebitda2016);
+                fundamentalParameterItem.EvEbitda2017 = GetEvEbitda(fundamentalParameterItem.Ev2017, fundamentalParameterItem.Ebitda2017);
+                fundamentalParameterItem.EvEbitda2018 = GetEvEbitda(fundamentalParameterItem.Ev2018, fundamentalParameterItem.Ebitda2018);
                 fundamentalParameterItem.EvEbitda2019 = GetEvEbitda(fundamentalParameterItem.Ev2019, fundamentalParameterItem.Ebitda2019);
                 fundamentalParameterItem.EvEbitda2020 = GetEvEbitda(fundamentalParameterItem.Ev2020, fundamentalParameterItem.Ebitda2020);
                 fundamentalParameterItem.EvEbitda2021 = GetEvEbitda(fundamentalParameterItem.Ev2021, fundamentalParameterItem.Ebitda2021);
@@ -268,6 +364,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.EvEbitda2025 = GetEvEbitda(fundamentalParameterItem.Ev2025, fundamentalParameterItem.Ebitda2025);
                 fundamentalParameterItem.EvEbitda2026 = GetEvEbitda(fundamentalParameterItem.Ev2026, fundamentalParameterItem.Ebitda2026);
 
+                fundamentalParameterItem.NetDebtEbitda2015 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2015, fundamentalParameterItem.Ebitda2015);
+                fundamentalParameterItem.NetDebtEbitda2016 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2016, fundamentalParameterItem.Ebitda2016);
+                fundamentalParameterItem.NetDebtEbitda2017 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2017, fundamentalParameterItem.Ebitda2017);
+                fundamentalParameterItem.NetDebtEbitda2018 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2018, fundamentalParameterItem.Ebitda2018);
                 fundamentalParameterItem.NetDebtEbitda2019 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2019, fundamentalParameterItem.Ebitda2019);
                 fundamentalParameterItem.NetDebtEbitda2020 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2020, fundamentalParameterItem.Ebitda2020);
                 fundamentalParameterItem.NetDebtEbitda2021 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2021, fundamentalParameterItem.Ebitda2021);
@@ -277,6 +377,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.NetDebtEbitda2025 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2025, fundamentalParameterItem.Ebitda2025);
                 fundamentalParameterItem.NetDebtEbitda2026 = GetNetDebtEbitda(fundamentalParameterItem.NetDebt2026, fundamentalParameterItem.Ebitda2026);
 
+                fundamentalParameterItem.EbitdaRevenue2015 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2015, fundamentalParameterItem.Revenue2015);
+                fundamentalParameterItem.EbitdaRevenue2016 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2016, fundamentalParameterItem.Revenue2016);
+                fundamentalParameterItem.EbitdaRevenue2017 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2017, fundamentalParameterItem.Revenue2017);
+                fundamentalParameterItem.EbitdaRevenue2018 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2018, fundamentalParameterItem.Revenue2018);
                 fundamentalParameterItem.EbitdaRevenue2019 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2019, fundamentalParameterItem.Revenue2019);
                 fundamentalParameterItem.EbitdaRevenue2020 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2020, fundamentalParameterItem.Revenue2020);
                 fundamentalParameterItem.EbitdaRevenue2021 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2021, fundamentalParameterItem.Revenue2021);
@@ -286,6 +390,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.EbitdaRevenue2025 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2025, fundamentalParameterItem.Revenue2025);
                 fundamentalParameterItem.EbitdaRevenue2026 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2026, fundamentalParameterItem.Revenue2026);
 
+                fundamentalParameterItem.DeltaMinMax2015 = await GetDeltaMinMaxAsync(instrument.Ticker, 2015);
+                fundamentalParameterItem.DeltaMinMax2016 = await GetDeltaMinMaxAsync(instrument.Ticker, 2016);
+                fundamentalParameterItem.DeltaMinMax2017 = await GetDeltaMinMaxAsync(instrument.Ticker, 2017);
+                fundamentalParameterItem.DeltaMinMax2018 = await GetDeltaMinMaxAsync(instrument.Ticker, 2018);
                 fundamentalParameterItem.DeltaMinMax2019 = await GetDeltaMinMaxAsync(instrument.Ticker, 2019);
                 fundamentalParameterItem.DeltaMinMax2020 = await GetDeltaMinMaxAsync(instrument.Ticker, 2020);
                 fundamentalParameterItem.DeltaMinMax2021 = await GetDeltaMinMaxAsync(instrument.Ticker, 2021);
