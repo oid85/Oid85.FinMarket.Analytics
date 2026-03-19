@@ -67,7 +67,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     var date = candles[i].Date;
                     dictionary[date].Trend = ultimateSmootherValues[i].Value > ultimateSmootherValues[i - 1].Value ? 1 : -1;
                     dictionary[date].Delta = Math.Round((candles[i].Close - candles[i - 1].Close) / candles[i - 1].Close * 100.0, 2);
-                    dictionary[date].Price = candles[i].Close;
+                    dictionary[date].Price = Math.Round(candles[i].Close, 4);
                 }
 
                 trendDynamicData.Items = [.. dictionary.Values];

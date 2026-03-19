@@ -208,18 +208,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 fundamentalParameterItem.Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty);
 
-                fundamentalParameterItem.Price2015 = priceDictionary2015[instrument.Ticker];
-                fundamentalParameterItem.Price2016 = priceDictionary2016[instrument.Ticker];
-                fundamentalParameterItem.Price2017 = priceDictionary2017[instrument.Ticker];
-                fundamentalParameterItem.Price2018 = priceDictionary2018[instrument.Ticker];
-                fundamentalParameterItem.Price2019 = priceDictionary2019[instrument.Ticker];
-                fundamentalParameterItem.Price2020 = priceDictionary2020[instrument.Ticker];
-                fundamentalParameterItem.Price2021 = priceDictionary2021[instrument.Ticker];
-                fundamentalParameterItem.Price2022 = priceDictionary2022[instrument.Ticker];
-                fundamentalParameterItem.Price2023 = priceDictionary2023[instrument.Ticker];
-                fundamentalParameterItem.Price2024 = priceDictionary2024[instrument.Ticker];
-                fundamentalParameterItem.Price2025 = priceDictionary2025[instrument.Ticker];
-                fundamentalParameterItem.Price2026 = priceDictionary2026[instrument.Ticker];
+                fundamentalParameterItem.Price2015 = priceDictionary2015[instrument.Ticker].HasValue ? Math.Round(priceDictionary2015[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2016 = priceDictionary2016[instrument.Ticker].HasValue ? Math.Round(priceDictionary2016[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2017 = priceDictionary2017[instrument.Ticker].HasValue ? Math.Round(priceDictionary2017[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2018 = priceDictionary2018[instrument.Ticker].HasValue ? Math.Round(priceDictionary2018[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2019 = priceDictionary2019[instrument.Ticker].HasValue ? Math.Round(priceDictionary2019[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2020 = priceDictionary2020[instrument.Ticker].HasValue ? Math.Round(priceDictionary2020[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2021 = priceDictionary2021[instrument.Ticker].HasValue ? Math.Round(priceDictionary2021[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2022 = priceDictionary2022[instrument.Ticker].HasValue ? Math.Round(priceDictionary2022[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2023 = priceDictionary2023[instrument.Ticker].HasValue ? Math.Round(priceDictionary2023[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2024 = priceDictionary2024[instrument.Ticker].HasValue ? Math.Round(priceDictionary2024[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2025 = priceDictionary2025[instrument.Ticker].HasValue ? Math.Round(priceDictionary2025[instrument.Ticker].Value, 4) : null;
+                fundamentalParameterItem.Price2026 = priceDictionary2026[instrument.Ticker].HasValue ? Math.Round(priceDictionary2026[instrument.Ticker].Value, 4) : null;
 
                 fundamentalParameterItem.Pe2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2015);
                 fundamentalParameterItem.Pe2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, KnownFundamentalParameterPeriods._2016);
