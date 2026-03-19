@@ -1,5 +1,4 @@
-﻿using Google.Api;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities;

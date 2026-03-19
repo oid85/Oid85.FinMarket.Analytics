@@ -1,11 +1,8 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
-using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Requests;
-using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
-using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
@@ -15,7 +12,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IParameterRepository parameterRepository,
         ILifePortfolioPositionRepository lifePortfolioPositionRepository,
         IInstrumentService instrumentService,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
         IDataService dataService)
         : IBondPortfolioService
     {
@@ -26,7 +22,22 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             instrument!.ManualCoefficient = request.ManualCoefficient;
             await instrumentRepository.EditInstrumentAsync(instrument);
 
-            await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
+            var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
+
+            var lifePortfolioPosition = lifePortfolioPositions.Find(x => x.Ticker == request.Ticker);
+
+            if (lifePortfolioPosition is null)
+                await lifePortfolioPositionRepository.AddLifePortfolioPositionAsync(
+                    new Core.Models.LifePortfolioPosition
+                    {
+                        Ticker = request.Ticker,
+                        Name = instrument.Name,
+                        Size = request.LifeSize,
+                        IsDeleted = false
+                    });
+
+            else
+                await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
 
             return new();
         }

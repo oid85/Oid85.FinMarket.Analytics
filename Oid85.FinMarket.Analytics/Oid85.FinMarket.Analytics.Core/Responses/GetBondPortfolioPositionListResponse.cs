@@ -1,6 +1,4 @@
-﻿using Oid85.FinMarket.Analytics.Core.Models;
-
-namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class GetBondPortfolioPositionListResponse
     {

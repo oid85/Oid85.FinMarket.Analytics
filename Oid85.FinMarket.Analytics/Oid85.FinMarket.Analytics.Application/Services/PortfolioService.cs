@@ -25,7 +25,22 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             instrument.ManualCoefficient = request.ManualCoefficient;
             await instrumentRepository.EditInstrumentAsync(instrument);
 
-            await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
+            var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
+
+            var lifePortfolioPosition = lifePortfolioPositions.Find(x => x.Ticker == request.Ticker);
+
+            if (lifePortfolioPosition is null)
+                await lifePortfolioPositionRepository.AddLifePortfolioPositionAsync(
+                    new Core.Models.LifePortfolioPosition
+                    {
+                        Ticker = request.Ticker,
+                        Name = instrument.Name,
+                        Size = request.LifeSize,
+                        IsDeleted = false
+                    });
+
+            else
+                await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
 
             return new();
         }
