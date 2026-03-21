@@ -22,5 +22,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить список фундаментальных параметров
         /// </summary>
         Task<GetAnalyticFundamentalParameterListResponse> GetAnalyticFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request);
+
+        /// <summary>
+        /// Получить фундаментальные параметры по сектору
+        /// </summary>
+        Task<GetFundamentalBySectorResponse> GetFundamentalBySectorAsync(GetFundamentalBySectorRequest request);
     }
 }

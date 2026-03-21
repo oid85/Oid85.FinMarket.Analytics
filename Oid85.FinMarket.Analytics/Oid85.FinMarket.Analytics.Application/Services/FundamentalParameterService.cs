@@ -114,18 +114,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.MarketCap2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2025, Value = request.MarketCap2025.Value });
             if (request.MarketCap2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.MarketCap, Period = KnownFundamentalParameterPeriods._2026, Value = request.MarketCap2026.Value });
 
-            if (request.DividendYield2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2015, Value = request.DividendYield2015.Value });
-            if (request.DividendYield2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2016, Value = request.DividendYield2016.Value });
-            if (request.DividendYield2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2017, Value = request.DividendYield2017.Value });
-            if (request.DividendYield2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2018, Value = request.DividendYield2018.Value });
-            if (request.DividendYield2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2019, Value = request.DividendYield2019.Value });
-            if (request.DividendYield2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2020, Value = request.DividendYield2020.Value });
-            if (request.DividendYield2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2021, Value = request.DividendYield2021.Value });
-            if (request.DividendYield2022.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2022, Value = request.DividendYield2022.Value });
-            if (request.DividendYield2023.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2023, Value = request.DividendYield2023.Value });
-            if (request.DividendYield2024.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2024, Value = request.DividendYield2024.Value });
-            if (request.DividendYield2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2025, Value = request.DividendYield2025.Value });
-            if (request.DividendYield2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.DividendYield, Period = KnownFundamentalParameterPeriods._2026, Value = request.DividendYield2026.Value });
+            if (request.Dividend2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2015, Value = request.Dividend2015.Value });
+            if (request.Dividend2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2016, Value = request.Dividend2016.Value });
+            if (request.Dividend2017.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2017, Value = request.Dividend2017.Value });
+            if (request.Dividend2018.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2018, Value = request.Dividend2018.Value });
+            if (request.Dividend2019.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2019, Value = request.Dividend2019.Value });
+            if (request.Dividend2020.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2020, Value = request.Dividend2020.Value });
+            if (request.Dividend2021.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2021, Value = request.Dividend2021.Value });
+            if (request.Dividend2022.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2022, Value = request.Dividend2022.Value });
+            if (request.Dividend2023.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2023, Value = request.Dividend2023.Value });
+            if (request.Dividend2024.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2024, Value = request.Dividend2024.Value });
+            if (request.Dividend2025.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2025, Value = request.Dividend2025.Value });
+            if (request.Dividend2026.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Dividend, Period = KnownFundamentalParameterPeriods._2026, Value = request.Dividend2026.Value });
 
             if (request.Roa2015.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2015, Value = request.Roa2015.Value });
             if (request.Roa2016.HasValue) createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(new CreateOrUpdateFundamentalParameterItemRequest { Ticker = request.Ticker, Type = KnownFundamentalParameterTypes.Roa, Period = KnownFundamentalParameterPeriods._2016, Value = request.Roa2016.Value });
@@ -180,10 +180,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var lastCandleList2025 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2025, 12, 31)) })).Result.Candles;
             var lastCandleList2026 = (await finMarketStorageServiceApiClient.GetLastCandleAsync(new() { Tickers = tickers, Date = DateOnly.FromDateTime(new DateTime(2026, 12, 31)) })).Result.Candles;
 
-            var priceDictionary2015 = tickers.Zip(lastCandleList2019, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
-            var priceDictionary2016 = tickers.Zip(lastCandleList2020, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
-            var priceDictionary2017 = tickers.Zip(lastCandleList2021, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
-            var priceDictionary2018 = tickers.Zip(lastCandleList2022, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
+            var priceDictionary2015 = tickers.Zip(lastCandleList2015, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
+            var priceDictionary2016 = tickers.Zip(lastCandleList2016, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
+            var priceDictionary2017 = tickers.Zip(lastCandleList2017, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
+            var priceDictionary2018 = tickers.Zip(lastCandleList2018, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2019 = tickers.Zip(lastCandleList2019, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2020 = tickers.Zip(lastCandleList2020, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
             var priceDictionary2021 = tickers.Zip(lastCandleList2021, (k, v) => new { Key = k, Value = v?.Close }).ToDictionary(item => item.Key, item => item.Value);
@@ -312,18 +312,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.MarketCap2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2025);
                 fundamentalParameterItem.MarketCap2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, KnownFundamentalParameterPeriods._2026);
 
-                fundamentalParameterItem.DividendYield2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2015);
-                fundamentalParameterItem.DividendYield2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2016);
-                fundamentalParameterItem.DividendYield2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2017);
-                fundamentalParameterItem.DividendYield2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2018);
-                fundamentalParameterItem.DividendYield2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2019);
-                fundamentalParameterItem.DividendYield2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2020);
-                fundamentalParameterItem.DividendYield2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2021);
-                fundamentalParameterItem.DividendYield2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2022);
-                fundamentalParameterItem.DividendYield2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2023);
-                fundamentalParameterItem.DividendYield2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2024);
-                fundamentalParameterItem.DividendYield2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2025);
-                fundamentalParameterItem.DividendYield2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.DividendYield, KnownFundamentalParameterPeriods._2026);
+                fundamentalParameterItem.Dividend2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2015);
+                fundamentalParameterItem.Dividend2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2016);
+                fundamentalParameterItem.Dividend2017 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2017);
+                fundamentalParameterItem.Dividend2018 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2018);
+                fundamentalParameterItem.Dividend2019 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2019);
+                fundamentalParameterItem.Dividend2020 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2020);
+                fundamentalParameterItem.Dividend2021 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2021);
+                fundamentalParameterItem.Dividend2022 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2022);
+                fundamentalParameterItem.Dividend2023 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2023);
+                fundamentalParameterItem.Dividend2024 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2024);
+                fundamentalParameterItem.Dividend2025 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2025);
+                fundamentalParameterItem.Dividend2026 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, KnownFundamentalParameterPeriods._2026);
 
                 fundamentalParameterItem.Roa2015 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2015);
                 fundamentalParameterItem.Roa2016 = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, KnownFundamentalParameterPeriods._2016);
@@ -389,6 +389,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fundamentalParameterItem.EbitdaRevenue2024 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2024, fundamentalParameterItem.Revenue2024);
                 fundamentalParameterItem.EbitdaRevenue2025 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2025, fundamentalParameterItem.Revenue2025);
                 fundamentalParameterItem.EbitdaRevenue2026 = GetEbitdaRevenue(fundamentalParameterItem.Ebitda2026, fundamentalParameterItem.Revenue2026);
+
+                fundamentalParameterItem.DividendYield2015 = GetDividendYield(fundamentalParameterItem.Dividend2015, fundamentalParameterItem.Price2015);
+                fundamentalParameterItem.DividendYield2016 = GetDividendYield(fundamentalParameterItem.Dividend2016, fundamentalParameterItem.Price2016);
+                fundamentalParameterItem.DividendYield2017 = GetDividendYield(fundamentalParameterItem.Dividend2017, fundamentalParameterItem.Price2017);
+                fundamentalParameterItem.DividendYield2018 = GetDividendYield(fundamentalParameterItem.Dividend2018, fundamentalParameterItem.Price2018);
+                fundamentalParameterItem.DividendYield2019 = GetDividendYield(fundamentalParameterItem.Dividend2019, fundamentalParameterItem.Price2019);
+                fundamentalParameterItem.DividendYield2020 = GetDividendYield(fundamentalParameterItem.Dividend2020, fundamentalParameterItem.Price2020);
+                fundamentalParameterItem.DividendYield2021 = GetDividendYield(fundamentalParameterItem.Dividend2021, fundamentalParameterItem.Price2021);
+                fundamentalParameterItem.DividendYield2022 = GetDividendYield(fundamentalParameterItem.Dividend2022, fundamentalParameterItem.Price2022);
+                fundamentalParameterItem.DividendYield2023 = GetDividendYield(fundamentalParameterItem.Dividend2023, fundamentalParameterItem.Price2023);
+                fundamentalParameterItem.DividendYield2024 = GetDividendYield(fundamentalParameterItem.Dividend2024, fundamentalParameterItem.Price2024);
+                fundamentalParameterItem.DividendYield2025 = GetDividendYield(fundamentalParameterItem.Dividend2025, fundamentalParameterItem.Price2025);
+                fundamentalParameterItem.DividendYield2026 = GetDividendYield(fundamentalParameterItem.Dividend2026, fundamentalParameterItem.Price2026);
 
                 fundamentalParameterItem.DeltaMinMax2015 = await GetDeltaMinMaxAsync(instrument.Ticker, 2015);
                 fundamentalParameterItem.DeltaMinMax2016 = await GetDeltaMinMaxAsync(instrument.Ticker, 2016);
@@ -459,18 +472,29 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return response;
         }
 
+        /// <inheritdoc />
+        public async Task<GetFundamentalBySectorResponse> GetFundamentalBySectorAsync(GetFundamentalBySectorRequest request)
+        {
+            var response = new GetFundamentalBySectorResponse();
+
+            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
+
+            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? [])
+                .Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).OrderBy(x => x.Ticker).ToList();
+
+            var tickers = instruments.Select(x => x.Ticker).ToList();
+
+            return response;
+        }
+
         private static double? GetFundamentalParameterValue(List<GetFundamentalParameterListItemResponse> fundamentalParameters, string ticker, string type, string period)
         {
             if (fundamentalParameters is null)
                 return null;
 
-            var value = fundamentalParameters.Find(
-                x =>
-                    x.Ticker == ticker &&
-                    x.Type == type &&
-                    x.Period == period);
+            var fundamentalParameter = fundamentalParameters.Find(x => x.Ticker == ticker && x.Type == type && x.Period == period);
 
-            return value?.Value;
+            return fundamentalParameter?.Value;
         }
 
         private static double? GetEvEbitda(double? ev, double? ebitda)
@@ -504,6 +528,17 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 return 0.0;
 
             return Math.Round(ebitda.Value / revenue.Value, 2);
+        }
+
+        private static double? GetDividendYield(double? dividend, double? price)
+        {
+            if (dividend is null || price is null)
+                return null;
+
+            if (dividend == 0.0 || price == 0.0)
+                return 0.0;
+
+            return Math.Round(dividend.Value / price.Value * 100.0, 2);
         }
 
         private async Task<double?> GetDeltaMinMaxAsync(string ticker, int year)

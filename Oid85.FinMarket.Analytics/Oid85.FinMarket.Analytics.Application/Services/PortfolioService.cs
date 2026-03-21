@@ -139,7 +139,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var portfolioPosition in portfolioPositions)
             {
-                portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient * portfolioPosition.TrendCoefficient, 2);
+                portfolioPosition.ResultCoefficient *= portfolioPosition.TrendCoefficient;
+                portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient, 2);
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
                 if (portfolioPosition.Price.HasValue)

@@ -69,5 +69,10 @@
         /// Валюта
         /// </summary>
         public string? Currency { get; set; } = null;
+
+        /// <summary>
+        /// Сектор
+        /// </summary>
+        public string Sector { get; set; }
     }
 }

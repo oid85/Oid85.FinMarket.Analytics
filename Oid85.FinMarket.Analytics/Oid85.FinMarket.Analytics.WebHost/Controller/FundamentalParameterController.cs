@@ -56,15 +56,15 @@ public class FundamentalParameterController(
             result => new BaseResponse<GetAnalyticFundamentalParameterBubbleDiagramResponse> { Result = result });
 
     /// <summary>
-    /// Пузырьковая диаграмма
+    /// Получить фундаментальные параметры по сектору
     /// </summary>
     [HttpPost("sector")]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalParameterListBySectorResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalParameterListBySectorResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalParameterListBySectorResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> GetAnalyticFundamentalParameterListBySectorAsync(
-        [FromBody] GetAnalyticFundamentalParameterListBySectorRequest request) =>
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalBySectorResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalBySectorResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalBySectorResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetFundamentalBySectorAsync(
+        [FromBody] GetFundamentalBySectorRequest request) =>
         GetResponseAsync(
-            () => fundamentalParameterService.GetAnalyticFundamentalParameterListBySectorAsync(request),
-            result => new BaseResponse<GetAnalyticFundamentalParameterListBySectorResponse> { Result = result });
+            () => fundamentalParameterService.GetFundamentalBySectorAsync(request),
+            result => new BaseResponse<GetFundamentalBySectorResponse> { Result = result });
 }

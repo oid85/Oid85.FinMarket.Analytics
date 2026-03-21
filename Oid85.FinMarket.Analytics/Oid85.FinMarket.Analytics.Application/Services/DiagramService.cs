@@ -48,7 +48,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var data = await dataService.GetClosePriceDiagramDataAsync(tickers);
 
             foreach (var instrument in instruments)
-            {
                 response.Items.Add(new GetClosePriceDiagramItemResponse()
                 {
                     Ticker = instrument.Ticker,
@@ -57,7 +56,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Data = [.. data[instrument.Ticker].Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
                     TrendState = getWeekDeltaResponse.Shares.Find(x => x.Ticker == instrument.Ticker)?.TrendState ?? string.Empty
                 });
-            }
 
             return response;
         }

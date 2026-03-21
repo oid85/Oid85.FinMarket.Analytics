@@ -9,7 +9,7 @@ public static class KnownFundamentalParameterTypes
     public const string Ev = "Ev";
     public const string NetDebt = "NetDebt";
     public const string MarketCap = "MarketCap";
-    public const string DividendYield = "DividendYield";
+    public const string Dividend = "Dividend";
     public const string Roa = "Roa";
     public const string Pbv = "Pbv";
     public const string Moex = "Moex";

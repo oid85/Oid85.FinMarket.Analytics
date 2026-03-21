@@ -145,6 +145,19 @@
         public double? DividendYield2025 { get; set; }
         public double? DividendYield2026 { get; set; }
 
+        public double? Dividend2015 { get; set; }
+        public double? Dividend2016 { get; set; }
+        public double? Dividend2017 { get; set; }
+        public double? Dividend2018 { get; set; }
+        public double? Dividend2019 { get; set; }
+        public double? Dividend2020 { get; set; }
+        public double? Dividend2021 { get; set; }
+        public double? Dividend2022 { get; set; }
+        public double? Dividend2023 { get; set; }
+        public double? Dividend2024 { get; set; }
+        public double? Dividend2025 { get; set; }
+        public double? Dividend2026 { get; set; }
+
         public double? Roa2015 { get; set; }
         public double? Roa2016 { get; set; }
         public double? Roa2017 { get; set; }

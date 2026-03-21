@@ -27,7 +27,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 IsSelected = instrument.IsSelected,
                 InPortfolio = instrument.InPortfolio,
                 DividendCoefficient = instrument.DividendCoefficient,
-                ManualCoefficient = instrument.ManualCoefficient
+                ManualCoefficient = instrument.ManualCoefficient,
+                Sector = instrument.Sector
             };
 
             await context.AddAsync(entity);
@@ -57,7 +58,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         .SetProperty(entity => entity.IsSelected, model.IsSelected)
                         .SetProperty(entity => entity.InPortfolio, model.InPortfolio)
                         .SetProperty(entity => entity.DividendCoefficient, model.DividendCoefficient)
-                        .SetProperty(entity => entity.ManualCoefficient, model.ManualCoefficient));
+                        .SetProperty(entity => entity.ManualCoefficient, model.ManualCoefficient)
+                        .SetProperty(entity => entity.Sector, model.Sector));
 
             await context.SaveChangesAsync();
 
@@ -82,7 +84,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 IsSelected = entity.IsSelected,
                 InPortfolio = entity.InPortfolio,
                 DividendCoefficient = entity.DividendCoefficient,
-                ManualCoefficient = entity.ManualCoefficient
+                ManualCoefficient = entity.ManualCoefficient,
+                Sector = entity.Sector
             };
 
             return model;
@@ -106,7 +109,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 IsSelected = entity.IsSelected,
                 InPortfolio = entity.InPortfolio,
                 DividendCoefficient = entity.DividendCoefficient,
-                ManualCoefficient = entity.ManualCoefficient
+                ManualCoefficient = entity.ManualCoefficient,
+                Sector = entity.Sector
             };
 
             return model;
@@ -132,7 +136,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         IsSelected = x.IsSelected,
                         InPortfolio = x.InPortfolio,
                         DividendCoefficient = x.DividendCoefficient,
-                        ManualCoefficient = x.ManualCoefficient
+                        ManualCoefficient = x.ManualCoefficient,
+                        Sector= x.Sector
                     })
                 .ToList();
 
