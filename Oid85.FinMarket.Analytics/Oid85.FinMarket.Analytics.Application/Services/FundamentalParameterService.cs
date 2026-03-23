@@ -13,7 +13,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class FundamentalParameterService(
         IInstrumentRepository instrumentRepository,
         IInstrumentService instrumentService,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
+        IDataService dataService)
         : IFundamentalParameterService
     {
         /// <inheritdoc />
@@ -474,9 +475,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         /// <inheritdoc />
         public async Task<GetFundamentalBySectorResponse> GetFundamentalBySectorAsync(GetFundamentalBySectorRequest request)
-        {
-            var response = new GetFundamentalBySectorResponse();
-
+        {            
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
 
             var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? [])
@@ -484,7 +483,108 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
+            var priceData = await dataService.GetClosePriceDiagramDataAsync(tickers);
+
+            List<string> periods = ["2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+
+            var response = new GetFundamentalBySectorResponse();
+
+            foreach (var instrument in instruments)
+                response.PriceDiagram.Add(
+                    new GetFundamentalBySectorItemResponse()
+                    {
+                        Ticker = instrument.Ticker,
+                        Name = instrument.Name,
+                        InPortfolio = instrument.InPortfolio,
+                        Data = [.. priceData[instrument.Ticker].Select(x => new GetFundamentalBySectorDateValueResponse { Date = x.Date.ToString(), Value = x.Value })]
+                    });
+
+            foreach (var instrument in instruments)
+            {
+                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, periods);
+
+                response.RevenueDiagram.Add(
+                    new GetFundamentalBySectorItemResponse()
+                    {
+                        Ticker = instrument.Ticker,
+                        Name = instrument.Name,
+                        InPortfolio = instrument.InPortfolio,
+                        Data = [.. fundamentalParameterValues.Select(x => new GetFundamentalBySectorDateValueResponse { Date = x.Period, Value = x.Value })]
+                    });
+            }
+
+            foreach (var instrument in instruments)
+            {
+                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, periods);
+
+                response.NetProfitDiagram.Add(
+                    new GetFundamentalBySectorItemResponse()
+                    {
+                        Ticker = instrument.Ticker,
+                        Name = instrument.Name,
+                        InPortfolio = instrument.InPortfolio,
+                        Data = [.. fundamentalParameterValues.Select(x => new GetFundamentalBySectorDateValueResponse { Date = x.Period, Value = x.Value })]
+                    });
+            }
+
+            foreach (var instrument in instruments)
+            {
+                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, periods);
+
+                response.DividendDiagram.Add(
+                    new GetFundamentalBySectorItemResponse()
+                    {
+                        Ticker = instrument.Ticker,
+                        Name = instrument.Name,
+                        InPortfolio = instrument.InPortfolio,
+                        Data = [.. fundamentalParameterValues.Select(x => new GetFundamentalBySectorDateValueResponse { Date = x.Period, Value = x.Value })]
+                    });
+            }
+
+            foreach (var instrument in instruments)
+            {
+                string year = "2024";
+
+                var ebitda = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, year.ToString());
+                var ev = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, year.ToString());
+                var netDebt = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, year.ToString());
+                var marketCap = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, year.ToString());
+
+                var evEbitda = GetEvEbitda(ev, ebitda);
+                var netDebtEbitda = GetNetDebtEbitda(netDebt, ebitda);
+
+                if (!evEbitda.HasValue) continue;
+                if (!netDebtEbitda.HasValue) continue;
+                if (!marketCap.HasValue) continue;
+
+                response.BubbleDiagram.Add(
+                    new GetFundamentalBySectorBubbleDiagramPointResponse
+                    {
+                        Ticker = instrument.Ticker,
+                        EvEbitda = evEbitda.Value,
+                        NetDebtEbitda = netDebtEbitda.Value,
+                        MarketCap = marketCap.Value
+                    });
+            }
+
             return response;
+        }
+
+        private static List<(string Period, double Value)> GetFundamentalParameterValues(List<GetFundamentalParameterListItemResponse> fundamentalParameters, string ticker, string type, List<string> periods)
+        {
+            if (fundamentalParameters is null)
+                return [];
+
+            List<(string Period, double Value)> result = [];
+
+            foreach (var period in periods)
+            {
+                var fundamentalParameter = fundamentalParameters.Find(x => x.Ticker == ticker && x.Type == type && x.Period == period);
+
+                result.Add(fundamentalParameter is null ? (period, 0.0) : (period, fundamentalParameter.Value));
+            }
+            
+            return result;
         }
 
         private static double? GetFundamentalParameterValue(List<GetFundamentalParameterListItemResponse> fundamentalParameters, string ticker, string type, string period)

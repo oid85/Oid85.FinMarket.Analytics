@@ -28,7 +28,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 InPortfolio = instrument.InPortfolio,
                 DividendCoefficient = instrument.DividendCoefficient,
                 ManualCoefficient = instrument.ManualCoefficient,
-                Sector = instrument.Sector
+                Sector = "-"
             };
 
             await context.AddAsync(entity);
