@@ -14,7 +14,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IParameterRepository parameterRepository,
         ILifePortfolioPositionRepository lifePortfolioPositionRepository,
         IInstrumentService instrumentService,
-        IWeekTrendService weekTrendService)
+        IDataService dataService)
         : IPortfolioService
     {
         /// <inheritdoc />
@@ -56,9 +56,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
         {
             var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
-
-            var weekDeltaDataItems = (await weekTrendService.GetWeekDeltaAsync(new GetWeekDeltaRequest { LastWeeksCount = 5 })).Shares;
-
+           
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
                 .Where(x => x.InPortfolio)
@@ -77,22 +75,25 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
+            var tickers = instruments.Select(x => x.Ticker).ToList();
+
+            var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
+            var candleData = await dataService.GetCandleDataAsync(tickers);
+
             var portfolioPositions = new List<GetPortfolioPositionListItemResponse>();
 
             foreach (var instrument in instruments)
             {
-                var weekDeltaData = weekDeltaDataItems.Find(x => x.Ticker == instrument.Ticker);
-
                 var portfolioPosition = new GetPortfolioPositionListItemResponse()
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     DividendCoefficient = instrument.DividendCoefficient,
                     ManualCoefficient = instrument.ManualCoefficient,
-                    Price = weekDeltaData!.Items.Last().Price
+                    Price = candleData[instrument.Ticker].Last().Close
                 };
 
-                var trendState = TrendStateHelper.GetTrendState(weekDeltaData.Items);
+                var trendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]);
 
                 switch (trendState.TrendState)
                 {
@@ -103,22 +104,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         portfolioPosition.Message = trendState.Message;
                         break;
 
-                    case TrendState.StrongTrend:
-                        portfolioPosition.TrendCoefficient = 1.0;
-                        portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
-                        portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
-                        portfolioPosition.Message = trendState.Message;
-                        break;
-
-                    case TrendState.BreakTrend:
-                        portfolioPosition.TrendCoefficient = 0.5;
-                        portfolioPosition.DividendCoefficient = 1.0;
-                        portfolioPosition.ManualCoefficient = 1.0;
-                        portfolioPosition.Message = trendState.Message;
-                        break;
-
                     case TrendState.NoTrend:
-                    case TrendState.Unknown:
                     default:
                         portfolioPosition.TrendCoefficient = 0.7;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
@@ -139,7 +125,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var portfolioPosition in portfolioPositions)
             {
-                portfolioPosition.ResultCoefficient *= portfolioPosition.TrendCoefficient;
+                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.ResultCoefficient * portfolioPosition.TrendCoefficient, 2);
                 portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient, 2);
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 

@@ -8,23 +8,8 @@
         Trend,
 
         /// <summary>
-        /// Сильный тренд
-        /// </summary>
-        StrongTrend,
-
-        /// <summary>
-        /// Слом тренда
-        /// </summary>
-        BreakTrend,
-
-        /// <summary>
         /// Нет тренда
         /// </summary>
-        NoTrend,
-
-        /// <summary>
-        /// Не определено
-        /// </summary>
-        Unknown
+        NoTrend
     }
 }
