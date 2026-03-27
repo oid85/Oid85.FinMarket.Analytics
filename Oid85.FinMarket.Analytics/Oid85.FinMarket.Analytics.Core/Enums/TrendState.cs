@@ -2,14 +2,8 @@
 {
     public enum TrendState
     {
-        /// <summary>
-        /// Тренд
-        /// </summary>
-        Trend,
-
-        /// <summary>
-        /// Нет тренда
-        /// </summary>
+        UpTrend,
+        DownTrend,
         NoTrend
     }
 }

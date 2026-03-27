@@ -5,8 +5,25 @@ namespace Oid85.FinMarket.Analytics.Application.Helpers
 {
     public class TrendStateHelper
     {
-        public static (TrendState TrendState, string Message) GetTrendState(List<DateValue<double>> ultimateSmoothers) => 
-            ultimateSmoothers[^1].Value > ultimateSmoothers[^2].Value ? (TrendState.Trend, "ТРЕНД") : (TrendState.NoTrend, "НЕТ ТРЕНДА");
+        public static (TrendState TrendState, string Message) GetTrendState(List<DateValue<double>> ultimateSmoothers)
+        {
+            bool upTrend = ultimateSmoothers[^1].Value > ultimateSmoothers[^2].Value;
+
+            bool downTrend =
+                ultimateSmoothers[^1].Value < ultimateSmoothers[^2].Value &&
+                ultimateSmoothers[^2].Value < ultimateSmoothers[^3].Value &&
+                ultimateSmoothers[^3].Value < ultimateSmoothers[^4].Value &&
+                ultimateSmoothers[^4].Value < ultimateSmoothers[^5].Value &&
+                ultimateSmoothers[^5].Value < ultimateSmoothers[^6].Value;
+
+            if (downTrend)
+                return (TrendState.DownTrend, "ТРЕНД ВНИЗ");
+
+            if (upTrend)
+                return (TrendState.UpTrend, "ТРЕНД ВВЕРХ");
+
+            return (TrendState.NoTrend, "НЕТ ТРЕНДА");
+        }
     }
 }
 

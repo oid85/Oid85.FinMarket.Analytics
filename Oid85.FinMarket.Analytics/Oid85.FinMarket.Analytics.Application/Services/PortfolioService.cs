@@ -97,7 +97,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 switch (trendState.TrendState)
                 {
-                    case TrendState.Trend:
+                    case TrendState.UpTrend:
                         portfolioPosition.TrendCoefficient = 1.0;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
@@ -105,8 +105,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         break;
 
                     case TrendState.NoTrend:
-                    default:
                         portfolioPosition.TrendCoefficient = 0.7;
+                        portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
+                        portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
+                        portfolioPosition.Message = trendState.Message;
+                        break;
+
+                    case TrendState.DownTrend:
+                        portfolioPosition.TrendCoefficient = 0.0;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
                         portfolioPosition.Message = trendState.Message;
