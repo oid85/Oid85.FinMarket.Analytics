@@ -12,9 +12,7 @@ namespace Oid85.FinMarket.Analytics.Application.Helpers
             bool downTrend =
                 ultimateSmoothers[^1].Value < ultimateSmoothers[^2].Value &&
                 ultimateSmoothers[^2].Value < ultimateSmoothers[^3].Value &&
-                ultimateSmoothers[^3].Value < ultimateSmoothers[^4].Value &&
-                ultimateSmoothers[^4].Value < ultimateSmoothers[^5].Value &&
-                ultimateSmoothers[^5].Value < ultimateSmoothers[^6].Value;
+                ultimateSmoothers[^3].Value < ultimateSmoothers[^4].Value;
 
             if (downTrend)
                 return (TrendState.DownTrend, "ТРЕНД ВНИЗ");

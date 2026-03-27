@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -45,7 +46,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var response = new GetClosePriceDiagramResponse();
 
-            var data = await dataService.GetClosePriceDiagramDataAsync(tickers);
+            var closePriceDiagramData = await dataService.GetClosePriceDiagramDataAsync(tickers);
+            var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
 
             foreach (var instrument in instruments)
                 response.Items.Add(new GetClosePriceDiagramItemResponse()
@@ -53,8 +55,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     InPortfolio = instrument.InPortfolio,
-                    Data = [.. data[instrument.Ticker].Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
-                    TrendState = getWeekDeltaResponse.Shares.Find(x => x.Ticker == instrument.Ticker)?.TrendState ?? string.Empty
+                    Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-6))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
+                    TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message
                 });
 
             return response;

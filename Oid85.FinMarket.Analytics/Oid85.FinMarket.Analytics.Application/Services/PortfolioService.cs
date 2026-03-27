@@ -127,7 +127,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string parameterTotalSum = (await parameterRepository.GetParameterValueAsync(KnownParameters.TotalSum)) ?? "0";
             double totalSum = Convert.ToDouble(parameterTotalSum.Replace(" ", "").Trim());
 
-            var baseUnit = totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
+            double baseUnit = portfolioPositions.Count < 10
+                ? totalSum / (portfolioPositions.Sum(x => x.ResultCoefficient) + (10 - portfolioPositions.Count))
+                : totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
 
             foreach (var portfolioPosition in portfolioPositions)
             {
