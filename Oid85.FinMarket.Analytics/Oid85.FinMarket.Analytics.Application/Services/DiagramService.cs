@@ -1,4 +1,5 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Requests;
@@ -9,13 +10,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class DiagramService(
         IInstrumentService instrumentService,
         IDataService dataService,
-        IWeekTrendService weekTrendService) 
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
         : IDiagramService
     {
         public async Task<GetClosePriceDiagramResponse> GetClosePriceDiagramAsync(GetClosePriceDiagramRequest request)
-        {
-            var getWeekDeltaResponse = await weekTrendService.GetWeekDeltaAsync(new() { LastWeeksCount = 10 });
-            
+        {                        
             var allInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
                 .ToList();
 
@@ -44,20 +43,30 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
+            var forecasts = (await finMarketStorageServiceApiClient.GetForecastListAsync(new())).Result.Forecasts;
+
             var response = new GetClosePriceDiagramResponse();
 
             var closePriceDiagramData = await dataService.GetClosePriceDiagramDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
 
             foreach (var instrument in instruments)
+            {
+                var forecast = forecasts.Find(x => x.Ticker == instrument.Ticker);
+
                 response.Items.Add(new GetClosePriceDiagramItemResponse()
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     InPortfolio = instrument.InPortfolio,
                     Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-6))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
-                    TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message
+                    TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
+                    ConsensusPrice = forecast?.ConsensusPrice,
+                    MinTarget = forecast?.MinTarget,
+                    MaxTarget = forecast?.MaxTarget,
+                    Recommendation = forecast?.RecommendationString
                 });
+            }
 
             return response;
         }

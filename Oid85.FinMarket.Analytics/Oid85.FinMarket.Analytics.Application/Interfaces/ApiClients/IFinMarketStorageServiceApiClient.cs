@@ -69,5 +69,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
         /// Создать или редактировать значение ключевой ставки
         /// </summary>
         Task<CreateOrUpdateKeyRateResponse> CreateOrUpdateKeyRateAsync(CreateOrUpdateKeyRateRequest request);
+
+        /// <summary>
+        /// Получить прогнозы
+        /// </summary>
+        Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request);
     }
 }

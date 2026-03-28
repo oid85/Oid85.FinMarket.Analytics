@@ -66,6 +66,10 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
         public async Task<CreateOrUpdateKeyRateResponse> CreateOrUpdateKeyRateAsync(CreateOrUpdateKeyRateRequest request) =>
             await GetResponseAsync<CreateOrUpdateKeyRateRequest, CreateOrUpdateKeyRateResponse>("/api/key-rates/create-or-update", request);
 
+        /// <inheritdoc />
+        public async Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request) =>
+            await GetResponseAsync<GetForecastListRequest, GetForecastListResponse>("/api/forecasts/list", request);
+
         private async Task<TResponse> GetCachedDataAsync<TRequest, TResponse>(string url, TRequest request) where TResponse : new()
         {
             string key = StringUtils.GetMd5($"{nameof(TRequest)}_{JsonSerializer.Serialize(request)}");
