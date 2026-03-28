@@ -112,7 +112,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         break;
 
                     case TrendState.DownTrend:
-                        portfolioPosition.TrendCoefficient = 0.0;
+                        portfolioPosition.TrendCoefficient = instrument.DividendCoefficient > 1.0 ? 0.7 : 0.0;
                         portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
                         portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
                         portfolioPosition.Message = trendState.Message;

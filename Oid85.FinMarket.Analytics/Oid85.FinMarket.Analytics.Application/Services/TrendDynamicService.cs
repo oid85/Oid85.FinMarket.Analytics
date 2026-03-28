@@ -75,12 +75,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 data.Add(trendDynamicData);
             }
 
+            /*
             var result = data.OrderByDescending(x =>
             {
                 var reverse = x.Items.Select(x => x.Trend).Where(x => x != null).AsEnumerable().Reverse();
                 var count = reverse.TakeWhile(x => x == 1).Count();
                 return count;
             }).ToList();
+            */
+
+            var result = data.OrderByDescending(x =>x.InPortfolio).ToList();
 
             return result;
         }
