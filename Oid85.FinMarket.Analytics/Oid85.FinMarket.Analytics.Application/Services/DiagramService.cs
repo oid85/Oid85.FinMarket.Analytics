@@ -59,11 +59,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     InPortfolio = instrument.InPortfolio,
-                    Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-6))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
+                    Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-6))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value, ConsensusPrice = forecast?.ConsensusPrice, MinTarget = forecast?.MinTarget, MaxTarget = forecast?.MaxTarget })],
                     TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
-                    ConsensusPrice = forecast?.ConsensusPrice,
-                    MinTarget = forecast?.MinTarget,
-                    MaxTarget = forecast?.MaxTarget,
                     Recommendation = forecast?.RecommendationString
                 });
             }
