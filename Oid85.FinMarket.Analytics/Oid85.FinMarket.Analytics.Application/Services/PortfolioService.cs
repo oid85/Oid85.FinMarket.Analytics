@@ -123,12 +123,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 portfolioPositions.Add(portfolioPosition);
             }
+            
+            double totalSum = Convert.ToDouble(((await parameterRepository.GetParameterValueAsync(KnownParameters.TotalSum)) ?? "0").Replace(" ", "").Trim());
+            
+            int minTotalNumberSharesInPortfolio = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.MinTotalNumberSharesInPortfolio)) ?? "0");
 
-            string parameterTotalSum = (await parameterRepository.GetParameterValueAsync(KnownParameters.TotalSum)) ?? "0";
-            double totalSum = Convert.ToDouble(parameterTotalSum.Replace(" ", "").Trim());
-
-            double baseUnit = portfolioPositions.Count < 10
-                ? totalSum / (portfolioPositions.Sum(x => x.ResultCoefficient) + (10 - portfolioPositions.Count))
+            double baseUnit = portfolioPositions.Count < minTotalNumberSharesInPortfolio
+                ? totalSum / (portfolioPositions.Sum(x => x.ResultCoefficient) + (minTotalNumberSharesInPortfolio - portfolioPositions.Count))
                 : totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
 
             foreach (var portfolioPosition in portfolioPositions)
