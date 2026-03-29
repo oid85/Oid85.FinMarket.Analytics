@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Core.Enums;
+﻿using Oid85.FinMarket.Analytics.Common.KnownConstants;
+using Oid85.FinMarket.Analytics.Core.Enums;
 using Oid85.FinMarket.Analytics.Core.Models;
 
 namespace Oid85.FinMarket.Analytics.Application.Helpers
@@ -15,12 +16,12 @@ namespace Oid85.FinMarket.Analytics.Application.Helpers
                 ultimateSmoothers[^3].Value < ultimateSmoothers[^4].Value;
 
             if (downTrend)
-                return (TrendState.DownTrend, "ТРЕНД ВНИЗ");
+                return (TrendState.DownTrend, KnownTrendStates.DownTrend);
 
             if (upTrend)
-                return (TrendState.UpTrend, "ТРЕНД ВВЕРХ");
+                return (TrendState.UpTrend, KnownTrendStates.UpTrend);
 
-            return (TrendState.NoTrend, "НЕТ ТРЕНДА");
+            return (TrendState.NoTrend, KnownTrendStates.NoTrend);
         }
     }
 }

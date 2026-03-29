@@ -65,7 +65,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 sharesData.Add(dataItem);
             }
 
-            response.Shares = [.. sharesData.OrderByDescending(x => x.InPortfolio)];
+            response.Shares = 
+                [
+                    .. sharesData.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
+                    .. sharesData.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
+                    .. sharesData.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend),
+                    .. sharesData.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
+                    .. sharesData.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
+                    .. sharesData.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend)
+                ];
 
             var indexesData = new List<WeekDeltaData>();
 
