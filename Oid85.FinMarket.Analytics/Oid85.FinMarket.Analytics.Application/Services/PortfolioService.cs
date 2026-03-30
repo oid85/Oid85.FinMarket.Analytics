@@ -56,7 +56,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
         {
             var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
-           
+
+            var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
+                .Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
                 .Where(x => x.InPortfolio)
@@ -139,7 +142,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
                 if (portfolioPosition.Price.HasValue)
+                {
+                    int lot = storageInstruments.Find(x => x.Ticker == portfolioPosition.Ticker)?.Lot ?? 1;
                     portfolioPosition.Size = Convert.ToInt32(Math.Truncate(portfolioPosition.Cost / portfolioPosition.Price.Value));
+                    portfolioPosition.Size = Convert.ToInt32(Math.Truncate(Convert.ToDouble(portfolioPosition.Size) / Convert.ToDouble(lot)) * lot);
+                }
 
                 portfolioPosition.LifeSize = lifePortfolioPositions.Find(x => x.Ticker == portfolioPosition.Ticker)?.Size ?? 0;
             }

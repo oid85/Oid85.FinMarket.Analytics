@@ -107,7 +107,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     LastPrice = x.LastPrice,
                     MaturityDate = x.MaturityDate,
                     Nominal = x.Nominal,
-                    Currency = x.Currency
+                    Currency = x.Currency,
+                    Lot = x.Lot
                 })
                 .ToList();
         }

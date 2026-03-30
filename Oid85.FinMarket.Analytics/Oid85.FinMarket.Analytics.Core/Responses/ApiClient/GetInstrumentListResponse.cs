@@ -56,5 +56,10 @@
         /// Валюта
         /// </summary>
         public string? Currency { get; set; } = null;
+
+        /// <summary>
+        /// Лот
+        /// </summary>
+        public int? Lot { get; set; } = null;
     }
 }
