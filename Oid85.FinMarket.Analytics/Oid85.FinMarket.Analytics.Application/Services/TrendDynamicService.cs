@@ -26,13 +26,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dates = DateUtils.GetDates(startDate, today);
 
-            var response = new GetTrendDynamicResponse();
-
-            response.Dates = dates;
-
-            response.Indexes = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData);
-            response.Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData);
-            response.Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData);            
+            var response = new GetTrendDynamicResponse
+            {
+                Dates = dates,
+                Indexes = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData),
+                Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData),
+                Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData)
+            };
 
             return response;
         }
@@ -49,6 +49,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
+                if (!candleData.ContainsKey(instrument.Ticker)) continue;
+                if (!ultimateSmootherData.ContainsKey(instrument.Ticker)) continue;
+
                 var trendDynamicData = new TrendDynamicData()
                 {
                     Ticker = instrument.Ticker,

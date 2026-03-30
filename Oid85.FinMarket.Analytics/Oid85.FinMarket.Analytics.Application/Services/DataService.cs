@@ -74,7 +74,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<Dictionary<string, List<DateValue<double>>>> GetClosePriceDiagramDataAsync(List<string> tickers)
         {
-            var from = DateOnly.FromDateTime(DateTime.Today.AddMonths(-6));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             var candleData = await GetCandleDataAsync(tickers);
@@ -83,6 +83,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var ticker in tickers)
             {
+                if (!candleData.ContainsKey(ticker)) continue;
+
                 var candles = candleData[ticker].Where(x => x.Date >= from && x.Date <= to);
                 var dateValues = candles.Select(x => new DateValue<double> { Date = x.Date, Value = x.Close}).ToList();
 
@@ -98,7 +100,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             var response = await finMarketStorageServiceApiClient.GetCandleListAsync(
-                new GetCandleListRequest
+                new ()
                 {
                     From = from,
                     To = to,
@@ -166,6 +168,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             foreach (var pair in candleData)
             {
                 string ticker = pair.Key;
+
+                if (!candleData.ContainsKey(ticker)) continue;
+
                 var candles = candleData[ticker];
                 var closePrices = candles.Select(x => x.Close).ToList();
                 var ultimateSmootherValues = GetUltimateSmootherValues(candles);

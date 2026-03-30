@@ -50,20 +50,33 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var closePriceDiagramData = await dataService.GetClosePriceDiagramDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
 
+            var items = new List<GetClosePriceDiagramItemResponse>();
+
             foreach (var instrument in instruments)
             {
                 var forecast = forecasts.Find(x => x.Ticker == instrument.Ticker);
 
-                response.Items.Add(new GetClosePriceDiagramItemResponse()
-                {
-                    Ticker = instrument.Ticker,
-                    Name = instrument.Name,
-                    InPortfolio = instrument.InPortfolio,
-                    Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-6))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value, ConsensusPrice = forecast?.ConsensusPrice, MinTarget = forecast?.MinTarget, MaxTarget = forecast?.MaxTarget })],
-                    TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
-                    Recommendation = forecast?.RecommendationString
-                });
+                items.Add(
+                    new ()
+                    {
+                        Ticker = instrument.Ticker,
+                        Name = instrument.Name,
+                        InPortfolio = instrument.InPortfolio,
+                        Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-6))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value, ConsensusPrice = forecast?.ConsensusPrice, MinTarget = forecast?.MinTarget, MaxTarget = forecast?.MaxTarget })],
+                        TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
+                        Recommendation = forecast?.RecommendationString
+                    });
             }
+
+            response.Items =
+                [
+                    .. items.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
+                    .. items.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
+                    .. items.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend),
+                    .. items.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
+                    .. items.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
+                    .. items.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend)
+                ];
 
             return response;
         }

@@ -3,6 +3,7 @@ using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -37,116 +38,73 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     WeekNumber = x.WeekNumber,
                     WeekStartDay = x.WeekStartDay,
                     WeekEndDay = x.WeekEndDay
-                })]
+                })],
+                Shares = GetWeekDeltaDataList(shares),
+                Indexes = GetWeekDeltaDataList(indexes),
+                Futures = GetWeekDeltaDataList(futures)
             };
-
-            var sharesData = new List<WeekDeltaData>();
-
-            foreach (var share in shares)
-            {
-                List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(share.Ticker, x.WeekStartDay, x.WeekEndDay))];
-
-                var candles = candleData[share.Ticker].Where(x => x.Date >= startDate).ToList();
-                var ultimateSmoothers = ultimateSmootherData[share.Ticker].Where(x => x.Date >= startDate).ToList();
-                double maxPrice = candles.Select(x => x.Close).Max();
-                double lastCandlePrice = candles.Last().Close;
-                double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
-
-                var dataItem = new WeekDeltaData
-                {
-                    Ticker = share.Ticker,
-                    Name = share.Name,
-                    InPortfolio = share.InPortfolio,                    
-                    Items = weekDeltaData,
-                    TrendState = TrendStateHelper.GetTrendState(ultimateSmoothers).Message,
-                    FallingFromMax = Math.Round(fallingFromMax, 2)
-                };
-
-                sharesData.Add(dataItem);
-            }
-
-            response.Shares = 
-                [
-                    .. sharesData.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
-                    .. sharesData.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
-                    .. sharesData.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend),
-                    .. sharesData.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
-                    .. sharesData.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
-                    .. sharesData.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend)
-                ];
-
-            var indexesData = new List<WeekDeltaData>();
-
-            foreach (var index in indexes)
-            {
-                List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(index.Ticker, x.WeekStartDay, x.WeekEndDay))];
-
-                var candles = candleData[index.Ticker].Where(x => x.Date >= startDate).ToList();
-                var ultimateSmoothers = ultimateSmootherData[index.Ticker].Where(x => x.Date >= startDate).ToList();
-                double maxPrice = candles.Select(x => x.Close).Max();
-                double lastCandlePrice = candles.Last().Close;
-                double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
-
-                var dataItem = new WeekDeltaData
-                {
-                    Ticker = index.Ticker,
-                    Name = index.Name,
-                    InPortfolio = index.InPortfolio,
-                    Items = weekDeltaData,
-                    TrendState = TrendStateHelper.GetTrendState(ultimateSmoothers).Message,
-                    FallingFromMax = Math.Round(fallingFromMax, 2)
-                };
-
-                indexesData.Add(dataItem);
-            }
-
-            response.Indexes = [.. indexesData.OrderBy(x => x.Ticker)];
-
-            var futuresData = new List<WeekDeltaData>();
-
-            foreach (var future in futures)
-            {
-                List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(future.Ticker, x.WeekStartDay, x.WeekEndDay))];
-
-                var candles = candleData[future.Ticker].Where(x => x.Date >= startDate).ToList();
-                var ultimateSmoothers = ultimateSmootherData[future.Ticker].Where(x => x.Date >= startDate).ToList();
-                double maxPrice = candles.Select(x => x.Close).Max();
-                double lastCandlePrice = candles.Last().Close;
-                double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
-
-                var dataItem = new WeekDeltaData
-                {
-                    Ticker = future.Ticker,
-                    Name = future.Name,
-                    InPortfolio = future.InPortfolio,
-                    Items = weekDeltaData,
-                    TrendState = TrendStateHelper.GetTrendState(ultimateSmoothers).Message,
-                    FallingFromMax = Math.Round(fallingFromMax, 2)
-                };
-
-                futuresData.Add(dataItem);
-            }
-
-            response.Futures = [.. futuresData.OrderBy(x => x.Ticker)];
 
             return response;
 
+            List<WeekDeltaData> GetWeekDeltaDataList(List<Instrument> instruments)
+            {
+                var weekDeltaDataList = new List<WeekDeltaData>();
+
+                foreach (var instrument in instruments)
+                {
+                    if (!candleData.ContainsKey(instrument.Ticker)) continue;
+                    if (!ultimateSmootherData.ContainsKey(instrument.Ticker)) continue;
+
+                    List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(instrument.Ticker, x.WeekStartDay, x.WeekEndDay))];
+
+                    var candles = candleData[instrument.Ticker].Where(x => x.Date >= startDate).ToList();
+                    var ultimateSmoothers = ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= startDate).ToList();
+                    double maxPrice = candles.Select(x => x.Close).Max();
+                    double lastCandlePrice = candles.Last().Close;
+                    double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
+
+                    weekDeltaDataList.Add(
+                        new()
+                        {
+                            Ticker = instrument.Ticker,
+                            Name = instrument.Name,
+                            InPortfolio = instrument.InPortfolio,
+                            Items = weekDeltaData,
+                            TrendState = TrendStateHelper.GetTrendState(ultimateSmoothers).Message,
+                            FallingFromMax = Math.Round(fallingFromMax, 2)
+                        });
+                }
+
+                return
+                [
+                    .. weekDeltaDataList.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
+                    .. weekDeltaDataList.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
+                    .. weekDeltaDataList.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend),
+                    .. weekDeltaDataList.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
+                    .. weekDeltaDataList.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
+                    .. weekDeltaDataList.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend)
+                ];
+            }
+
             WeekDeltaDataItem GetWeekDeltaDataItem(string ticker, DateOnly weekStartDay, DateOnly weekEndDay)
             {
+                if (!candleData.ContainsKey(ticker))
+                    return new WeekDeltaDataItem { Delta = null };
+
                 var candles = candleData[ticker]?.Where(x => x.Date >= weekStartDay && x.Date <= weekEndDay)?.ToList();
 
                 if (candles is null)
-                    return new WeekDeltaDataItem() { Delta = null };
+                    return new WeekDeltaDataItem { Delta = null };
 
                 if (candles.Count == 0)
-                    return new WeekDeltaDataItem() { Delta = null };
+                    return new WeekDeltaDataItem { Delta = null };
 
                 double firstPrice = candles.First().Close;
                 double lastPrice = candles.Last().Close;
 
                 double delta = (lastPrice - firstPrice) / firstPrice * 100.0;
 
-                return new WeekDeltaDataItem() { Delta = Math.Round(delta, 2), Price = Math.Round(lastPrice, 4) };
+                return new WeekDeltaDataItem { Delta = Math.Round(delta, 2), Price = Math.Round(lastPrice, 4) };
             }
         }
     }
