@@ -144,8 +144,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (portfolioPosition.Price.HasValue)
                 {
                     int lot = storageInstruments.Find(x => x.Ticker == portfolioPosition.Ticker)?.Lot ?? 1;
-                    portfolioPosition.Size = Convert.ToInt32(Math.Truncate(portfolioPosition.Cost / portfolioPosition.Price.Value));
-                    portfolioPosition.Size = Convert.ToInt32(Math.Truncate(Convert.ToDouble(portfolioPosition.Size) / Convert.ToDouble(lot)) * lot);
+                    int size = Convert.ToInt32(Math.Truncate(portfolioPosition.Cost / portfolioPosition.Price.Value));
+                    portfolioPosition.Size = Convert.ToInt32(Math.Truncate(Convert.ToDouble(size) / Convert.ToDouble(lot)) * lot);
                 }
 
                 portfolioPosition.LifeSize = lifePortfolioPositions.Find(x => x.Ticker == portfolioPosition.Ticker)?.Size ?? 0;
