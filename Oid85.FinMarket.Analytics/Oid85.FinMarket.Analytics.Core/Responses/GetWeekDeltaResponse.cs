@@ -16,6 +16,7 @@
         public bool InPortfolio { get; set; }
         public string TrendState { get; set; } = string.Empty;
         public double? FallingFromMax { get; set; } = null;
+        public double? DividendYield { get; set; }
     }
 
     public class WeekDeltaHeaderItem

@@ -1,5 +1,6 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
+using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 
@@ -92,6 +93,39 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             return data;
+        }
+
+        /// <inheritdoc />
+        public async Task<Dictionary<string, Dividend>> GetDividendDataAsync(List<string> tickers)
+        {
+            string period = DateTime.Now.Year.ToString();
+
+            var candleData = await GetCandleDataAsync(tickers);
+
+            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result
+                .FundamentalParameters
+                .Where(x => x.Type == KnownFundamentalParameterTypes.Dividend)
+                .Where(x => x.Period == period)
+                .ToList();
+
+            var result = new Dictionary<string, Dividend>();
+
+            foreach (var ticker in tickers)
+            {
+                if (!candleData.ContainsKey(ticker)) continue;
+
+                var lastClosePrice = candleData[ticker].Last().Close;
+                var dividendFundamentalParameter = fundamentalParameters.Find(x => x.Ticker == ticker);
+
+                if (dividendFundamentalParameter is null) continue;
+
+                double yield = dividendFundamentalParameter.Value / lastClosePrice * 100.0;
+                var dividend = new Dividend { Ticker = ticker, Value = dividendFundamentalParameter.Value, Yield = yield };
+
+                result.Add(ticker, dividend);
+            }
+
+            return result;
         }
 
         private async Task<List<Candle>> GetCandleByTickerAsync(string ticker)

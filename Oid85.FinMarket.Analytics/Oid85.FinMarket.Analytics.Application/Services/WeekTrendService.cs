@@ -28,6 +28,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
+            var dividendData = await dataService.GetDividendDataAsync(tickers);
             var weeks = DateUtils.GetWeeks(startDate, today);
 
             var response = new GetWeekDeltaResponse
@@ -71,7 +72,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             InPortfolio = instrument.InPortfolio,
                             Items = weekDeltaData,
                             TrendState = TrendStateHelper.GetTrendState(ultimateSmoothers).Message,
-                            FallingFromMax = Math.Round(fallingFromMax, 2)
+                            FallingFromMax = Math.Round(fallingFromMax, 2),
+                            DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? Math.Round(value.Yield.Value, 1) : null
                         });
                 }
 

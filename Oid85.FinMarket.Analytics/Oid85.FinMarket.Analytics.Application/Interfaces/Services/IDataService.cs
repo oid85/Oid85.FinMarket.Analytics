@@ -26,5 +26,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить данные по купонам
         /// </summary>
         Task<Dictionary<string, List<BondCoupon>>> GetBondCouponsAsync(List<string> tickers);
+
+        /// <summary>
+        /// Получить данные по дивидендам
+        /// </summary>
+        Task<Dictionary<string, Dividend>> GetDividendDataAsync(List<string> tickers);
     }
 }

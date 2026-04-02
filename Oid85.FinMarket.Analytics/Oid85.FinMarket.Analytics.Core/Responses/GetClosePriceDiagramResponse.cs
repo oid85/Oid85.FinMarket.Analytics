@@ -13,6 +13,7 @@
         public bool InPortfolio { get; set; }
         public string TrendState { get; set; } = string.Empty;
         public string? Recommendation { get; set; }
+        public double? DividendYield { get; set; }
     }
 
     public class GetClosePriceDiagramDateValueResponse

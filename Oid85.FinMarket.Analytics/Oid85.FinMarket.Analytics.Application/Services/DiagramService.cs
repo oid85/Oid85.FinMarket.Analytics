@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -49,6 +50,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var closePriceDiagramData = await dataService.GetClosePriceDiagramDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
+            var dividendData = await dataService.GetDividendDataAsync(tickers);
 
             var items = new List<GetClosePriceDiagramItemResponse>();
 
@@ -64,7 +66,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         InPortfolio = instrument.InPortfolio,
                         Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-6))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value, ConsensusPrice = forecast?.ConsensusPrice, MinTarget = forecast?.MinTarget, MaxTarget = forecast?.MaxTarget })],
                         TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
-                        Recommendation = forecast?.RecommendationString
+                        Recommendation = forecast?.RecommendationString,
+                        DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? Math.Round(value.Yield.Value, 1) : null
                     });
             }
 

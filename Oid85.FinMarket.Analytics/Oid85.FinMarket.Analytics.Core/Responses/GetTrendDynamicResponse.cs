@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿using Oid85.FinMarket.Analytics.Core.Models;
+
+namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class GetTrendDynamicResponse
     {
@@ -14,6 +16,7 @@
         public string Name { get; set; }
         public List<TrendDynamicDataItem> Items { get; set; }
         public bool InPortfolio { get; set; }
+        public double? DividendYield { get; set; }
     }
 
     public class TrendDynamicDataItem
