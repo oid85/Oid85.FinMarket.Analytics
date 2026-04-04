@@ -21,8 +21,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<EditPortfolioPositionResponse> EditPortfolioPositionAsync(EditPortfolioPositionRequest request)
         {
             var instrument = await instrumentRepository.GetInstrumentByTickerAsync(request.Ticker);
-            instrument!.DividendCoefficient = request.DividendCoefficient;
-            instrument.ManualCoefficient = request.ManualCoefficient;
+            instrument!.ManualCoefficient = request.ManualCoefficient;
             await instrumentRepository.EditInstrumentAsync(instrument);
 
             var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
@@ -68,7 +67,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
-                if (instrument.DividendCoefficient == 0 || instrument.ManualCoefficient == 0)
+                if (instrument.ManualCoefficient == 0)
                     await EditPortfolioPositionAsync(new EditPortfolioPositionRequest { Ticker = instrument.Ticker, DividendCoefficient = 1, ManualCoefficient = 1 });
             }
 
@@ -82,6 +81,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var candleData = await dataService.GetCandleDataAsync(tickers);
+            var dividendData = await dataService.GetDividendDataAsync(tickers);
 
             var portfolioPositions = new List<GetPortfolioPositionListItemResponse>();
 
@@ -91,10 +91,27 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
-                    DividendCoefficient = instrument.DividendCoefficient,
                     ManualCoefficient = instrument.ManualCoefficient,
                     Price = candleData[instrument.Ticker].Last().Close
                 };
+
+                double dividendCoefficient = 1.0;
+
+                if (dividendData.ContainsKey(instrument.Ticker))
+                {
+                    const double loLimitCoefficient = 1.0;
+                    const double hiLimitCoefficient = 2.0;
+                    const double loLimitYield = 10.0;
+                    const double hiLimitYield = 20.0;
+
+                    double yield = dividendData[instrument.Ticker].Yield!.Value;
+
+                    if (yield >= hiLimitYield) dividendCoefficient = hiLimitCoefficient;
+                    else if (yield <= loLimitYield) dividendCoefficient = loLimitCoefficient;
+                    else dividendCoefficient = (yield - loLimitYield) * (hiLimitCoefficient - loLimitCoefficient) / (hiLimitYield - loLimitYield) + loLimitCoefficient;
+                }
+
+                portfolioPosition.DividendCoefficient = Math.Round(dividendCoefficient, 2);
 
                 var trendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]);
 
@@ -102,25 +119,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     case TrendState.UpTrend:
                         portfolioPosition.TrendCoefficient = 1.0;
-                        portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
-                        portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
                         portfolioPosition.Message = trendState.Message;
                         break;
 
                     case TrendState.NoTrend:
                         portfolioPosition.TrendCoefficient = 0.7;
-                        portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
-                        portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
                         portfolioPosition.Message = trendState.Message;
                         break;
 
                     case TrendState.DownTrend:
-                        portfolioPosition.TrendCoefficient = instrument.DividendCoefficient > 1.0 ? 0.7 : 0.0;
-                        portfolioPosition.DividendCoefficient = instrument.DividendCoefficient;
-                        portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
+                        portfolioPosition.TrendCoefficient = dividendCoefficient > 1.0 ? 0.7 : 0.0;
                         portfolioPosition.Message = trendState.Message;
                         break;
                 }
+                
+                portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
 
                 portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient, 2);
 

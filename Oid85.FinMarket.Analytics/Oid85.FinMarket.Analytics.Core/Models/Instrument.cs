@@ -36,11 +36,6 @@
         public string Type { get; set; }
 
         /// <summary>
-        /// Дивидендный коэффициент
-        /// </summary>
-        public double DividendCoefficient { get; set; }
-
-        /// <summary>
         /// Ручной коэффициент
         /// </summary>
         public double ManualCoefficient { get; set; }

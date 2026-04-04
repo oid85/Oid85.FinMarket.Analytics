@@ -14,7 +14,6 @@
         public bool InPortfolio { get; set; }
         public string Type { get; set; }
         public double BenchmarkChange { get; set; }
-        public double DividendCoefficient { get; set; }
         public double ManualCoefficient { get; set; }
     }
 }

@@ -37,7 +37,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Name = instrument.Name,
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
-                    DividendCoefficient = instrument.DividendCoefficient,
                     ManualCoefficient = instrument.ManualCoefficient,
                     Type = instrument.Type,
                     BenchmarkChange = Math.Round(GetIncrement(instrument.Ticker) - benchmarkIncrement, 2)
