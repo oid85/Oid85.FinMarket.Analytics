@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Oid85.FinMarket.Analytics.Common.Utils;
@@ -18,6 +19,20 @@ public static class StringUtils
         var bytes = Encoding.UTF8.GetBytes(input);
         var hashBytes = MD5.HashData(bytes);
         var result = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+        return result;
+    }
+
+    public static double ToDouble(string input)
+    {
+        string separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+        input = input.Trim();
+        input = input.Replace(" ", "");
+        input = input.Replace(",", separator);
+        input = input.Replace(".", separator);
+
+        var result = Convert.ToDouble(input);
 
         return result;
     }
