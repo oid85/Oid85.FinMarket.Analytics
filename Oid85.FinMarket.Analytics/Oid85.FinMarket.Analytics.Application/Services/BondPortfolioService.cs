@@ -57,17 +57,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Bond).OrderBy(x => x.Ticker).ToList();
 
-            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 0 })).Instruments
+            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Bond).Where(x => x.InPortfolio).OrderBy(x => x.Ticker).ToList();
-
-            foreach (var instrument in instruments)
-            {
-                if (instrument.ManualCoefficient == 0)
-                    await EditBondPortfolioPositionAsync(new EditBondPortfolioPositionRequest { Ticker = instrument.Ticker, ManualCoefficient = 1 });
-            }
-
-            instruments = [.. (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 0 })).Instruments
-                .Where(x => x.Type == KnownInstrumentTypes.Bond).Where(x => x.InPortfolio).OrderBy(x => x.Ticker)];
 
             var couponDictionary = await dataService.GetBondCouponsAsync([.. instruments.Select(x => x.Ticker)]);
 

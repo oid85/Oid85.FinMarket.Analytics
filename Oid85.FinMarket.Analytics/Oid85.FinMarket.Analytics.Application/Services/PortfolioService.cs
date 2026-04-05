@@ -59,7 +59,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
 
-            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
+            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
@@ -71,7 +71,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     await EditPortfolioPositionAsync(new EditPortfolioPositionRequest { Ticker = instrument.Ticker, DividendCoefficient = 1, ManualCoefficient = 1 });
             }
 
-            instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
+            instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)

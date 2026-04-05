@@ -29,7 +29,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
-            var analyticInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new GetAnalyticInstrumentListRequest { LastDaysCount = 50 })).Instruments;
+            var analyticInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments;
 
             var from = DateOnly.FromDateTime(DateTime.Today);
             var to = DateOnly.FromDateTime(DateTime.Today.AddYears(1));

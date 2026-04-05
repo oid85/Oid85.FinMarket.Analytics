@@ -4,6 +4,7 @@ using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -66,9 +67,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             List<string> periods = ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026"];
 
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
-            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
             var tickers = instruments.Select(x => x.Ticker).ToList();
-            
+            var benchmarkChangeData = await dataService.GetBenchmarkChangeAsync(tickers);
+
             var prices = new List<Dictionary<string, double?>>();
 
             foreach (var period in periods)
@@ -90,7 +92,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Name = instrument.Name,
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
-                    BenchmarkChange = instrument.BenchmarkChange,
+                    BenchmarkChange = benchmarkChangeData.TryGetValue(instrument.Ticker, out double value) ? Math.Round(value, 2) : 0.0,
                     Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty)
                 };
                 

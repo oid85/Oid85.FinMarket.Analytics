@@ -13,7 +13,6 @@
         public bool IsSelected { get; set; }
         public bool InPortfolio { get; set; }
         public string Type { get; set; }
-        public double BenchmarkChange { get; set; }
         public double ManualCoefficient { get; set; }
     }
 }

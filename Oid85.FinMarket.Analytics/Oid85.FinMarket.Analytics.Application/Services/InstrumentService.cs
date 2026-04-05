@@ -19,13 +19,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetAnalyticInstrumentListResponse> GetAnalyticInstrumentListAsync(GetAnalyticInstrumentListRequest request)
         {
             var instruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
-            var tickers = instruments!.Select(x => x.Ticker).ToList();
-            var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-
-            var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
-            var today = DateOnly.FromDateTime(DateTime.Today);
-
-            var benchmarkIncrement = GetIncrement(KnownIndexTickers.MCFTR);
 
             var items = new List<GetAnalyticInstrumentListItemResponse>();
 
@@ -38,34 +31,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
                     ManualCoefficient = instrument.ManualCoefficient,
-                    Type = instrument.Type,
-                    BenchmarkChange = Math.Round(GetIncrement(instrument.Ticker) - benchmarkIncrement, 2)
+                    Type = instrument.Type
                 });
 
             var response = new GetAnalyticInstrumentListResponse()
             {
-                Instruments = [.. items.OrderByDescending(x => x.BenchmarkChange)]
+                Instruments = [.. items.OrderBy(x => x.Ticker)]
             };
 
             return response;
-
-            // Изменение меджу первым и последним значением в процентах (приращение)
-            double GetIncrement(string ticker)
-            {
-                if (ultimateSmootherData.TryGetValue(ticker, out List<DateValue<double>>? dateValues))
-                {
-                    var filteredDateValues = dateValues.Where(x => x.Date >= startDate && x.Date <= today).ToList();
-
-                    if (filteredDateValues.Count == 0)
-                        return 0.0;
-
-                    var result = (filteredDateValues.Last().Value - filteredDateValues.First().Value) / filteredDateValues.First().Value * 100.0;
-
-                    return Math.Round(result, 2);
-                }
-
-                return 0.0;
-            }
         }
 
         /// <inheritdoc />
@@ -126,7 +100,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         {
                             Ticker = storageInstrument.Ticker,
                             Name = storageInstrument.Name,
-                            Type = storageInstrument.Type
+                            Type = storageInstrument.Type,
+                            ManualCoefficient = 1
                         });
 
             // Удаляем неактуальные

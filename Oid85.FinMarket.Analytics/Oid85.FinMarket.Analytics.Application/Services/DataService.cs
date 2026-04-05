@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using System.Diagnostics.Metrics;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Models;
@@ -126,6 +127,42 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             return result;
+        }
+
+        /// <inheritdoc />
+        public async Task<Dictionary<string, double>> GetBenchmarkChangeAsync(List<string> tickers)
+        {
+            const int lastDaysCount = 90; // Считаем изменение к бенчмарку за последние 90 дней
+            var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * lastDaysCount));
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var ultimateSmootherData = await GetUltimateSmootherDataAsync(tickers);
+
+            var benchmarkIncrement = GetIncrement(KnownIndexTickers.MCFTR);
+
+            var result = new Dictionary<string, double>();
+
+            foreach (var ticker in tickers)
+                result.Add(ticker, Math.Round(GetIncrement(ticker) - benchmarkIncrement, 2));
+
+            return result;
+
+            // Изменение меджу первым и последним значением в процентах (приращение)
+            double GetIncrement(string ticker)
+            {
+                if (ultimateSmootherData.TryGetValue(ticker, out List<DateValue<double>>? dateValues))
+                {
+                    var filteredDateValues = dateValues.Where(x => x.Date >= startDate && x.Date <= today).ToList();
+                    
+                    if (filteredDateValues.Count == 0)
+                        return 0.0;
+                    
+                    var result = (filteredDateValues.Last().Value - filteredDateValues.First().Value) / filteredDateValues.First().Value * 100.0;
+                    
+                    return Math.Round(result, 2);
+                }
+
+                return 0.0;
+            }
         }
 
         private async Task<List<Candle>> GetCandleByTickerAsync(string ticker)

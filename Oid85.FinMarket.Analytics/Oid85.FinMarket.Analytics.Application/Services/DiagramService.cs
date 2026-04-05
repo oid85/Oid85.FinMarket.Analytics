@@ -16,7 +16,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     {
         public async Task<GetClosePriceDiagramResponse> GetClosePriceDiagramAsync(GetClosePriceDiagramRequest request)
         {                        
-            var allInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new() { LastDaysCount = 90 })).Instruments
+            var allInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
                 .ToList();
 
             List<string> indexTickers = [ KnownIndexTickers.IMOEX, KnownIndexTickers.MCFTR, KnownIndexTickers.RGBI, KnownIndexTickers.RVI ];
