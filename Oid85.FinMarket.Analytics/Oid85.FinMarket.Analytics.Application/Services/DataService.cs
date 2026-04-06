@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Metrics;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Models;
@@ -10,6 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
     public class DataService(
+        IParameterRepository parameterRepository,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IDataService
     {
@@ -100,14 +102,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<Dictionary<string, Dividend>> GetDividendDataAsync(List<string> tickers)
         {
-            string period = DateTime.Now.Year.ToString();
-
             var candleData = await GetCandleDataAsync(tickers);
 
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result
                 .FundamentalParameters
-                .Where(x => x.Type == KnownFundamentalParameterTypes.Dividend)
-                .Where(x => x.Period == period)
+                .Where(x => x.Type == KnownFundamentalParameterTypes.Dividend)                
                 .ToList();
 
             var result = new Dictionary<string, Dividend>();
@@ -117,7 +116,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (!candleData.ContainsKey(ticker)) continue;
 
                 var lastClosePrice = candleData[ticker].Last().Close;
-                var dividendFundamentalParameter = fundamentalParameters.Find(x => x.Ticker == ticker);
+
+                var dividendFundamentalParameter = fundamentalParameters.Where(x => x.Ticker == ticker).OrderBy(x => x.Period).LastOrDefault();
 
                 if (dividendFundamentalParameter is null) continue;
 
@@ -169,7 +169,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<Dictionary<string, FundamentalScore>> GetFundamentalScoreDataAsync(List<string> tickers)
         {
-            List<string> periods = ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026"];
+            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
             var dividendData = await GetDividendDataAsync(tickers);
 
@@ -183,6 +183,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var score = new FundamentalScore();
 
                 CheckPe();
+                CheckEv();
                 CheckPbv();
                 CheckDividendYield();
                 CheckIsDividendAristokrat();
@@ -198,10 +199,25 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     var values = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Pe);
 
                     if (values.Count > 0)
-                        if (values[^1] <= 3.0)
+                        if (values[^1] <= 5.0)
                         {
                             count++;
                             score.PeOk = true;
+                        }
+
+                    countCriteria++;
+                }
+
+                void CheckEv()
+                {
+                    var ev = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Ev);
+                    var ebitda = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Ebitda);
+
+                    if (ev.Count > 0 && ebitda.Count > 0)
+                        if (ev[^1] / ebitda[^1] <= 3.5)
+                        {
+                            count++;
+                            score.EvOk = true;
                         }
 
                     countCriteria++;
@@ -270,7 +286,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         if (netDebt[^1] / ebitda[^1] <= 1.5)
                         {
                             count++;
-                            score.NetProfitOk = true;
+                            score.NetDebtOk = true;
                         }
 
                     countCriteria++;

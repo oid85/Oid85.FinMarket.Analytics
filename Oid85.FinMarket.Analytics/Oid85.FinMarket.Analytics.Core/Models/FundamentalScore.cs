@@ -3,11 +3,12 @@
     public class FundamentalScore
     {
         public bool PeOk { get; set; } = false;
+        public bool EvOk { get; set; } = false;
         public bool PbvOk { get; set; } = false;
         public bool DividendYieldOk { get; set; } = false;
         public bool IsDividendAristocrat { get; set; } = false;
         public bool NetProfitOk { get; set; } = false;
         public bool NetDebtOk{ get; set; } = false;
-        public double ScoreValue { get; set; } = 0.0;
+        public double ScoreValue { get; set; } = 0.0;        
     }
 }
