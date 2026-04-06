@@ -35,6 +35,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Получить данные по изменению относительно индекса полной доходности MCFTR
         /// </summary>
-        Task<Dictionary<string, double>> GetBenchmarkChangeAsync(List<string> tickers);
+        Task<Dictionary<string, double>> GetBenchmarkChangeDataAsync(List<string> tickers);
+
+        /// <summary>
+        /// Получить рейтинг по фундаментальным данным
+        /// </summary>
+        Task<Dictionary<string, FundamentalScore>> GetFundamentalScoreDataAsync(List<string> tickers);
     }
 }

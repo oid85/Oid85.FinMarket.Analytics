@@ -69,7 +69,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
             var tickers = instruments.Select(x => x.Ticker).ToList();
-            var benchmarkChangeData = await dataService.GetBenchmarkChangeAsync(tickers);
+            var benchmarkChangeData = await dataService.GetBenchmarkChangeDataAsync(tickers);
+            var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
 
             var prices = new List<Dictionary<string, double?>>();
 
@@ -117,12 +118,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     fundamentalParameterItem.DeltaMinMax.Add(await GetDeltaMinMaxAsync(instrument.Ticker, int.Parse(periods[i])));
                 }
 
-                fundamentalParameterItem.Score = GetScore(fundamentalParameterItem);
+                fundamentalParameterItem.Score = scoreData[instrument.Ticker];
 
                 fundamentalParameterItems.Add(fundamentalParameterItem);
             }
 
-            var response = new GetAnalyticFundamentalParameterListResponse { FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Score)] };
+            var response = new GetAnalyticFundamentalParameterListResponse { FundamentalParameters = [.. fundamentalParameterItems.OrderByDescending(x => x.Score?.ScoreValue)] };
 
             int number = 1;
 
@@ -135,11 +136,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetAnalyticFundamentalParameterBubbleDiagramResponse> GetAnalyticFundamentalParameterBubbleDiagramAsync(GetAnalyticFundamentalParameterBubbleDiagramRequest request)
         {
-            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
+            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;            
 
             var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
 
-            var tickers = instruments.Select(x => x.Ticker).ToList();
+            var tickers = instruments.Select(x => x.Ticker).ToList();            
 
             var response = new GetAnalyticFundamentalParameterBubbleDiagramResponse();
 
@@ -366,76 +367,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return maxCandle.Date < minCandle.Date
                 ? -1 * Math.Abs(Math.Round((max - min) / max * 100.0, 2)) // Падение от максимума
                 : Math.Abs(Math.Round((max - min) / min * 100.0, 2)); // Рост от минимума
-        }
-
-        private static double? GetScore(GetAnalyticFundamentalParameterListItemResponse parameter)
-        {
-            double score = 0.0;
-
-            // P / E
-            if (parameter.Pe[^5] is not null && parameter.Pe[^5] > 0 && parameter.Pe[^5] <= 3.0) score++;
-            if (parameter.Pe[^4] is not null && parameter.Pe[^4] > 0 && parameter.Pe[^4] <= 3.0) score++;
-            if (parameter.Pe[^3] is not null && parameter.Pe[^3] > 0 && parameter.Pe[^3] <= 3.0) score++;
-            if (parameter.Pe[^2] is not null && parameter.Pe[^2] > 0 && parameter.Pe[^2] <= 3.0) score++;
-            if (parameter.Pe[^1] is not null && parameter.Pe[^1] > 0 && parameter.Pe[^1] <= 3.0) score++;
-
-            // P / BV
-            if (parameter.Pbv[^5] is not null && parameter.Pbv[^5] > 0 && parameter.Pbv[^5] <= 1.0) score++;
-            if (parameter.Pbv[^4] is not null && parameter.Pbv[^4] > 0 && parameter.Pbv[^4] <= 1.0) score++;
-            if (parameter.Pbv[^3] is not null && parameter.Pbv[^3] > 0 && parameter.Pbv[^3] <= 1.0) score++;
-            if (parameter.Pbv[^2] is not null && parameter.Pbv[^2] > 0 && parameter.Pbv[^2] <= 1.0) score++;
-            if (parameter.Pbv[^1] is not null && parameter.Pbv[^1] > 0 && parameter.Pbv[^1] <= 1.0) score++;
-
-            // EV / EBITDA
-            if (parameter.EvEbitda[^5] is not null && parameter.EvEbitda[^5] <= 3.0) score++;
-            if (parameter.EvEbitda[^4] is not null && parameter.EvEbitda[^4] <= 3.0) score++;
-            if (parameter.EvEbitda[^3] is not null && parameter.EvEbitda[^3] <= 3.0) score++;
-            if (parameter.EvEbitda[^2] is not null && parameter.EvEbitda[^2] <= 3.0) score++;
-            if (parameter.EvEbitda[^1] is not null && parameter.EvEbitda[^1] <= 3.0) score++;
-
-            // Чистый долг / EBITDA
-            if (parameter.NetDebtEbitda[^5] is not null && parameter.NetDebtEbitda[^5] <= 1.5) score++;
-            if (parameter.NetDebtEbitda[^4] is not null && parameter.NetDebtEbitda[^4] <= 1.5) score++;
-            if (parameter.NetDebtEbitda[^3] is not null && parameter.NetDebtEbitda[^3] <= 1.5) score++;
-            if (parameter.NetDebtEbitda[^2] is not null && parameter.NetDebtEbitda[^2] <= 1.5) score++;
-            if (parameter.NetDebtEbitda[^1] is not null && parameter.NetDebtEbitda[^1] <= 1.5) score++;
-
-            // Выручка
-            if (parameter.Revenue[^5] is not null && parameter.Revenue[^5] > 0) score++;
-            if (parameter.Revenue[^4] is not null && parameter.Revenue[^4] > 0) score++;
-            if (parameter.Revenue[^3] is not null && parameter.Revenue[^3] > 0) score++;
-            if (parameter.Revenue[^2] is not null && parameter.Revenue[^2] > 0) score++;
-            if (parameter.Revenue[^1] is not null && parameter.Revenue[^1] > 0) score++;
-
-            // Чистая прибыль
-            if (parameter.NetProfit[^5] is not null && parameter.NetProfit[^5] > 0) score++;
-            if (parameter.NetProfit[^4] is not null && parameter.NetProfit[^4] > 0) score++;
-            if (parameter.NetProfit[^3] is not null && parameter.NetProfit[^3] > 0) score++;
-            if (parameter.NetProfit[^2] is not null && parameter.NetProfit[^2] > 0) score++;
-            if (parameter.NetProfit[^1] is not null && parameter.NetProfit[^1] > 0) score++;
-
-            // Дивидендная доходность
-            if (parameter.DividendYield[^5] is not null && parameter.DividendYield[^5] > 0) score++;
-            if (parameter.DividendYield[^4] is not null && parameter.DividendYield[^4] > 0) score++;
-            if (parameter.DividendYield[^3] is not null && parameter.DividendYield[^3] > 0) score++;
-            if (parameter.DividendYield[^2] is not null && parameter.DividendYield[^2] > 0) score++;
-            if (parameter.DividendYield[^1] is not null && parameter.DividendYield[^1] > 0) score++;
-
-            // ROA
-            if (parameter.Roa[^5] is not null && parameter.Roa[^5] > 15) score++;
-            if (parameter.Roa[^4] is not null && parameter.Roa[^4] > 15) score++;
-            if (parameter.Roa[^3] is not null && parameter.Roa[^3] > 15) score++;
-            if (parameter.Roa[^2] is not null && parameter.Roa[^2] > 15) score++;
-            if (parameter.Roa[^1] is not null && parameter.Roa[^1] > 15) score++;
-
-            // EBITDA / Revenue
-            if (parameter.EbitdaRevenue[^5] is not null && parameter.EbitdaRevenue[^5] > 0.15) score++;
-            if (parameter.EbitdaRevenue[^4] is not null && parameter.EbitdaRevenue[^4] > 0.15) score++;
-            if (parameter.EbitdaRevenue[^3] is not null && parameter.EbitdaRevenue[^3] > 0.15) score++;
-            if (parameter.EbitdaRevenue[^2] is not null && parameter.EbitdaRevenue[^2] > 0.15) score++;
-            if (parameter.EbitdaRevenue[^1] is not null && parameter.EbitdaRevenue[^1] > 0.15) score++;
-
-            return score;
         }
     }
 }

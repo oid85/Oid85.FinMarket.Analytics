@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿using Oid85.FinMarket.Analytics.Core.Models;
+
+namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class GetWeekDeltaResponse
     {
@@ -17,6 +19,7 @@
         public string TrendState { get; set; } = string.Empty;
         public double? FallingFromMax { get; set; } = null;
         public double? DividendYield { get; set; }
+        public FundamentalScore? Score { get; set; }
     }
 
     public class WeekDeltaHeaderItem

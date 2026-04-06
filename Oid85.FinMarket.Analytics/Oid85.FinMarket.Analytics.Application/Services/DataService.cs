@@ -4,6 +4,7 @@ using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
@@ -130,7 +131,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<Dictionary<string, double>> GetBenchmarkChangeAsync(List<string> tickers)
+        public async Task<Dictionary<string, double>> GetBenchmarkChangeDataAsync(List<string> tickers)
         {
             const int lastDaysCount = 90; // Считаем изменение к бенчмарку за последние 90 дней
             var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * lastDaysCount));
@@ -163,6 +164,123 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 return 0.0;
             }
+        }
+
+        /// <inheritdoc />
+        public async Task<Dictionary<string, FundamentalScore>> GetFundamentalScoreDataAsync(List<string> tickers)
+        {
+            List<string> periods = ["2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026"];
+            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
+            var dividendData = await GetDividendDataAsync(tickers);
+
+            var result = new Dictionary<string, FundamentalScore>();
+
+            foreach (var ticker in tickers)
+            {
+                int countCriteria = 0;
+                int count = 0;
+
+                var score = new FundamentalScore();
+
+                CheckPe();
+                CheckPbv();
+                CheckDividendYield();
+                CheckIsDividendAristokrat();
+                CheckNetProfit();
+                CheckNetDebt();
+
+                score.ScoreValue = Math.Round(Convert.ToDouble(count) / Convert.ToDouble(countCriteria), 2);
+
+                result.Add(ticker, score);
+
+                void CheckPe()
+                {
+                    var values = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Pe);
+
+                    if (values.Count > 0)
+                        if (values[^1] <= 3.0)
+                        {
+                            count++;
+                            score.PeOk = true;
+                        }
+
+                    countCriteria++;
+                }
+
+                void CheckPbv()
+                {
+                    var values = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Pbv);
+
+                    if (values.Count > 0)
+                        if (values[^1] <= 1.0)
+                        {
+                            count++;
+                            score.PbvOk = true;
+                        }
+
+                    countCriteria++;
+                }
+
+                void CheckDividendYield()
+                {
+                    if (dividendData.ContainsKey(ticker))
+                        if (dividendData[ticker].Yield >= 10.0)
+                        {
+                            count++;
+                            score.DividendYieldOk = true;
+                        }
+
+                    countCriteria++;
+                }
+
+                void CheckIsDividendAristokrat()
+                {
+                    var values = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Dividend);
+
+                    if (values.Count > 5)
+                        if (values[^1] > 0.0 && values[^2] > 0.0 && values[^3] > 0.0 && values[^4] > 0.0 && values[^5] > 0.0)
+                        {
+                            count++;
+                            score.IsDividendAristocrat = true;
+                        }
+
+                    countCriteria++;
+                }
+
+                void CheckNetProfit()
+                {
+                    var values = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.NetProfit);
+
+                    if (values.Count > 2)
+                        if (values[^1] > 0.0 && values[^2] > 0.0 && values[^1] > values[^2])
+                        {
+                            count++;
+                            score.NetProfitOk = true;
+                        }
+
+                    countCriteria++;
+                }
+
+                void CheckNetDebt()
+                {
+                    var netDebt = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.NetDebt);
+                    var ebitda = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Ebitda);
+
+                    if (netDebt.Count > 0 && ebitda.Count > 0)
+                        if (netDebt[^1] / ebitda[^1] <= 1.5)
+                        {
+                            count++;
+                            score.NetProfitOk = true;
+                        }
+
+                    countCriteria++;
+                }
+            }
+            
+            return result;
+
+            List<double?> GetFundamentalParameterValues(string ticker, string type) =>
+                [.. periods.Select(p => fundamentalParameters.Find(fp => fp.Ticker == ticker && fp.Period == p && fp.Type == type)?.Value).Where(x => x.HasValue)];
         }
 
         private async Task<List<Candle>> GetCandleByTickerAsync(string ticker)

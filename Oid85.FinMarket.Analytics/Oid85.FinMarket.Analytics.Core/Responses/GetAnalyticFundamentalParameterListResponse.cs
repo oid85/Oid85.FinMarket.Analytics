@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿using Oid85.FinMarket.Analytics.Core.Models;
+
+namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class GetAnalyticFundamentalParameterListResponse
     {
@@ -12,7 +14,7 @@
         public string Name { get; set; } = string.Empty;
         public bool IsSelected { get; set; }
         public bool InPortfolio { get; set; }
-        public double? Score { get; set; } = null;
+        public FundamentalScore? Score { get; set; } = null;
         public double? Moex { get; set; } = null;
         public double BenchmarkChange { get; set; }
         public List<string> Periods { get; set; } = [];
