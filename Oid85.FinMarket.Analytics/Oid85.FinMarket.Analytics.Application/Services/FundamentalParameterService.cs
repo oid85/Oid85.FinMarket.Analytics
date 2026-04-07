@@ -71,6 +71,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments.Select(x => x.Ticker).ToList();
             var benchmarkChangeData = await dataService.GetBenchmarkChangeDataAsync(tickers);
             var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
+            var forecastData = await dataService.GetForecastDataAsync();
 
             var prices = new List<Dictionary<string, double?>>();
 
@@ -94,6 +95,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
                     BenchmarkChange = benchmarkChangeData.TryGetValue(instrument.Ticker, out double value) ? Math.Round(value, 2) : 0.0,
+                    Forecast = forecastData.TryGetValue(instrument.Ticker, out Forecast? forecast) ? forecast : null,
                     Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty)
                 };
                 
@@ -118,7 +120,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     fundamentalParameterItem.DeltaMinMax.Add(await GetDeltaMinMaxAsync(instrument.Ticker, int.Parse(periods[i])));
                 }
 
-                fundamentalParameterItem.Score = scoreData[instrument.Ticker];
+                fundamentalParameterItem.Score = scoreData.TryGetValue(instrument.Ticker, out FundamentalScore? score) ? score : null;
 
                 fundamentalParameterItems.Add(fundamentalParameterItem);
             }

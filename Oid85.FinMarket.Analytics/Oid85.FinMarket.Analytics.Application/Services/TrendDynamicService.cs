@@ -26,14 +26,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dividendData = await dataService.GetDividendDataAsync(tickers);
             var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
+            var forecastData = await dataService.GetForecastDataAsync();
             var dates = DateUtils.GetDates(startDate, today);
 
             var response = new GetTrendDynamicResponse
             {
                 Dates = dates,
-                Indexes = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData, dividendData, scoreData),
-                Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData, dividendData, scoreData),
-                Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData, dividendData, scoreData)
+                Indexes = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData),
+                Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData),
+                Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData)
             };
 
             return response;
@@ -47,7 +48,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             Dictionary<string, List<DateValue<double>>> ultimateSmootherData,
             Dictionary<string, List<Candle>> candleData,
             Dictionary<string, Dividend> dividendData,
-            Dictionary<string, FundamentalScore> scoreData)
+            Dictionary<string, FundamentalScore> scoreData,
+            Dictionary<string, Forecast> forecastData)
         {
             var data = new List<TrendDynamicData>();
 
@@ -61,8 +63,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     InPortfolio = instrument.InPortfolio,
-                    DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? Math.Round(value.Yield.Value, 1) : null,
+                    DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? Math.Round(value.Yield!.Value, 1) : null,
                     Score = scoreData.TryGetValue(instrument.Ticker, out FundamentalScore? score) ? score : null,
+                    Forecast = forecastData.TryGetValue(instrument.Ticker, out Forecast? forecast) ? forecast : null,
                     Items = []
                 };
 

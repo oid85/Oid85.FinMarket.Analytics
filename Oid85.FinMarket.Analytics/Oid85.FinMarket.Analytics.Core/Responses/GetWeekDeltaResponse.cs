@@ -15,23 +15,24 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public string Ticker { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public List<WeekDeltaDataItem> Items { get; set; } = [];
-        public bool InPortfolio { get; set; }
+        public bool InPortfolio { get; set; } = false;
         public string TrendState { get; set; } = string.Empty;
         public double? FallingFromMax { get; set; } = null;
-        public double? DividendYield { get; set; }
-        public FundamentalScore? Score { get; set; }
+        public double? DividendYield { get; set; } = null;
+        public FundamentalScore? Score { get; set; } = null;
+        public Forecast? Forecast { get; set; } = null;
     }
 
     public class WeekDeltaHeaderItem
     {
-        public int? WeekNumber { get; set; }
-        public DateOnly? WeekStartDay { get; set; }
-        public DateOnly? WeekEndDay { get; set; }
+        public int? WeekNumber { get; set; } = null;
+        public DateOnly? WeekStartDay { get; set; } = null;
+        public DateOnly? WeekEndDay { get; set; } = null;
     }
 
     public class WeekDeltaDataItem
     {
-        public double? Delta { get; set; }
-        public double? Price { get; set; }
+        public double? Delta { get; set; } = null;
+        public double? Price { get; set; } = null;
     }
 }

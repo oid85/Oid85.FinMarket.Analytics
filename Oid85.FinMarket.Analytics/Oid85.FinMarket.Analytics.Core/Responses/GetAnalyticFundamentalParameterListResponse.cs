@@ -15,6 +15,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public bool IsSelected { get; set; }
         public bool InPortfolio { get; set; }
         public FundamentalScore? Score { get; set; } = null;
+        public Forecast? Forecast { get; set; } = null;
         public double? Moex { get; set; } = null;
         public double BenchmarkChange { get; set; }
         public List<string> Periods { get; set; } = [];
@@ -33,6 +34,6 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<double?> EvEbitda { get; set; } = [];
         public List<double?> NetDebtEbitda { get; set; } = [];
         public List<double?> EbitdaRevenue { get; set; } = [];
-        public List<double?> DeltaMinMax { get; set; } = [];
+        public List<double?> DeltaMinMax { get; set; } = [];        
     }
 }

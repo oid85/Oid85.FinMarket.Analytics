@@ -41,5 +41,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить рейтинг по фундаментальным данным
         /// </summary>
         Task<Dictionary<string, FundamentalScore>> GetFundamentalScoreDataAsync(List<string> tickers);
+
+        /// <summary>
+        /// Получить данные по прогнозам
+        /// </summary>
+        Task<Dictionary<string, Forecast>> GetForecastDataAsync();
     }
 }

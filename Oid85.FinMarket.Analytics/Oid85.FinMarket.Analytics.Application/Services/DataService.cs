@@ -299,6 +299,40 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 [.. periods.Select(p => fundamentalParameters.Find(fp => fp.Ticker == ticker && fp.Period == p && fp.Type == type)?.Value).Where(x => x.HasValue)];
         }
 
+        /// <inheritdoc />
+        public async Task<Dictionary<string, Forecast>> GetForecastDataAsync()
+        {
+            var forecasts = (await finMarketStorageServiceApiClient.GetForecastListAsync(new())).Result.Forecasts;
+            var tickers = forecasts.Select(x => x.Ticker).ToList();
+            var candleData = await GetCandleDataAsync(tickers);
+
+            var result = new Dictionary<string, Forecast>();
+
+            foreach (var forecast in forecasts)
+            {
+                if (!candleData.ContainsKey(forecast.Ticker)) continue;
+                
+                var price = candleData[forecast.Ticker].Last().Close;
+
+                if (price >= forecast.ConsensusPrice) continue;
+
+                result.Add(
+                    forecast.Ticker,
+                    new ()
+                    {
+                        Ticker = forecast.Ticker,
+                        ConsensusPrice = forecast.ConsensusPrice,
+                        CurrentPrice = price,
+                        UpsidePrc = Math.Round((forecast.ConsensusPrice - price) / price * 100.0, 2),
+                        MaxTarget = forecast.MaxTarget,
+                        MinTarget = forecast.MinTarget,
+                        Recommendation = forecast.RecommendationString
+                    });
+            }
+
+            return result;
+        }
+
         private async Task<List<Candle>> GetCandleByTickerAsync(string ticker)
         {
             var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
