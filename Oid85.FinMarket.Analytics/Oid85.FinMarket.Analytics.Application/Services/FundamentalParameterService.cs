@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Oid85.FinMarket.Analytics.Application.Helpers;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
@@ -40,7 +41,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             Ticker = request.Ticker,
                             Type = request.Type,
                             Period = (int.Parse(request.Period) + i).ToString(),
-                            Value = StringUtils.ToDouble(parts[i])
+                            Value = StringUtils.ToDouble(parts[i]),
+                            ExtData = request.ExtData
                         });
                 }
             }
@@ -53,7 +55,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ticker = request.Ticker,
                         Type = request.Type,
                         Period = request.Period,
-                        Value = StringUtils.ToDouble(request.Value)
+                        Value = StringUtils.ToDouble(request.Value),
+                        ExtData = request.ExtData
                     });                
             }
 
@@ -66,12 +69,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetAnalyticFundamentalParameterListResponse> GetAnalyticFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request)
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
-            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
+            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new() { Periods = periods })).Result.FundamentalParameters;
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
             var tickers = instruments.Select(x => x.Ticker).ToList();
             var benchmarkChangeData = await dataService.GetBenchmarkChangeDataAsync(tickers);
             var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
-            var forecastData = await dataService.GetForecastDataAsync();
+            var forecastData = await dataService.GetConsensusForecastDataAsync();
 
             var prices = new List<Dictionary<string, double?>>();
 
@@ -113,10 +116,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     fundamentalParameterItem.Roa.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, periods[i]));
                     fundamentalParameterItem.Pbv.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, periods[i]));
 
-                    fundamentalParameterItem.EvEbitda.Add(GetEvEbitda(fundamentalParameterItem.Ev[i], fundamentalParameterItem.Ebitda[i]));
-                    fundamentalParameterItem.NetDebtEbitda.Add(GetNetDebtEbitda(fundamentalParameterItem.NetDebt[i], fundamentalParameterItem.Ebitda[i]));
-                    fundamentalParameterItem.EbitdaRevenue.Add(GetEbitdaRevenue(fundamentalParameterItem.Ebitda[i], fundamentalParameterItem.Revenue[i]));
-                    fundamentalParameterItem.DividendYield.Add(GetDividendYield(fundamentalParameterItem.Dividend[i], fundamentalParameterItem.Price[i]));
+                    fundamentalParameterItem.EvEbitda.Add(GetDiv(fundamentalParameterItem.Ev[i], fundamentalParameterItem.Ebitda[i]));
+                    fundamentalParameterItem.NetDebtEbitda.Add(GetDiv(fundamentalParameterItem.NetDebt[i], fundamentalParameterItem.Ebitda[i]));
+                    fundamentalParameterItem.EbitdaRevenue.Add(GetDiv(fundamentalParameterItem.Ebitda[i], fundamentalParameterItem.Revenue[i]));
+                    fundamentalParameterItem.DividendYield.Add(GetDiv(fundamentalParameterItem.Dividend[i], fundamentalParameterItem.Price[i]));
                     fundamentalParameterItem.DeltaMinMax.Add(await GetDeltaMinMaxAsync(instrument.Ticker, int.Parse(periods[i])));
                 }
 
@@ -138,6 +141,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetAnalyticFundamentalParameterBubbleDiagramResponse> GetAnalyticFundamentalParameterBubbleDiagramAsync(GetAnalyticFundamentalParameterBubbleDiagramRequest request)
         {
+            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
+
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;            
 
             var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
@@ -148,25 +153,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
-                var ebitda = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, request.Year.ToString());
-                var ev = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, request.Year.ToString());
-                var netDebt = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, request.Year.ToString());
-                var marketCap = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, request.Year.ToString());
+                var ebitda = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods).Last().Value;
+                var ev = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods).Last().Value;
+                var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).Last().Value;
+                var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).Last().Value;
 
-                var evEbitda = GetEvEbitda(ev, ebitda);
-                var netDebtEbitda = GetNetDebtEbitda(netDebt, ebitda);
-
-                if (!evEbitda.HasValue) continue;
-                if (!netDebtEbitda.HasValue) continue;
-                if (!marketCap.HasValue) continue;
+                var evEbitda = GetDiv(ev, ebitda);
+                var netDebtEbitda = GetDiv(netDebt, ebitda);
 
                 response.Data.Add(
                     new GetAnalyticFundamentalParameterBubbleDiagramPointResponse
                     {
                         Ticker = instrument.Ticker,
-                        EvEbitda = evEbitda.Value,
-                        NetDebtEbitda = netDebtEbitda.Value,
-                        MarketCap = marketCap.Value
+                        EvEbitda = evEbitda!.Value,
+                        NetDebtEbitda = netDebtEbitda!.Value,
+                        MarketCap = marketCap
                     });
             }
 
@@ -175,18 +176,17 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         /// <inheritdoc />
         public async Task<GetFundamentalBySectorResponse> GetFundamentalBySectorAsync(GetFundamentalBySectorRequest request)
-        {            
+        {
+            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
+
             var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
 
-            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? [])
-                .Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).OrderBy(x => x.Ticker).ToList();
+            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).OrderBy(x => x.Ticker).ToList();
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
-            var priceData = await dataService.GetClosePriceDiagramDataAsync(tickers);
-
-            List<string> periods = ["2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
-
+            var priceData = await dataService.GetClosePriceDataAsync(tickers);
+           
             var response = new GetFundamentalBySectorResponse();
 
             foreach (var instrument in instruments)
@@ -243,37 +243,129 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
-                string year = "2024";
+                var ebitda = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods).Last().Value;
+                var ev = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods).Last().Value;
+                var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).Last().Value;
+                var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).Last().Value;
 
-                var ebitda = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, year.ToString());
-                var ev = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, year.ToString());
-                var netDebt = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, year.ToString());
-                var marketCap = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, year.ToString());
-
-                var evEbitda = GetEvEbitda(ev, ebitda);
-                var netDebtEbitda = GetNetDebtEbitda(netDebt, ebitda);
-
-                if (!evEbitda.HasValue) continue;
-                if (!netDebtEbitda.HasValue) continue;
-                if (!marketCap.HasValue) continue;
+                var evEbitda = GetDiv(ev, ebitda);
+                var netDebtEbitda = GetDiv(netDebt, ebitda);
 
                 response.BubbleDiagram.Add(
                     new GetFundamentalBySectorBubbleDiagramPointResponse
                     {
                         Ticker = instrument.Ticker,
-                        EvEbitda = evEbitda.Value,
-                        NetDebtEbitda = netDebtEbitda.Value,
-                        MarketCap = marketCap.Value
+                        EvEbitda = evEbitda!.Value,
+                        NetDebtEbitda = netDebtEbitda!.Value,
+                        MarketCap = marketCap
                     });
             }
 
             return response;
         }
 
-        private static List<(string Period, double Value)> GetFundamentalParameterValues(List<GetFundamentalParameterListItemResponse> fundamentalParameters, string ticker, string type, List<string> periods)
+        /// <inheritdoc />
+        public async Task<GetFundamentalByCompanyResponse> GetFundamentalByCompanyAsync(GetFundamentalByCompanyRequest request)
         {
-            if (fundamentalParameters is null)
-                return [];
+            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+            var tickers = instruments.Select(x => x.Ticker).ToList();
+            var instrument = instruments.Find(x => x.Ticker == request.Ticker)!;
+
+            var analyseDataContext = await dataService.GetAnalyseDataContextAsync(tickers);
+
+            var dividend = analyseDataContext.GetDividend(instrument.Ticker);
+            var consensusForecast = analyseDataContext.GetConsensusForecast(instrument.Ticker);
+            var nataliaBaffetovnaForecast = analyseDataContext.GetNataliaBaffetovnaForecast(instrument.Ticker);
+            var fundamentalScore = analyseDataContext.GetFundamentalScore(instrument.Ticker);
+            var benchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker);
+            var companyFundamentalMetric = analyseDataContext.GetFundamentalMetric(instrument.Ticker);
+            var companyFundamentalMetrics = analyseDataContext.GetFundamentalMetrics(instrument.Ticker);
+            var prices = analyseDataContext.GetClosePrices(instrument.Ticker);
+            var price = analyseDataContext.GetPrice(instrument.Ticker);
+            var ultimateSmoothers = analyseDataContext.GetUltimateSmoothers(instrument.Ticker);
+            var dividendPolyticInfo = analyseDataContext.GetExtData(instrument.Ticker)?.DividendPolyticInfo;
+            var growthDriverInfo = analyseDataContext.GetExtData(instrument.Ticker)?.GrowthDriverInfo;
+            var riskInfo = analyseDataContext.GetExtData(instrument.Ticker)?.RiskInfo;
+
+            var response = new GetFundamentalByCompanyResponse
+            {
+                Ticker = instrument.Ticker,
+                Name = instrument.Name,
+                Sector = instrument.Sector,
+                Price = price,
+                Dividend = dividend,
+                ConsensusForecast = consensusForecast,
+                NataliaBaffetovnaForecast = nataliaBaffetovnaForecast,
+                FundamentalScore = fundamentalScore,
+                BenchmarkChange = benchmarkChange,
+                CompanyFundamentalMetric = companyFundamentalMetric,
+                PriceDiagramData = GetPriceDiagramData(),
+                DividendPolyticInfo = dividendPolyticInfo,
+                GrowthDriverInfo = growthDriverInfo,
+                RiskInfo = riskInfo
+            };
+
+            // Диаграмма динамики прибыли
+            foreach (var metric in companyFundamentalMetrics)            
+                response.NetProfitDiagramData.Add(new BarDiagramDataPoint { X = metric.Period, Y = metric.NetProfit, ColorFill = KnownColors.LightGreen, ColorStroke = KnownColors.Green });
+
+            // Диаграмма динамики дивидендов
+            foreach (var metric in companyFundamentalMetrics)
+                response.DividendDiagramData.Add(new BarDiagramDataPoint { X = metric.Period, Y = metric.Dividend, ColorFill = KnownColors.LightGreen, ColorStroke = KnownColors.Green });
+
+            // Сравнительная диаграмма по мультипликаторам среди сектора
+            var sectorInstruments = instruments.Where(x => x.Sector == instrument.Sector).ToList();
+            List<Instrument> orderedSectorInstruments = [sectorInstruments.Find(x => x.Ticker == instrument.Ticker), .. sectorInstruments.Where(x => x.Ticker != instrument.Ticker).OrderBy(x => x.Ticker).ToList()];
+
+            foreach (var sectorInstrument in orderedSectorInstruments)
+            {
+                var fundamentalMetric = analyseDataContext.GetFundamentalMetric(sectorInstrument.Ticker)!;
+
+                string colorFill = sectorInstrument.Ticker == instrument.Ticker ? KnownColors.Green : KnownColors.LightGreen;
+                string colorStroke = sectorInstrument.Ticker == instrument.Ticker ? KnownColors.Green : KnownColors.Green;
+
+                response.PeDiagramData.Add(new () { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pe, ColorFill = colorFill, ColorStroke = colorStroke });
+                response.PbvDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pbv, ColorFill = colorFill, ColorStroke = colorStroke });
+                response.EvEbitdaDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.EvEbitda, ColorFill = colorFill, ColorStroke = colorStroke });
+                response.NetDebtEbitdaDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.NetDebtEbitda, ColorFill = colorFill, ColorStroke = colorStroke });
+            }
+
+            return response;
+
+            List<PriceDiagramDataPoint> GetPriceDiagramData()
+            {
+                var priceDiagramData = new List<PriceDiagramDataPoint>();
+
+                for (int i = 1; i < prices.Count; i++)
+                {
+                    var date = prices[i].Date;
+                    var price = prices[i].Value;
+                    var us = ultimateSmoothers.Find(x => x.Date == date)?.Value;                    
+
+                    var point = new PriceDiagramDataPoint
+                    {
+                        Date = date,
+                        PriceValue = price,
+                        UltimateSmootherValue = us,
+                        ConsensusPriceValue = consensusForecast?.ConsensusPrice
+                    };
+
+                    var trendState = TrendStateHelper.GetTrendState(ultimateSmoothers);
+
+                    if (trendState.TrendState == Core.Enums.TrendState.UpTrend) { point.ColorFill = KnownColors.LightGreen; point.ColorStroke = KnownColors.Green; }
+                    else if (trendState.TrendState == Core.Enums.TrendState.DownTrend) { point.ColorFill = KnownColors.LightRed; point.ColorStroke = KnownColors.Red; }
+                    else { point.ColorFill = KnownColors.LightYellow; point.ColorStroke = KnownColors.DarkSlateGray; }
+
+                    priceDiagramData.Add(point);
+                }
+
+                return priceDiagramData;
+            }
+        }
+
+        private static List<(string Period, double Value)> GetFundamentalParameterValues(List<FundamentalParameterListItem> fundamentalParameters, string ticker, string type, List<string> periods)
+        {
+            if (fundamentalParameters is null) return [];
 
             List<(string Period, double Value)> result = [];
 
@@ -287,58 +379,23 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return result;
         }
 
-        private static double? GetFundamentalParameterValue(List<GetFundamentalParameterListItemResponse> fundamentalParameters, string ticker, string type, string period)
+        private static double? GetFundamentalParameterValue(List<FundamentalParameterListItem> fundamentalParameters, string ticker, string type, string period)
         {
-            if (fundamentalParameters is null)
+            if (fundamentalParameters is null) 
                 return null;
 
-            var fundamentalParameter = fundamentalParameters.Find(x => x.Ticker == ticker && x.Type == type && x.Period == period);
-
-            return fundamentalParameter?.Value;
+            return fundamentalParameters.Find(x => x.Ticker == ticker && x.Type == type && x.Period == period)?.Value;
         }
 
-        private static double? GetEvEbitda(double? ev, double? ebitda)
+        private static double? GetDiv(double? arg1, double? arg2)
         {
-            if (ev is null || ebitda is null)
+            if (arg1 is null || arg2 is null)
                 return null;
 
-            if (ev == 0.0 || ebitda == 0.0)
+            if (arg1 == 0.0 || arg2 == 0.0)
                 return 0.0;
 
-            return Math.Round(ev.Value / ebitda.Value, 2);
-        }
-
-        private static double? GetNetDebtEbitda(double? netDebt, double? ebitda)
-        {
-            if (netDebt is null || ebitda is null)
-                return null;
-
-            if (netDebt == 0.0 || ebitda == 0.0)
-                return 0.0;
-
-            return Math.Round(netDebt.Value / ebitda.Value, 2);
-        }
-
-        private static double? GetEbitdaRevenue(double? ebitda, double? revenue)
-        {
-            if (revenue is null || ebitda is null)
-                return null;
-
-            if (revenue == 0.0 || ebitda == 0.0)
-                return 0.0;
-
-            return Math.Round(ebitda.Value / revenue.Value, 2);
-        }
-
-        private static double? GetDividendYield(double? dividend, double? price)
-        {
-            if (dividend is null || price is null)
-                return null;
-
-            if (dividend == 0.0 || price == 0.0)
-                return 0.0;
-
-            return Math.Round(dividend.Value / price.Value * 100.0, 2);
+            return Math.Round(arg1.Value / arg2.Value, 2);
         }
 
         private async Task<double?> GetDeltaMinMaxAsync(string ticker, int year)

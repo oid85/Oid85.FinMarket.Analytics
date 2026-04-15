@@ -15,16 +15,21 @@
         /// <summary>
         /// Тип параметра
         /// </summary>
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         /// <summary>
         /// Период
         /// </summary>
-        public string Period { get; set; }
+        public string? Period { get; set; }
 
         /// <summary>
         /// Значение
         /// </summary>
-        public double Value { get; set; }
+        public double? Value { get; set; }
+
+        /// <summary>
+        /// Доп. данные
+        /// </summary>
+        public string? ExtData { get; set; }
     }
 }

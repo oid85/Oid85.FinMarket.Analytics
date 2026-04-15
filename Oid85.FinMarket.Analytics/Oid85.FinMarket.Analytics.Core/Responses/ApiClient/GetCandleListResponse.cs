@@ -7,10 +7,10 @@
 
     public class GetCandleListResult
     {
-        public List<GetCandleListItemResponse> Candles { get; set; } = [];
+        public List<CandleListItem> Candles { get; set; } = [];
     }
 
-    public class GetCandleListItemResponse
+    public class CandleListItem
     {
         /// <summary>
         /// Дата

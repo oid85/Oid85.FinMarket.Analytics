@@ -7,10 +7,10 @@
 
     public class GetFundamentalParameterListResult
     {
-        public List<GetFundamentalParameterListItemResponse> FundamentalParameters { get; set; }
+        public List<FundamentalParameterListItem> FundamentalParameters { get; set; }
     }
 
-    public class GetFundamentalParameterListItemResponse
+    public class FundamentalParameterListItem
     {
         /// <summary>
         /// Идентификатор
@@ -36,5 +36,10 @@
         /// Значение
         /// </summary>
         public double Value { get; set; }
+
+        /// <summary>
+        /// Доп. данные
+        /// </summary>
+        public string ExtData { get; set; }
     }
 }

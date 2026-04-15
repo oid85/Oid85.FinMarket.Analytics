@@ -1,5 +1,8 @@
 ﻿namespace Oid85.FinMarket.Analytics.Core.Models
 {
+    /// <summary>
+    /// Дата - значение
+    /// </summary>
     public class DateValue<T>
     {
         public DateOnly Date { get; set; }

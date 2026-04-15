@@ -7,10 +7,10 @@
 
     public class GetForecastListResult
     {
-        public List<GetForecastListItemResponse> Forecasts { get; set; } = [];
+        public List<ForecastListItem> Forecasts { get; set; } = [];
     }
 
-    public class GetForecastListItemResponse
+    public class ForecastListItem
     {
         public string Ticker { get; set; }
         public double CurrentPrice { get; set; }

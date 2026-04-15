@@ -26,7 +26,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dividendData = await dataService.GetDividendDataAsync(tickers);
             var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
-            var forecastData = await dataService.GetForecastDataAsync();
+            var forecastData = await dataService.GetConsensusForecastDataAsync();
             var dates = DateUtils.GetDates(startDate, today);
 
             var response = new GetTrendDynamicResponse

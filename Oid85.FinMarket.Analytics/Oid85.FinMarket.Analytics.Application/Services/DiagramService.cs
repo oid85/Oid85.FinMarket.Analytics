@@ -48,7 +48,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var response = new GetClosePriceDiagramResponse();
 
-            var closePriceDiagramData = await dataService.GetClosePriceDiagramDataAsync(tickers);
+            var closePriceDiagramData = await dataService.GetClosePriceDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dividendData = await dataService.GetDividendDataAsync(tickers);
 

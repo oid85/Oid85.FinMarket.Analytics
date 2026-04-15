@@ -2,6 +2,5 @@
 {
     public class GetAnalyticFundamentalParameterBubbleDiagramRequest
     {
-        public int Year { get; set; }
     }
 }

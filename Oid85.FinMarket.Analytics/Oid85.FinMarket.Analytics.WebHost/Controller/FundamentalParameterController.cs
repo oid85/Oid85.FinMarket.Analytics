@@ -67,4 +67,17 @@ public class FundamentalParameterController(
         GetResponseAsync(
             () => fundamentalParameterService.GetFundamentalBySectorAsync(request),
             result => new BaseResponse<GetFundamentalBySectorResponse> { Result = result });
+
+    /// <summary>
+    /// Получить фундаментальные параметры по компании
+    /// </summary>
+    [HttpPost("company")]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalByCompanyResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalByCompanyResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalByCompanyResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetFundamentalByCompanyAsync(
+        [FromBody] GetFundamentalByCompanyRequest request) =>
+        GetResponseAsync(
+            () => fundamentalParameterService.GetFundamentalByCompanyAsync(request),
+            result => new BaseResponse<GetFundamentalByCompanyResponse> { Result = result });
 }
