@@ -109,5 +109,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (!storageInstruments.Select(x => x.Ticker).Contains(analyticInstrument.Ticker))
                     await instrumentRepository.DeleteByTickerAsync(analyticInstrument.Ticker);
         }
+
+        /// <inheritdoc />
+        public async Task<GetSectorListResponse> GetSectorListAsync(GetSectorListRequest request)
+        {
+            var analyticInstruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
+            var sectors = analyticInstruments.Where(x => !string.IsNullOrEmpty(x.Sector))
+                .Select(x => x.Sector).Distinct().OrderBy(x => x).ToList();
+
+            return new GetSectorListResponse { Sectors = sectors };
+        }
     }
 }

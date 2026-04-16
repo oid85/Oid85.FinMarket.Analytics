@@ -33,5 +33,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Синхронизировать инструменты со Storage
         /// </summary>
         Task SyncInstrumentListAsync();
+
+        /// <summary>
+        /// Получить список секторов
+        /// </summary>
+        Task<GetSectorListResponse> GetSectorListAsync(GetSectorListRequest request);
     }
 }

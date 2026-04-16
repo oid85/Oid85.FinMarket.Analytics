@@ -30,6 +30,19 @@ public class InstrumentController(
             result => new BaseResponse<GetAnalyticInstrumentListResponse> { Result = result });
 
     /// <summary>
+    /// Получить список секторов
+    /// </summary>
+    [HttpPost("sectors/list")]
+    [ProducesResponseType(typeof(BaseResponse<GetSectorListResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetSectorListResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetSectorListResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetSectorListAsync(
+        [FromBody] GetSectorListRequest request) =>
+        GetResponseAsync(
+            () => instrumentService.GetSectorListAsync(request),
+            result => new BaseResponse<GetSectorListResponse> { Result = result });
+
+    /// <summary>
     /// Выделить инструмент
     /// </summary>
     [HttpPost("select")]
