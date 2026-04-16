@@ -286,13 +286,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var dividendPolyticInfo = analyseDataContext.GetExtData(instrument.Ticker)?.DividendPolyticInfo;
             var growthDriverInfo = analyseDataContext.GetExtData(instrument.Ticker)?.GrowthDriverInfo;
             var riskInfo = analyseDataContext.GetExtData(instrument.Ticker)?.RiskInfo;
+            var trendState = TrendStateHelper.GetTrendState(ultimateSmoothers);
 
             var response = new GetFundamentalByCompanyResponse
             {
                 Ticker = instrument.Ticker,
+                InPortfolio = instrument.InPortfolio,
                 Name = instrument.Name,
                 Sector = instrument.Sector,
                 Price = price,
+                TrendState = trendState.Message,
                 Dividend = dividend,
                 ConsensusForecast = consensusForecast,
                 NataliaBaffetovnaForecast = nataliaBaffetovnaForecast,
@@ -307,11 +310,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             // Диаграмма динамики прибыли
             foreach (var metric in companyFundamentalMetrics)            
-                response.NetProfitDiagramData.Add(new BarDiagramDataPoint { X = metric.Period, Y = metric.NetProfit, ColorFill = KnownColors.LightGreen, ColorStroke = KnownColors.Green });
+                response.NetProfitDiagramData.Add(new () { X = metric.Period, Y = metric.NetProfit });
 
             // Диаграмма динамики дивидендов
             foreach (var metric in companyFundamentalMetrics)
-                response.DividendDiagramData.Add(new BarDiagramDataPoint { X = metric.Period, Y = metric.Dividend, ColorFill = KnownColors.LightGreen, ColorStroke = KnownColors.Green });
+                response.DividendDiagramData.Add(new () { X = metric.Period, Y = metric.Dividend });
 
             // Сравнительная диаграмма по мультипликаторам среди сектора
             var sectorInstruments = instruments.Where(x => x.Sector == instrument.Sector).ToList();
@@ -321,13 +324,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 var fundamentalMetric = analyseDataContext.GetFundamentalMetric(sectorInstrument.Ticker)!;
 
-                string colorFill = sectorInstrument.Ticker == instrument.Ticker ? KnownColors.Green : KnownColors.LightGreen;
-                string colorStroke = sectorInstrument.Ticker == instrument.Ticker ? KnownColors.Green : KnownColors.Green;
-
-                response.PeDiagramData.Add(new () { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pe, ColorFill = colorFill, ColorStroke = colorStroke });
-                response.PbvDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pbv, ColorFill = colorFill, ColorStroke = colorStroke });
-                response.EvEbitdaDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.EvEbitda, ColorFill = colorFill, ColorStroke = colorStroke });
-                response.NetDebtEbitdaDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.NetDebtEbitda, ColorFill = colorFill, ColorStroke = colorStroke });
+                response.PeDiagramData.Add(new () { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pe });
+                response.PbvDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pbv });
+                response.EvEbitdaDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.EvEbitda });
+                response.NetDebtEbitdaDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.NetDebtEbitda });
             }
 
             return response;
@@ -349,12 +349,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         UltimateSmootherValue = us,
                         ConsensusPriceValue = consensusForecast?.ConsensusPrice
                     };
-
-                    var trendState = TrendStateHelper.GetTrendState(ultimateSmoothers);
-
-                    if (trendState.TrendState == Core.Enums.TrendState.UpTrend) { point.ColorFill = KnownColors.LightGreen; point.ColorStroke = KnownColors.Green; }
-                    else if (trendState.TrendState == Core.Enums.TrendState.DownTrend) { point.ColorFill = KnownColors.LightRed; point.ColorStroke = KnownColors.Red; }
-                    else { point.ColorFill = KnownColors.LightYellow; point.ColorStroke = KnownColors.DarkSlateGray; }
 
                     priceDiagramData.Add(point);
                 }

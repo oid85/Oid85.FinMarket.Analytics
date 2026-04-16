@@ -10,6 +10,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public string? Ticker { get; set; } = null;
 
         /// <summary>
+        /// Инструмент в портфеле
+        /// </summary>
+        public bool InPortfolio { get; set; }
+
+        /// <summary>
         /// Наименование
         /// </summary>
         public string? Name { get; set; } = null;
@@ -23,6 +28,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         /// Текущая цена
         /// </summary>
         public double? Price { get; set; } = null;
+
+        /// <summary>
+        /// Состояние тренда
+        /// </summary>
+        public string? TrendState { get; set; } = null;
 
         /// <summary>
         /// График с ценой
@@ -111,15 +121,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public double? PriceValue { get; set; } = null;
         public double? ConsensusPriceValue { get; set; } = null;
         public double? UltimateSmootherValue { get; set; } = null;
-        public string? ColorFill { get; set; } = null;
-        public string? ColorStroke { get; set; } = null;
     }
 
     public class BarDiagramDataPoint
     {
         public string? X { get; set; } = null;
         public double? Y { get; set; } = null;
-        public string? ColorFill { get; set; } = null;
-        public string? ColorStroke { get; set; } = null;
     }
 }

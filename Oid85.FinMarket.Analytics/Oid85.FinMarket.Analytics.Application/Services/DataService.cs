@@ -259,12 +259,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     var values = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Dividend);
 
-                    if (values.Count > 5)
-                        if (values[^1] > 0.0 && values[^2] > 0.0 && values[^3] > 0.0 && values[^4] > 0.0 && values[^5] > 0.0)
+                    int limitTotal = 5;
+                    int limitPredicat = 4;
+
+                    if (values.Count >= limitTotal)
+                    {
+                        List<double?> array = [values[^1], values[^2], values[^3], values[^4], values[^5]];
+                        if (array.Count(x => x > 0) >= limitPredicat)
                         {
                             count++;
                             score.IsDividendAristocrat = true;
                         }
+                    }
 
                     countCriteria++;
                 }
