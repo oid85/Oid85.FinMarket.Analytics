@@ -17,8 +17,10 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<TrendDynamicDataItem> Items { get; set; } = [];
         public bool InPortfolio { get; set; }
         public double? DividendYield { get; set; } = null;
-        public FundamentalScore? Score { get; set; }
+        public FundamentalScore? Score { get; set; } = null;
         public Forecast? Forecast { get; set; } = null;
+        public Forecast? NataliaBaffetovnaForecast { get; set; } = null;
+        public Forecast? FinanceMarkerForecast { get; set; } = null;
     }
 
     public class TrendDynamicDataItem

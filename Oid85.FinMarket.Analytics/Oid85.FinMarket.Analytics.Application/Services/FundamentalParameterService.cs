@@ -42,7 +42,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             Type = request.Type,
                             Period = (int.Parse(request.Period) + i).ToString(),
                             Value = StringUtils.ToDouble(parts[i]),
-                            ExtData = request.ExtData
+                            ExtData = request.ExtData ?? string.Empty
                         });
                 }
             }
@@ -56,7 +56,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Type = request.Type,
                         Period = request.Period,
                         Value = StringUtils.ToDouble(request.Value),
-                        ExtData = request.ExtData
+                        ExtData = request.ExtData ?? string.Empty
                     });                
             }
 
@@ -153,10 +153,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
-                var ebitda = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods).Last().Value;
-                var ev = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods).Last().Value;
-                var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).Last().Value;
-                var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).Last().Value;
+                var ebitda = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var ev = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).LastOrDefault(x => x.Value != 0.0).Value;
 
                 var evEbitda = GetDiv(ev, ebitda);
                 var netDebtEbitda = GetDiv(netDebt, ebitda);
@@ -243,10 +243,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
-                var ebitda = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods).Last().Value;
-                var ev = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods).Last().Value;
-                var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).Last().Value;
-                var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).Last().Value;
+                var ebitda = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var ev = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).LastOrDefault(x => x.Value != 0.0).Value;
 
                 var evEbitda = GetDiv(ev, ebitda);
                 var netDebtEbitda = GetDiv(netDebt, ebitda);
@@ -276,6 +276,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var dividend = analyseDataContext.GetDividend(instrument.Ticker);
             var consensusForecast = analyseDataContext.GetConsensusForecast(instrument.Ticker);
             var nataliaBaffetovnaForecast = analyseDataContext.GetNataliaBaffetovnaForecast(instrument.Ticker);
+            var financeMarkerForecast = analyseDataContext.GetFinanceMarkerForecast(instrument.Ticker);
             var fundamentalScore = analyseDataContext.GetFundamentalScore(instrument.Ticker);
             var benchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker);
             var companyFundamentalMetric = analyseDataContext.GetFundamentalMetric(instrument.Ticker);
@@ -299,6 +300,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Dividend = dividend,
                 ConsensusForecast = consensusForecast,
                 NataliaBaffetovnaForecast = nataliaBaffetovnaForecast,
+                FinanceMarkerForecast = financeMarkerForecast,
                 FundamentalScore = fundamentalScore,
                 BenchmarkChange = benchmarkChange,
                 CompanyFundamentalMetric = companyFundamentalMetric,
@@ -347,7 +349,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Date = date,
                         PriceValue = price,
                         UltimateSmootherValue = us,
-                        ConsensusPriceValue = consensusForecast?.ConsensusPrice
+                        ConsensusPriceValue = consensusForecast?.ConsensusPrice,
+                        NataliaBaffetovnaConsensusPriceValue = nataliaBaffetovnaForecast?.ConsensusPrice
                     };
 
                     priceDiagramData.Add(point);

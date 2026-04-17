@@ -85,6 +85,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public Forecast? NataliaBaffetovnaForecast { get; set; } = null;
 
         /// <summary>
+        /// Прогноз от FinanceMarker
+        /// </summary>
+        public Forecast? FinanceMarkerForecast { get; set; } = null;
+
+        /// <summary>
         /// Рейтинг на основе фунд. анализа от 0 до 1
         /// </summary>
         public FundamentalScore? FundamentalScore { get; set; } = null;
@@ -121,6 +126,8 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public double? PriceValue { get; set; } = null;
         public double? ConsensusPriceValue { get; set; } = null;
         public double? UltimateSmootherValue { get; set; } = null;
+        public double? NataliaBaffetovnaConsensusPriceValue { get; set; } = null;
+        public double? FinanceMarkerConsensusPriceValue { get; set; } = null;
     }
 
     public class BarDiagramDataPoint

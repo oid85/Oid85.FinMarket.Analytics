@@ -51,6 +51,11 @@
         public Dictionary<string, Forecast> NataliaBaffetovnaForecastData { get; set; } = [];
 
         /// <summary>
+        /// Консенсус прогнозы (FinanceMarker)
+        /// </summary>
+        public Dictionary<string, Forecast> FinanceMarkerForecastData { get; set; } = [];
+
+        /// <summary>
         /// Купоны (для облигаций)
         /// </summary>
         public Dictionary<string, List<BondCoupon>> BondCouponData { get; set; } = [];
@@ -140,6 +145,11 @@
         /// Получить консенсус прогноз по тикеру (NataliaBaffetovna)
         /// </summary>
         public Forecast? GetNataliaBaffetovnaForecast(string ticker) => !NataliaBaffetovnaForecastData.TryGetValue(ticker, out var result) ? null : result;
+
+        /// <summary>
+        /// Получить консенсус прогноз по тикеру (FinanceMarker)
+        /// </summary>
+        public Forecast? GetFinanceMarkerForecast(string ticker) => !FinanceMarkerForecastData.TryGetValue(ticker, out var result) ? null : result;
 
         /// <summary>
         /// Получить купоны по тикеру (для облигаций)

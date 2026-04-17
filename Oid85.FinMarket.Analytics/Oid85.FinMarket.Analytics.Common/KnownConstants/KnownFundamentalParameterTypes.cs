@@ -15,6 +15,7 @@ public static class KnownFundamentalParameterTypes
     public const string Moex = "Moex";
     public const string DeltaMinMax = "DeltaMinMax";
     public const string NataliaBaffetovnaForecast = "NataliaBaffetovnaForecast";
+    public const string FinanceMarkerForecast = "FinanceMarkerForecast";
     public const string DividendPolyticInfo = "DividendPolyticInfo";
     public const string GrowthDriverInfo = "GrowthDriverInfo";
     public const string RiskInfo = "RiskInfo";

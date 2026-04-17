@@ -27,14 +27,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var dividendData = await dataService.GetDividendDataAsync(tickers);
             var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
             var forecastData = await dataService.GetConsensusForecastDataAsync();
+            var nataliaBaffetovnaForecastData = await dataService.GetNataliaBaffetovnaForecastDataAsync(tickers);
+            var financeMarkerForecastData = await dataService.GetFinanceMarkerForecastDataAsync(tickers);
             var dates = DateUtils.GetDates(startDate, today);
 
             var response = new GetTrendDynamicResponse
             {
                 Dates = dates,
-                Indexes = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData),
-                Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData),
-                Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData)
+                Indexes = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData),
+                Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData),
+                Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData)
             };
 
             return response;
@@ -49,7 +51,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             Dictionary<string, List<Candle>> candleData,
             Dictionary<string, Dividend> dividendData,
             Dictionary<string, FundamentalScore> scoreData,
-            Dictionary<string, Forecast> forecastData)
+            Dictionary<string, Forecast> forecastData,
+            Dictionary<string, Forecast> nataliaBaffetovnaForecastData,
+            Dictionary<string, Forecast> financeMarkerForecastData)
         {
             var data = new List<TrendDynamicData>();
 
@@ -66,6 +70,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? Math.Round(value.Yield!.Value, 1) : null,
                     Score = scoreData.TryGetValue(instrument.Ticker, out FundamentalScore? score) ? score : null,
                     Forecast = forecastData.TryGetValue(instrument.Ticker, out Forecast? forecast) ? forecast : null,
+                    NataliaBaffetovnaForecast = nataliaBaffetovnaForecastData.TryGetValue(instrument.Ticker, out Forecast? nataliaBaffetovnaForecast) ? nataliaBaffetovnaForecast : null,
+                    FinanceMarkerForecast = financeMarkerForecastData.TryGetValue(instrument.Ticker, out Forecast? financeMarkerForecast) ? financeMarkerForecast : null,
                     Items = []
                 };
 
