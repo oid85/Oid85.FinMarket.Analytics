@@ -412,6 +412,39 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
+        public async Task<Dictionary<string, Forecast>> GetVladProDengiForecastDataAsync(List<string> tickers)
+        {
+            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
+            var fundamentalParameterList = await GetFundamentalParameterListAsync();
+            var candleData = await GetCandleDataAsync(tickers);
+
+            var result = new Dictionary<string, Forecast>();
+
+            foreach (var ticker in tickers)
+            {
+                if (!candleData.ContainsKey(ticker)) continue;
+
+                var price = candleData[ticker].Last().Close;
+
+                var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
+                var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.VladProDengiForecast)?.Value).LastOrDefault();
+
+                if (!consensusPrice.HasValue) continue;
+                if (price >= consensusPrice) continue;
+
+                result.Add(ticker, new()
+                {
+                    Ticker = ticker,
+                    ConsensusPrice = consensusPrice,
+                    CurrentPrice = price,
+                    UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
+                });
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc />
         public async Task<Dictionary<string, List<FundamentalMetric>>> GetFundamentalMetricDataAsync(List<string> tickers)
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
@@ -491,6 +524,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 ConsensusForecastData = await GetConsensusForecastDataAsync(),
                 NataliaBaffetovnaForecastData = await GetNataliaBaffetovnaForecastDataAsync(tickers),
                 FinanceMarkerForecastData = await GetFinanceMarkerForecastDataAsync(tickers),
+                VladProDengiForecastData = await GetVladProDengiForecastDataAsync(tickers),
                 BondCouponData = await GetBondCouponsAsync(tickers),
                 ExtData = await GetExtDataAsync(tickers)
             };

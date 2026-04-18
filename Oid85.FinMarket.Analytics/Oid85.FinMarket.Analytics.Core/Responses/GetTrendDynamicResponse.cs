@@ -21,6 +21,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public Forecast? Forecast { get; set; } = null;
         public Forecast? NataliaBaffetovnaForecast { get; set; } = null;
         public Forecast? FinanceMarkerForecast { get; set; } = null;
+        public Forecast? VladProDengiForecast { get; set; } = null;
     }
 
     public class TrendDynamicDataItem

@@ -56,6 +56,11 @@
         public Dictionary<string, Forecast> FinanceMarkerForecastData { get; set; } = [];
 
         /// <summary>
+        /// Консенсус прогнозы (VladProDengi)
+        /// </summary>
+        public Dictionary<string, Forecast> VladProDengiForecastData { get; set; } = [];
+
+        /// <summary>
         /// Купоны (для облигаций)
         /// </summary>
         public Dictionary<string, List<BondCoupon>> BondCouponData { get; set; } = [];
@@ -150,6 +155,11 @@
         /// Получить консенсус прогноз по тикеру (FinanceMarker)
         /// </summary>
         public Forecast? GetFinanceMarkerForecast(string ticker) => !FinanceMarkerForecastData.TryGetValue(ticker, out var result) ? null : result;
+
+        /// <summary>
+        /// Получить консенсус прогноз по тикеру (VladProDengi)
+        /// </summary>
+        public Forecast? GetVladProDengiForecast(string ticker) => !VladProDengiForecastData.TryGetValue(ticker, out var result) ? null : result;
 
         /// <summary>
         /// Получить купоны по тикеру (для облигаций)

@@ -298,6 +298,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var consensusForecast = analyseDataContext.GetConsensusForecast(instrument.Ticker);
             var nataliaBaffetovnaForecast = analyseDataContext.GetNataliaBaffetovnaForecast(instrument.Ticker);
             var financeMarkerForecast = analyseDataContext.GetFinanceMarkerForecast(instrument.Ticker);
+            var vladProDengiForecast = analyseDataContext.GetVladProDengiForecast(instrument.Ticker);
             var fundamentalScore = analyseDataContext.GetFundamentalScore(instrument.Ticker);
             var benchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker);
             var companyFundamentalMetric = analyseDataContext.GetFundamentalMetric(instrument.Ticker);
@@ -323,6 +324,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 ConsensusForecast = consensusForecast,
                 NataliaBaffetovnaForecast = nataliaBaffetovnaForecast,
                 FinanceMarkerForecast = financeMarkerForecast,
+                VladProDengiForecast = vladProDengiForecast,
                 FundamentalScore = fundamentalScore,
                 BenchmarkChange = benchmarkChange,
                 CompanyFundamentalMetric = companyFundamentalMetric,
@@ -374,7 +376,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         UltimateSmootherValue = us,
                         ConsensusPriceValue = consensusForecast?.ConsensusPrice,
                         NataliaBaffetovnaConsensusPriceValue = nataliaBaffetovnaForecast?.ConsensusPrice,
-                        FinanceMarkerConsensusPriceValue = financeMarkerForecast?.ConsensusPrice
+                        FinanceMarkerConsensusPriceValue = financeMarkerForecast?.ConsensusPrice,
+                        VladProDengiConsensusPriceValue = vladProDengiForecast?.ConsensusPrice
                     };
 
                     priceDiagramData.Add(point);
