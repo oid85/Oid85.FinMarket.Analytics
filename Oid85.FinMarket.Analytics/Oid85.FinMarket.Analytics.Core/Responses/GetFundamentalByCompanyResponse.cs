@@ -117,7 +117,12 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         /// <summary>
         /// Риски
         /// </summary>
-        public string? RiskInfo { get; set; } = null;        
+        public string? RiskInfo { get; set; } = null;
+
+        /// <summary>
+        /// Идея
+        /// </summary>
+        public string? Concept { get; set; } = null;
     }
 
     public class PriceDiagramDataPoint

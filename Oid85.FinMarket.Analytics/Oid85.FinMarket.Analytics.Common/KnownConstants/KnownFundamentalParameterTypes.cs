@@ -19,4 +19,5 @@ public static class KnownFundamentalParameterTypes
     public const string DividendPolyticInfo = "DividendPolyticInfo";
     public const string GrowthDriverInfo = "GrowthDriverInfo";
     public const string RiskInfo = "RiskInfo";
+    public const string Concept = "Concept";
 }

@@ -26,28 +26,48 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<CreateOrUpdateAnalyticFundamentalParameterResponse> CreateOrUpdateAnalyticFundamentalParameterAsync(CreateOrUpdateAnalyticFundamentalParameterRequest request)
         {
             var createOrUpdateFundamentalParameterRequest = new CreateOrUpdateFundamentalParameterRequest();
-
-            if (request.Value.Contains(';'))
+            
+            if (request.Value is not null)
             {
-                var parts = request.Value.Split(';');
-
-                for (int i = 0; i < parts.Length; i++)
+                if (request.Value.Contains(';'))
                 {
-                    if (string.IsNullOrEmpty(parts[i].Trim())) continue;
+                    var parts = request.Value.Split(';');
 
+                    for (int i = 0; i < parts.Length; i++)
+                    {
+                        if (string.IsNullOrEmpty(parts[i].Trim())) continue;
+
+                        createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(
+                            new CreateOrUpdateFundamentalParameterItemRequest
+                            {
+                                Ticker = request.Ticker,
+                                Type = request.Type,
+                                Period = (int.Parse(request.Period!) + i).ToString(),
+                                Value = StringUtils.ToDouble(parts[i]),
+                                ExtData = request.ExtData ?? string.Empty
+                            });
+                    }
+
+                    await finMarketStorageServiceApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
+                    return new CreateOrUpdateAnalyticFundamentalParameterResponse();
+                }
+
+                else
                     createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(
                         new CreateOrUpdateFundamentalParameterItemRequest
                         {
                             Ticker = request.Ticker,
                             Type = request.Type,
-                            Period = (int.Parse(request.Period) + i).ToString(),
-                            Value = StringUtils.ToDouble(parts[i]),
+                            Period = request.Period,
+                            Value = StringUtils.ToDouble(request.Value),
                             ExtData = request.ExtData ?? string.Empty
                         });
-                }
+
+                await finMarketStorageServiceApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
+                return new CreateOrUpdateAnalyticFundamentalParameterResponse();
             }
 
-            else
+            if (request.ExtData is not null)
             {
                 createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(
                     new CreateOrUpdateFundamentalParameterItemRequest
@@ -57,10 +77,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Period = request.Period,
                         Value = StringUtils.ToDouble(request.Value),
                         ExtData = request.ExtData ?? string.Empty
-                    });                
-            }
+                    });
 
-            await finMarketStorageServiceApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
+                await finMarketStorageServiceApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
+                return new CreateOrUpdateAnalyticFundamentalParameterResponse();
+            }
 
             return new CreateOrUpdateAnalyticFundamentalParameterResponse();
         }
@@ -287,6 +308,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var dividendPolyticInfo = analyseDataContext.GetExtData(instrument.Ticker)?.DividendPolyticInfo;
             var growthDriverInfo = analyseDataContext.GetExtData(instrument.Ticker)?.GrowthDriverInfo;
             var riskInfo = analyseDataContext.GetExtData(instrument.Ticker)?.RiskInfo;
+            var concept = analyseDataContext.GetExtData(instrument.Ticker)?.Concept;
             var trendState = TrendStateHelper.GetTrendState(ultimateSmoothers);
 
             var response = new GetFundamentalByCompanyResponse
@@ -307,7 +329,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 PriceDiagramData = GetPriceDiagramData(),
                 DividendPolyticInfo = dividendPolyticInfo,
                 GrowthDriverInfo = growthDriverInfo,
-                RiskInfo = riskInfo
+                RiskInfo = riskInfo,
+                Concept = concept
             };
 
             // Диаграмма динамики прибыли
@@ -350,7 +373,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         PriceValue = price,
                         UltimateSmootherValue = us,
                         ConsensusPriceValue = consensusForecast?.ConsensusPrice,
-                        NataliaBaffetovnaConsensusPriceValue = nataliaBaffetovnaForecast?.ConsensusPrice
+                        NataliaBaffetovnaConsensusPriceValue = nataliaBaffetovnaForecast?.ConsensusPrice,
+                        FinanceMarkerConsensusPriceValue = financeMarkerForecast?.ConsensusPrice
                     };
 
                     priceDiagramData.Add(point);

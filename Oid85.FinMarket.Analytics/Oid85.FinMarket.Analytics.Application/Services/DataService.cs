@@ -456,11 +456,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo)>> GetExtDataAsync(List<string> tickers)
+        public async Task<Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo, string? Concept)>> GetExtDataAsync(List<string> tickers)
         {
             var fundamentalParameterList = await GetFundamentalParameterListAsync();
 
-            var result = new Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo)>();
+            var result = new Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo, string? Concept)>();
 
             foreach (var ticker in tickers)
             {
@@ -469,8 +469,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 string? dividendPolyticInfo = fundamentalParametersByTicker.Find(x => x.Type == KnownFundamentalParameterTypes.DividendPolyticInfo)?.ExtData;
                 string? growthDriverInfo = fundamentalParametersByTicker.Find(x => x.Type == KnownFundamentalParameterTypes.GrowthDriverInfo)?.ExtData;
                 string? riskInfo = fundamentalParametersByTicker.Find(x => x.Type == KnownFundamentalParameterTypes.RiskInfo)?.ExtData;
+                string? concept = fundamentalParametersByTicker.Find(x => x.Type == KnownFundamentalParameterTypes.Concept)?.ExtData;
 
-                result.Add(ticker, (dividendPolyticInfo, growthDriverInfo, riskInfo));
+                result.Add(ticker, (dividendPolyticInfo, growthDriverInfo, riskInfo, concept));
             }
 
             return result;
@@ -585,7 +586,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             if (_fundamentalParameters is not null) return _fundamentalParameters;
 
-            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
+            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';'), string.Empty];
 
             _fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new() { Periods = periods })).Result.FundamentalParameters;
 

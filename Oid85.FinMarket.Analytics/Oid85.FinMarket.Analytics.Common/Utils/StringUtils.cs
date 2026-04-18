@@ -23,8 +23,10 @@ public static class StringUtils
         return result;
     }
 
-    public static double ToDouble(string input)
+    public static double ToDouble(string? input)
     {
+        if (input is null) return 0.0;
+
         string separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
 
         input = input.Trim();

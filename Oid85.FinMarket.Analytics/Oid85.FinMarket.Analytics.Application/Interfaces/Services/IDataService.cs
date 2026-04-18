@@ -65,7 +65,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Получить данные по див политикеб драйверам роста, рискам
         /// </summary>
-        Task<Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo)>> GetExtDataAsync(List<string> tickers);
+        Task<Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo, string? Concept)>> GetExtDataAsync(List<string> tickers);
 
         /// <summary>
         /// Получить контекст

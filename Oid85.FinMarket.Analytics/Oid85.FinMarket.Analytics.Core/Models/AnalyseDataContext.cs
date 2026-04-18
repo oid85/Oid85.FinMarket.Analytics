@@ -63,7 +63,7 @@
         /// <summary>
         /// Доп. данные фундаментального анализа
         /// </summary>
-        public Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo)> ExtData { get; set; } = [];
+        public Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo, string? Concept)> ExtData { get; set; } = [];
 
         /// <summary>
         /// Получить последнюю цену инструмента по тикеру
@@ -159,6 +159,6 @@
         /// <summary>
         /// Получить доп. данные фундаментального анализа по тикеру
         /// </summary>
-        public (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo)? GetExtData(string ticker) => !ExtData.TryGetValue(ticker, out var result) ? null : result;
+        public (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo, string? Concept)? GetExtData(string ticker) => !ExtData.TryGetValue(ticker, out var result) ? null : result;
     }
 }
