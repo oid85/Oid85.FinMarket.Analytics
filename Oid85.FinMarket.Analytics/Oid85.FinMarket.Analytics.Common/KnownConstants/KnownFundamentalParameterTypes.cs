@@ -6,6 +6,8 @@ public static class KnownFundamentalParameterTypes
     public const string Ebitda = "Ebitda";
     public const string Revenue = "Revenue";
     public const string NetProfit = "NetProfit";
+    public const string Fcf = "Fcf";
+    public const string Eps = "Eps";
     public const string Ev = "Ev";
     public const string NetDebt = "NetDebt";
     public const string MarketCap = "MarketCap";

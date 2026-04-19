@@ -95,7 +95,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments.Select(x => x.Ticker).ToList();
             var benchmarkChangeData = await dataService.GetBenchmarkChangeDataAsync(tickers);
             var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
-            var forecastData = await dataService.GetConsensusForecastDataAsync();
 
             var prices = new List<Dictionary<string, double?>>();
 
@@ -119,7 +118,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
                     BenchmarkChange = benchmarkChangeData.TryGetValue(instrument.Ticker, out double value) ? Math.Round(value, 2) : 0.0,
-                    Forecast = forecastData.TryGetValue(instrument.Ticker, out Forecast? forecast) ? forecast : null,
                     Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty)
                 };
                 
@@ -130,6 +128,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     fundamentalParameterItem.Ebitda.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods[i]));
                     fundamentalParameterItem.Revenue.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, periods[i]));
                     fundamentalParameterItem.NetProfit.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, periods[i]));
+                    fundamentalParameterItem.Fcf.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Fcf, periods[i]));
+                    fundamentalParameterItem.Eps.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Eps, periods[i]));
                     fundamentalParameterItem.Ev.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods[i]));
                     fundamentalParameterItem.NetDebt.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods[i]));
                     fundamentalParameterItem.MarketCap.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods[i]));
@@ -137,10 +137,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     fundamentalParameterItem.Roa.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, periods[i]));
                     fundamentalParameterItem.Pbv.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, periods[i]));
 
-                    fundamentalParameterItem.EvEbitda.Add(GetDiv(fundamentalParameterItem.Ev[i], fundamentalParameterItem.Ebitda[i]));
-                    fundamentalParameterItem.NetDebtEbitda.Add(GetDiv(fundamentalParameterItem.NetDebt[i], fundamentalParameterItem.Ebitda[i]));
-                    fundamentalParameterItem.EbitdaRevenue.Add(GetDiv(fundamentalParameterItem.Ebitda[i], fundamentalParameterItem.Revenue[i]));
-                    fundamentalParameterItem.DividendYield.Add(GetDiv(fundamentalParameterItem.Dividend[i], fundamentalParameterItem.Price[i]));
+                    fundamentalParameterItem.EvEbitda.Add(Math.Round(GetDiv(fundamentalParameterItem.Ev[i], fundamentalParameterItem.Ebitda[i]), 2));
+                    fundamentalParameterItem.NetDebtEbitda.Add(Math.Round(GetDiv(fundamentalParameterItem.NetDebt[i], fundamentalParameterItem.Ebitda[i]), 2));
+                    fundamentalParameterItem.EbitdaRevenue.Add(Math.Round(GetDiv(fundamentalParameterItem.Ebitda[i], fundamentalParameterItem.Revenue[i]), 2));
+                    fundamentalParameterItem.DividendYield.Add(Math.Round(GetDiv(fundamentalParameterItem.Dividend[i], fundamentalParameterItem.Price[i]) * 100.0, 2));
                     fundamentalParameterItem.DeltaMinMax.Add(await GetDeltaMinMaxAsync(instrument.Ticker, int.Parse(periods[i])));
                 }
 
@@ -186,8 +186,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new GetAnalyticFundamentalParameterBubbleDiagramPointResponse
                     {
                         Ticker = instrument.Ticker,
-                        EvEbitda = evEbitda!.Value,
-                        NetDebtEbitda = netDebtEbitda!.Value,
+                        EvEbitda = Math.Round(evEbitda, 2),
+                        NetDebtEbitda = Math.Round(netDebtEbitda, 2),
                         MarketCap = marketCap
                     });
             }
@@ -276,8 +276,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new GetFundamentalBySectorBubbleDiagramPointResponse
                     {
                         Ticker = instrument.Ticker,
-                        EvEbitda = evEbitda!.Value,
-                        NetDebtEbitda = netDebtEbitda!.Value,
+                        EvEbitda = Math.Round(evEbitda, 2),
+                        NetDebtEbitda = Math.Round(netDebtEbitda, 2),
                         MarketCap = marketCap
                     });
             }
@@ -411,15 +411,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return fundamentalParameters.Find(x => x.Ticker == ticker && x.Type == type && x.Period == period)?.Value;
         }
 
-        private static double? GetDiv(double? arg1, double? arg2)
+        private static double GetDiv(double? arg1, double? arg2)
         {
             if (arg1 is null || arg2 is null)
-                return null;
+                return 0.0;
 
             if (arg1 == 0.0 || arg2 == 0.0)
                 return 0.0;
 
-            return Math.Round(arg1.Value / arg2.Value, 2);
+            return arg1.Value / arg2.Value;
         }
 
         private async Task<double?> GetDeltaMinMaxAsync(string ticker, int year)
