@@ -118,21 +118,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 switch (trendState.TrendState)
                 {
                     case TrendState.UpTrend:
-                        portfolioPosition.TrendCoefficient = 1.0;
                         portfolioPosition.Message = trendState.Message;
                         break;
 
                     case TrendState.NoTrend:
-                        portfolioPosition.TrendCoefficient = 0.7;
                         portfolioPosition.Message = trendState.Message;
                         break;
 
                     case TrendState.DownTrend:
-                        portfolioPosition.TrendCoefficient = dividendCoefficient > 1.0 ? 0.7 : 0.0;
                         portfolioPosition.Message = trendState.Message;
                         break;
                 }
-                
+
+                portfolioPosition.TrendCoefficient = 1.0;
+
                 portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
 
                 portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient, 2);

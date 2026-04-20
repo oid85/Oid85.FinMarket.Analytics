@@ -26,8 +26,8 @@
     public class GetFundamentalBySectorBubbleDiagramPointResponse
     {
         public string Ticker { get; set; }
-        public double NetDebtEbitda { get; set; }
-        public double EvEbitda { get; set; }
-        public double MarketCap { get; set; }
+        public double? NetDebtEbitda { get; set; }
+        public double? EvEbitda { get; set; }
+        public double? MarketCap { get; set; }
     }
 }

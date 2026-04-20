@@ -18,9 +18,6 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public bool InPortfolio { get; set; } = false;
         public string TrendState { get; set; } = string.Empty;
         public double? FallingFromMax { get; set; } = null;
-        public double? DividendYield { get; set; } = null;
-        public FundamentalScore? Score { get; set; } = null;
-        public Forecast? Forecast { get; set; } = null;
     }
 
     public class WeekDeltaHeaderItem

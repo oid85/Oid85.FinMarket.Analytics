@@ -28,9 +28,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-            var dividendData = await dataService.GetDividendDataAsync(tickers);
-            var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
-            var forecastData = await dataService.GetConsensusForecastDataAsync();
             var weeks = DateUtils.GetWeeks(startDate, today);
 
             var response = new GetWeekDeltaResponse
@@ -74,10 +71,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             InPortfolio = instrument.InPortfolio,
                             Items = weekDeltaData,
                             TrendState = TrendStateHelper.GetTrendState(ultimateSmoothers).Message,
-                            FallingFromMax = Math.Round(fallingFromMax, 2),
-                            DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? Math.Round(value.Yield!.Value, 1) : null,
-                            Score = scoreData.TryGetValue(instrument.Ticker, out FundamentalScore? score) ? score : null,
-                            Forecast = forecastData.TryGetValue(instrument.Ticker, out Forecast? forecast) ? forecast : null
+                            FallingFromMax = fallingFromMax.RoundTo(2)
                         });
                 }
 
@@ -110,7 +104,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 double delta = (lastPrice - firstPrice) / firstPrice * 100.0;
 
-                return new WeekDeltaDataItem { Delta = Math.Round(delta, 2), Price = Math.Round(lastPrice, 4) };
+                return new WeekDeltaDataItem { Delta = delta.RoundTo(2), Price = lastPrice.RoundTo(4) };
             }
         }
     }

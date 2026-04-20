@@ -117,31 +117,49 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Name = instrument.Name,
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
-                    BenchmarkChange = benchmarkChangeData.TryGetValue(instrument.Ticker, out double value) ? Math.Round(value, 2) : 0.0,
-                    Moex = GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Moex, string.Empty)
+                    BenchmarkChange = benchmarkChangeData.TryGetValue(instrument.Ticker, out double value) ? value.RoundTo(2) : 0.0
                 };
                 
                 for (int i = 0; i < periods.Count; i++)
                 {
-                    fundamentalParameterItem.Price.Add(prices[i][instrument.Ticker].HasValue ? Math.Round(prices[i][instrument.Ticker].Value, 4) : null);
-                    fundamentalParameterItem.Pe.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, periods[i]));
-                    fundamentalParameterItem.Ebitda.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods[i]));
-                    fundamentalParameterItem.Revenue.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, periods[i]));
-                    fundamentalParameterItem.NetProfit.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, periods[i]));
-                    fundamentalParameterItem.Fcf.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Fcf, periods[i]));
-                    fundamentalParameterItem.Eps.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Eps, periods[i]));
-                    fundamentalParameterItem.Ev.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods[i]));
-                    fundamentalParameterItem.NetDebt.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods[i]));
-                    fundamentalParameterItem.MarketCap.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods[i]));
-                    fundamentalParameterItem.Dividend.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, periods[i]));
-                    fundamentalParameterItem.Roa.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, periods[i]));
-                    fundamentalParameterItem.Pbv.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, periods[i]));
+                    fundamentalParameterItem.Price.Add(prices[i][instrument.Ticker].HasValue ? prices[i][instrument.Ticker].Value.RoundTo(4) : null);
+                    fundamentalParameterItem.NumberShares.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NumberShares, periods[i]).RoundTo(2));
+                    fundamentalParameterItem.Pe.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pe, periods[i]).RoundTo(2));
+                    fundamentalParameterItem.Ebitda.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods[i]).RoundTo(1));
+                    fundamentalParameterItem.Revenue.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, periods[i]).RoundTo(1));
+                    fundamentalParameterItem.NetProfit.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, periods[i]).RoundTo(1));
+                    fundamentalParameterItem.Fcf.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Fcf, periods[i]).RoundTo(1));
+                    fundamentalParameterItem.Eps.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Eps, periods[i]).RoundTo(2));
+                    fundamentalParameterItem.Ev.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods[i]).RoundTo(1));
+                    fundamentalParameterItem.NetDebt.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods[i]).RoundTo(1));
+                    fundamentalParameterItem.MarketCap.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods[i]).RoundTo(1));
+                    fundamentalParameterItem.Dividend.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, periods[i]).RoundTo(5));
+                    fundamentalParameterItem.Roa.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Roa, periods[i]).RoundTo(2));
+                    fundamentalParameterItem.Pbv.Add(GetFundamentalParameterValue(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Pbv, periods[i]).RoundTo(2));
 
-                    fundamentalParameterItem.EvEbitda.Add(Math.Round(GetDiv(fundamentalParameterItem.Ev[i], fundamentalParameterItem.Ebitda[i]), 2));
-                    fundamentalParameterItem.NetDebtEbitda.Add(Math.Round(GetDiv(fundamentalParameterItem.NetDebt[i], fundamentalParameterItem.Ebitda[i]), 2));
-                    fundamentalParameterItem.EbitdaRevenue.Add(Math.Round(GetDiv(fundamentalParameterItem.Ebitda[i], fundamentalParameterItem.Revenue[i]), 2));
-                    fundamentalParameterItem.DividendYield.Add(Math.Round(GetDiv(fundamentalParameterItem.Dividend[i], fundamentalParameterItem.Price[i]) * 100.0, 2));
+                    fundamentalParameterItem.EvEbitda.Add(fundamentalParameterItem.Ev[i].Div(fundamentalParameterItem.Ebitda[i]).RoundTo(2));
+                    fundamentalParameterItem.NetDebtEbitda.Add(fundamentalParameterItem.NetDebt[i].Div(fundamentalParameterItem.Ebitda[i]).RoundTo(2));
+                    fundamentalParameterItem.EbitdaRevenue.Add(fundamentalParameterItem.Ebitda[i].Div(fundamentalParameterItem.Revenue[i]).RoundTo(2));
+                    fundamentalParameterItem.DividendYield.Add(fundamentalParameterItem.Dividend[i].Div(fundamentalParameterItem.Price[i]).Mult(100.0).RoundTo(2));                    
                     fundamentalParameterItem.DeltaMinMax.Add(await GetDeltaMinMaxAsync(instrument.Ticker, int.Parse(periods[i])));
+
+                    if (periods[i] == (DateTime.Now.Year - 1).ToString())
+                    {
+                        if (fundamentalParameterItem.Pe.Last().HasValue &&
+                            fundamentalParameterItem.Pbv.Last().HasValue &&
+                            fundamentalParameterItem.Roa.Last().HasValue &&
+                            fundamentalParameterItem.MarketCap.Last().HasValue &&
+                            fundamentalParameterItem.Revenue.Last().HasValue &&
+                            fundamentalParameterItem.NetProfit.Last().HasValue &&
+                            fundamentalParameterItem.Eps.Last().HasValue &&
+                            fundamentalParameterItem.Fcf.Last().HasValue &&
+                            fundamentalParameterItem.Dividend.Last().HasValue &&
+                            fundamentalParameterItem.Price.Last().HasValue &&
+                            fundamentalParameterItem.Price.Last().HasValue)
+                        {
+                            fundamentalParameterItem.FillData = true;
+                        }
+                    }
                 }
 
                 fundamentalParameterItem.Score = scoreData.TryGetValue(instrument.Ticker, out FundamentalScore? score) ? score : null;
@@ -153,7 +171,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             int number = 1;
 
-            foreach (var fundamentalParameterItem in response.FundamentalParameters)
+            foreach (var fundamentalParameterItem in response.FundamentalParameters) 
                 fundamentalParameterItem.Number = number++;
 
             return response;
@@ -179,15 +197,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).LastOrDefault(x => x.Value != 0.0).Value;
                 var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).LastOrDefault(x => x.Value != 0.0).Value;
 
-                var evEbitda = GetDiv(ev, ebitda);
-                var netDebtEbitda = GetDiv(netDebt, ebitda);
-
                 response.Data.Add(
                     new GetAnalyticFundamentalParameterBubbleDiagramPointResponse
                     {
                         Ticker = instrument.Ticker,
-                        EvEbitda = Math.Round(evEbitda, 2),
-                        NetDebtEbitda = Math.Round(netDebtEbitda, 2),
+                        EvEbitda = ev.Div(ebitda).RoundTo(2),
+                        NetDebtEbitda = netDebt.Div(ebitda).RoundTo(2),
                         MarketCap = marketCap
                     });
             }
@@ -269,15 +284,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).LastOrDefault(x => x.Value != 0.0).Value;
                 var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).LastOrDefault(x => x.Value != 0.0).Value;
 
-                var evEbitda = GetDiv(ev, ebitda);
-                var netDebtEbitda = GetDiv(netDebt, ebitda);
-
                 response.BubbleDiagram.Add(
                     new GetFundamentalBySectorBubbleDiagramPointResponse
                     {
                         Ticker = instrument.Ticker,
-                        EvEbitda = Math.Round(evEbitda, 2),
-                        NetDebtEbitda = Math.Round(netDebtEbitda, 2),
+                        EvEbitda = ev.Div(ebitda).RoundTo(2),
+                        NetDebtEbitda = netDebt.Div(ebitda).RoundTo(2),
                         MarketCap = marketCap
                     });
             }
@@ -411,17 +423,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return fundamentalParameters.Find(x => x.Ticker == ticker && x.Type == type && x.Period == period)?.Value;
         }
 
-        private static double GetDiv(double? arg1, double? arg2)
-        {
-            if (arg1 is null || arg2 is null)
-                return 0.0;
-
-            if (arg1 == 0.0 || arg2 == 0.0)
-                return 0.0;
-
-            return arg1.Value / arg2.Value;
-        }
-
         private async Task<double?> GetDeltaMinMaxAsync(string ticker, int year)
         {
             var response = await finMarketStorageServiceApiClient.GetCandleListAsync(
@@ -448,8 +449,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             double min = minCandle.Close;
 
             return maxCandle.Date < minCandle.Date
-                ? -1 * Math.Abs(Math.Round((max - min) / max * 100.0, 2)) // Падение от максимума
-                : Math.Abs(Math.Round((max - min) / min * 100.0, 2)); // Рост от минимума
+                ? -1 * Math.Abs(((max - min) / max * 100.0).RoundTo(2)) // Падение от максимума
+                : Math.Abs(((max - min) / min * 100.0).RoundTo(2));     // Рост от минимума
         }
     }
 }

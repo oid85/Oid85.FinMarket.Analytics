@@ -2,6 +2,7 @@
 
 public static class KnownFundamentalParameterTypes
 {
+    public const string NumberShares = "NumberShares";
     public const string Pe = "Pe";
     public const string Ebitda = "Ebitda";
     public const string Revenue = "Revenue";

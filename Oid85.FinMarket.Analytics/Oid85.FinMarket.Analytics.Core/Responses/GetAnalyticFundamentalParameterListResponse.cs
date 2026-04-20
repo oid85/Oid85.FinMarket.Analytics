@@ -14,11 +14,12 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public string Name { get; set; } = string.Empty;
         public bool IsSelected { get; set; }
         public bool InPortfolio { get; set; }
+        public bool FillData { get; set; }
         public FundamentalScore? Score { get; set; } = null;
-        public double? Moex { get; set; } = null;
         public double BenchmarkChange { get; set; }
         public List<string> Periods { get; set; } = [];
         public List<double?> Price { get; set; } = [];
+        public List<double?> NumberShares { get; set; } = [];
         public List<double?> Pe { get; set; } = [];
         public List<double?> Ebitda { get; set; } = [];
         public List<double?> Revenue { get; set; } = [];
