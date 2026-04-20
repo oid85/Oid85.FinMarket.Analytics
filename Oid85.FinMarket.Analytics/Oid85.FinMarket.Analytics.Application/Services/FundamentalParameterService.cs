@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Oid85.FinMarket.Analytics.Application.Helpers;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
