@@ -542,6 +542,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Pe = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Pe)?.Value,
                         Pbv = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Pbv)?.Value,
                         Roa = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Roa)?.Value,
+                        Fcf = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Fcf)?.Value,
+                        Eps = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Eps)?.Value,
                         Dividend = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Dividend)?.Value,
                         NetProfit = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value,
                         NumberShares = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NumberShares)?.Value,

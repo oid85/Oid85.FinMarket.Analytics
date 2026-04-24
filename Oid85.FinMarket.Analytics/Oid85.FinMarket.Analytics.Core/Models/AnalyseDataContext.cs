@@ -110,6 +110,8 @@
                 Period = metricsWithoutPredict[^1].Period,
                 Pe = metrics.FindLast(x => x.Pe.HasValue)?.Pe,
                 Pbv = metricsWithoutPredict.FindLast(x => x.Pbv.HasValue)?.Pbv,
+                Fcf = metricsWithoutPredict.FindLast(x => x.Pe.HasValue)?.Fcf,
+                Eps = metricsWithoutPredict.FindLast(x => x.Pbv.HasValue)?.Eps,
                 Roa = metricsWithoutPredict.FindLast(x => x.Roa.HasValue)?.Roa,
                 EvEbitda = metricsWithoutPredict.FindLast(x => x.EvEbitda.HasValue)?.EvEbitda,
                 NetDebtEbitda = metricsWithoutPredict.FindLast(x => x.NetDebtEbitda.HasValue)?.NetDebtEbitda,

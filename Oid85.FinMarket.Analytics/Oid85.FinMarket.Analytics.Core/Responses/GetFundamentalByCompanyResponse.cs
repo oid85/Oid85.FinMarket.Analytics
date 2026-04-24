@@ -50,24 +50,54 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<BarDiagramDataPoint> DividendDiagramData { get; set; } = [];
 
         /// <summary>
-        /// Сравнение P/E с другими компаниями из сектора
+        /// Динамика P/E по периодам
         /// </summary>
         public List<BarDiagramDataPoint> PeDiagramData { get; set; } = [];
 
         /// <summary>
-        /// Сравнение P/BV с другими компаниями из сектора
+        /// Динамика P/BV по периодам
         /// </summary>
         public List<BarDiagramDataPoint> PbvDiagramData { get; set; } = [];
 
         /// <summary>
-        /// Сравнение EV/EBITDA с другими компаниями из сектора
+        /// Динамика FCF по периодам
+        /// </summary>
+        public List<BarDiagramDataPoint> FcfDiagramData { get; set; } = [];
+
+        /// <summary>
+        /// Динамика EPS по периодам
+        /// </summary>
+        public List<BarDiagramDataPoint> EpsDiagramData { get; set; } = [];
+
+        /// <summary>
+        /// Динамика EV/EBITDA по периодам
         /// </summary>
         public List<BarDiagramDataPoint> EvEbitdaDiagramData { get; set; } = [];
 
         /// <summary>
-        /// Сравнение NetDebt/EBITDA с другими компаниями из сектора
+        /// Динамика NetDebt/EBITDA по периодам
         /// </summary>
         public List<BarDiagramDataPoint> NetDebtEbitdaDiagramData { get; set; } = [];
+
+        /// <summary>
+        /// Сравнение P/E с другими компаниями из сектора
+        /// </summary>
+        public List<BarDiagramDataPoint> PeSectorDiagramData { get; set; } = [];
+
+        /// <summary>
+        /// Сравнение P/BV с другими компаниями из сектора
+        /// </summary>
+        public List<BarDiagramDataPoint> PbvSectorDiagramData { get; set; } = [];
+
+        /// <summary>
+        /// Сравнение EV/EBITDA с другими компаниями из сектора
+        /// </summary>
+        public List<BarDiagramDataPoint> EvEbitdaSectorDiagramData { get; set; } = [];
+
+        /// <summary>
+        /// Сравнение NetDebt/EBITDA с другими компаниями из сектора
+        /// </summary>
+        public List<BarDiagramDataPoint> NetDebtEbitdaSectorDiagramData { get; set; } = [];
 
         /// <summary>
         /// Актуальный дивиденд

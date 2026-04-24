@@ -386,14 +386,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Concept = concept
             };
 
-            // Диаграмма динамики прибыли
-            foreach (var metric in companyFundamentalMetrics)            
-                response.NetProfitDiagramData.Add(new () { X = metric.Period, Y = metric.NetProfit });
-
-            // Диаграмма динамики дивидендов
+            // Диаграммы динамики показателей компании
             foreach (var metric in companyFundamentalMetrics)
-                response.DividendDiagramData.Add(new () { X = metric.Period, Y = metric.Dividend });
-
+            {
+                response.NetProfitDiagramData.Add(new() { X = metric.Period, Y = metric.NetProfit });
+                response.DividendDiagramData.Add(new() { X = metric.Period, Y = metric.Dividend });
+                response.PeDiagramData.Add(new() { X = metric.Period, Y = metric.Pe });
+                response.PbvDiagramData.Add(new() { X = metric.Period, Y = metric.Pbv });
+                response.EvEbitdaDiagramData.Add(new() { X = metric.Period, Y = metric.EvEbitda });
+                response.NetDebtEbitdaDiagramData.Add(new() { X = metric.Period, Y = metric.NetDebtEbitda });
+                response.FcfDiagramData.Add(new() { X = metric.Period, Y = metric.Fcf });
+                response.EpsDiagramData.Add(new() { X = metric.Period, Y = metric.Eps });
+            }  
+                
             // Сравнительная диаграмма по мультипликаторам среди сектора
             var sectorInstruments = instruments.Where(x => x.Sector == instrument.Sector).ToList();
             List<Instrument> orderedSectorInstruments = [sectorInstruments.Find(x => x.Ticker == instrument.Ticker), .. sectorInstruments.Where(x => x.Ticker != instrument.Ticker).OrderBy(x => x.Ticker).ToList()];
@@ -402,10 +407,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 var fundamentalMetric = analyseDataContext.GetFundamentalMetric(sectorInstrument.Ticker)!;
 
-                response.PeDiagramData.Add(new () { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pe });
-                response.PbvDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pbv });
-                response.EvEbitdaDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.EvEbitda });
-                response.NetDebtEbitdaDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.NetDebtEbitda });
+                response.PeSectorDiagramData.Add(new () { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pe });
+                response.PbvSectorDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.Pbv });
+                response.EvEbitdaSectorDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.EvEbitda });
+                response.NetDebtEbitdaSectorDiagramData.Add(new() { X = sectorInstrument.Ticker, Y = fundamentalMetric.NetDebtEbitda });
             }
 
             return response;

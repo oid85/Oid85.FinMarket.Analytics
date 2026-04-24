@@ -5,6 +5,8 @@
         public string Period { get; set; }
         public double? Pe { get; set; } = null;
         public double? Pbv { get; set; } = null;
+        public double? Fcf { get; set; } = null;
+        public double? Eps { get; set; } = null;
         public double? Roa { get; set; } = null;
         public double? EvEbitda { get; set; } = null;
         public double? NetDebtEbitda { get; set; } = null;
