@@ -43,6 +43,10 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
             await GetResponseAsync<CreateOrUpdateFundamentalParameterRequest, CreateOrUpdateFundamentalParameterResponse>("/api/fundamental-parameters/create-or-update", request);
 
         /// <inheritdoc />
+        public async Task<DeleteFundamentalParameterResponse> DeleteFundamentalParameterAsync(DeleteFundamentalParameterRequest request) =>
+            await GetResponseAsync<DeleteFundamentalParameterRequest, DeleteFundamentalParameterResponse>("/api/fundamental-parameters/delete", request);
+
+        /// <inheritdoc />
         public async Task<GetConsumerPriceIndexChangeListResponse> GetConsumerPriceIndexChangeListAsync(GetConsumerPriceIndexChangeListRequest request) =>
             await GetResponseAsync<GetConsumerPriceIndexChangeListRequest, GetConsumerPriceIndexChangeListResponse>("/api/consumer-price-indexes/list", request);
 

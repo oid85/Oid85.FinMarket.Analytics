@@ -14,6 +14,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<CreateOrUpdateAnalyticFundamentalParameterResponse> CreateOrUpdateAnalyticFundamentalParameterAsync(CreateOrUpdateAnalyticFundamentalParameterRequest request);
 
         /// <summary>
+        /// Удаление фундаментального параметра
+        /// </summary>
+        Task<DeleteAnalyticFundamentalParameterResponse> DeleteAnalyticFundamentalParameterAsync(DeleteAnalyticFundamentalParameterRequest request);
+
+        /// <summary>
         /// Пузырьковая диаграмма
         /// </summary>
         Task<GetAnalyticFundamentalParameterBubbleDiagramResponse> GetAnalyticFundamentalParameterBubbleDiagramAsync(GetAnalyticFundamentalParameterBubbleDiagramRequest request);
@@ -31,6 +36,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Получить фундаментальные параметры по компании
         /// </summary>
-        Task<GetFundamentalByCompanyResponse> GetFundamentalByCompanyAsync(GetFundamentalByCompanyRequest request);
+        Task<GetFundamentalByCompanyResponse> GetFundamentalByCompanyAsync(GetFundamentalByCompanyRequest request);        
     }
 }

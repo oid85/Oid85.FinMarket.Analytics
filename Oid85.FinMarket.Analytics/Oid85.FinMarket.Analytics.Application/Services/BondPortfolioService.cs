@@ -158,7 +158,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             response.YearCouponPrc = Math.Round(yearCouponSum / totalSum * 100.0, 2);
             response.MonthCouponSum = Math.Round(yearCouponSum / 12.0, 2);
 
-            response.TotalSumLongOfz = response.PortfolioPositions.Where(x => x.Name.Contains("ОФЗ")).Sum(x => x.Cost);
+            response.TotalSumOfz = response.PortfolioPositions.Where(x => x.Name.Contains("ОФЗ")).Sum(x => x.Cost);
 
             return response;
         }

@@ -41,6 +41,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
         Task<CreateOrUpdateFundamentalParameterResponse> CreateOrUpdateFundamentalParameterAsync(CreateOrUpdateFundamentalParameterRequest request);
 
         /// <summary>
+        /// Удалить фундаментальные параметры
+        /// </summary>
+        Task<DeleteFundamentalParameterResponse> DeleteFundamentalParameterAsync(DeleteFundamentalParameterRequest request);
+
+        /// <summary>
         /// Получить именения индекса потребительских цен
         /// </summary>
         Task<GetConsumerPriceIndexChangeListResponse> GetConsumerPriceIndexChangeListAsync(GetConsumerPriceIndexChangeListRequest request);
@@ -73,6 +78,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
         /// <summary>
         /// Получить прогнозы
         /// </summary>
-        Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request);
+        Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request);        
     }
 }

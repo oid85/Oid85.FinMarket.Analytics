@@ -43,6 +43,19 @@ public class FundamentalParameterController(
             result => new BaseResponse<CreateOrUpdateAnalyticFundamentalParameterResponse> { Result = result });
 
     /// <summary>
+    /// Удалить фундаментальный параметр
+    /// </summary>
+    [HttpPost("delete")]
+    [ProducesResponseType(typeof(BaseResponse<DeleteAnalyticFundamentalParameterResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<DeleteAnalyticFundamentalParameterResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<DeleteAnalyticFundamentalParameterResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> DeleteAnalyticFundamentalParameterAsync(
+        [FromBody] DeleteAnalyticFundamentalParameterRequest request) =>
+        GetResponseAsync(
+            () => fundamentalParameterService.DeleteAnalyticFundamentalParameterAsync(request),
+            result => new BaseResponse<DeleteAnalyticFundamentalParameterResponse> { Result = result });
+
+    /// <summary>
     /// Пузырьковая диаграмма
     /// </summary>
     [HttpPost("bubble")]

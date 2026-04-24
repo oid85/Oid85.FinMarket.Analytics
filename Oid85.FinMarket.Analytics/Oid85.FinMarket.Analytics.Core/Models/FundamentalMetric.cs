@@ -10,5 +10,6 @@
         public double? NetDebtEbitda { get; set; } = null;
         public double? Dividend { get; set; } = null;
         public double? NetProfit { get; set; } = null;
+        public double? NumberShares { get; set; } = null;
     }
 }

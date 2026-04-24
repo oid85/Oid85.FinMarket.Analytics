@@ -12,7 +12,6 @@
         public List<GetClosePriceDiagramDateValueResponse> Data { get; set; } = [];
         public bool InPortfolio { get; set; }
         public string TrendState { get; set; } = string.Empty;
-        public string? Recommendation { get; set; }
         public double? DividendYield { get; set; }
     }
 
@@ -20,8 +19,5 @@
     {
         public DateOnly? Date { get; set; } = null;
         public double? Value { get; set; } = null;
-        public double? MaxTarget { get; set; } = null;
-        public double? MinTarget { get; set; } = null;
-        public double? ConsensusPrice { get; set; } = null;
     }
 }

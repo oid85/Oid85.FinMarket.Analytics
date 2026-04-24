@@ -95,6 +95,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public Forecast? VladProDengiForecast { get; set; } = null;
 
         /// <summary>
+        /// Прогноз методом прогноза чистой прибыли
+        /// </summary>
+        public Forecast? PredictNetProfitForecast { get; set; } = null;
+
+        /// <summary>
         /// Рейтинг на основе фунд. анализа от 0 до 1
         /// </summary>
         public FundamentalScore? FundamentalScore { get; set; } = null;
@@ -134,11 +139,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
     {
         public DateOnly? Date { get; set; } = null;
         public double? PriceValue { get; set; } = null;
-        public double? ConsensusPriceValue { get; set; } = null;
         public double? UltimateSmootherValue { get; set; } = null;
-        public double? NataliaBaffetovnaConsensusPriceValue { get; set; } = null;
-        public double? FinanceMarkerConsensusPriceValue { get; set; } = null;
-        public double? VladProDengiConsensusPriceValue { get; set; } = null;
     }
 
     public class BarDiagramDataPoint

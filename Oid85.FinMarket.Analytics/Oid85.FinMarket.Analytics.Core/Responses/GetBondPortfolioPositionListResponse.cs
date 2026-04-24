@@ -3,7 +3,7 @@
     public class GetBondPortfolioPositionListResponse
     {
         public double TotalSum { get; set; }
-        public double TotalSumLongOfz { get; set; }
+        public double TotalSumOfz { get; set; }
         public double YearCouponSum { get; set; }
         public double YearCouponPrc { get; set; }
         public double MonthCouponSum { get; set; }

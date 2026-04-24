@@ -194,6 +194,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 CheckDividendYield();
                 CheckIsDividendAristokrat();
                 CheckNetProfit();
+                CheckEps();
+                CheckFcf();
                 CheckNetDebt();
 
                 score.ScoreValue = Math.Round(Convert.ToDouble(count) / Convert.ToDouble(countCriteria), 2);
@@ -289,6 +291,34 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     countCriteria++;
                 }
 
+                void CheckEps()
+                {
+                    var values = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Eps);
+
+                    if (values.Count > 2)
+                        if (values[^1] > 0.0 && values[^2] > 0.0 && values[^1] > values[^2])
+                        {
+                            count++;
+                            score.EpsOk = true;
+                        }
+
+                    countCriteria++;
+                }
+
+                void CheckFcf()
+                {
+                    var values = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.Fcf);
+
+                    if (values.Count > 2)
+                        if (values[^1] > 0.0 && values[^2] > 0.0 && values[^1] > values[^2])
+                        {
+                            count++;
+                            score.FcfOk = true;
+                        }
+
+                    countCriteria++;
+                }
+
                 void CheckNetDebt()
                 {
                     var netDebt = GetFundamentalParameterValues(ticker, KnownFundamentalParameterTypes.NetDebt);
@@ -326,8 +356,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 
                 var price = candleData[forecast.Ticker].Last().Close;
 
-                if (price >= forecast.ConsensusPrice) continue;
-
                 result.Add(
                     forecast.Ticker,
                     new ()
@@ -364,7 +392,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.NataliaBaffetovnaForecast)?.Value).LastOrDefault();
 
                 if (!consensusPrice.HasValue) continue;
-                if (price >= consensusPrice) continue;
 
                 result.Add(ticker, new () 
                 { 
@@ -397,7 +424,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.FinanceMarkerForecast)?.Value).LastOrDefault();
 
                 if (!consensusPrice.HasValue) continue;
-                if (price >= consensusPrice) continue;
 
                 result.Add(ticker, new()
                 {
@@ -430,7 +456,50 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.VladProDengiForecast)?.Value).LastOrDefault();
 
                 if (!consensusPrice.HasValue) continue;
-                if (price >= consensusPrice) continue;
+
+                result.Add(ticker, new()
+                {
+                    Ticker = ticker,
+                    ConsensusPrice = consensusPrice,
+                    CurrentPrice = price,
+                    UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
+                });
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        public async Task<Dictionary<string, Forecast>> GetPredictNetProfitForecastDataAsync(List<string> tickers)
+        {
+            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+
+            var fundamentalParameterList = await GetFundamentalParameterListAsync();
+            var candleData = await GetCandleDataAsync(tickers);
+
+            var result = new Dictionary<string, Forecast>();
+
+            foreach (var ticker in tickers)
+            {
+                if (!candleData.ContainsKey(ticker)) continue;
+
+                var price = candleData[ticker].Last().Close;
+
+                var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
+
+                double? predictPe = fundamentalParameterListByTicker.Find(x => x.Period == predictYear && x.Type == KnownFundamentalParameterTypes.Pe)?.Value;
+                double? predictNetProfit = fundamentalParameterListByTicker.Find(x => x.Period == predictYear && x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value;
+                double? predictNumberShares = fundamentalParameterListByTicker.Find(x => x.Period == predictYear && x.Type == KnownFundamentalParameterTypes.NumberShares)?.Value;
+
+                predictNetProfit = predictNetProfit.Mult(1_000_000_000);
+                predictNumberShares = predictNumberShares.Mult(1_000_000);
+
+                double? predictNetProfitConsensusPrice = predictNetProfit.Mult(predictPe).Div(predictNumberShares);
+
+                double? consensusPrice = predictNetProfit.Mult(predictPe).Div(predictNumberShares);
+
+                if (!consensusPrice.HasValue) continue;
 
                 result.Add(ticker, new()
                 {
@@ -475,6 +544,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Roa = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Roa)?.Value,
                         Dividend = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Dividend)?.Value,
                         NetProfit = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value,
+                        NumberShares = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NumberShares)?.Value,
                         EvEbitda = MathUtils.DivideNullable(ev, ebitda),
                         NetDebtEbitda = MathUtils.DivideNullable(netDebt, ebitda)
                     };
@@ -483,6 +553,37 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 }
 
                 result.Add(ticker, metrics);
+            }
+
+            return result;
+        }
+
+        public async Task<Dictionary<string, bool>> GetFillFundamentalDataAsync(List<string> tickers)
+        {            
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+
+            var fundamentalParameterList = await GetFundamentalParameterListAsync();
+
+            var result = new Dictionary<string, bool>();
+
+            foreach (var ticker in tickers)
+            {
+                var fundamentalParametersByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
+
+                string lastPeriod = (int.Parse(predictYear) - 1).ToString();
+
+                bool fillFundamental = fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.NumberShares) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Pe) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Pbv) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Roa) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.MarketCap) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Revenue) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.NetProfit) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Eps) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Fcf) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Dividend) is not null;
+
+                result.Add(ticker, fillFundamental);
             }
 
             return result;
@@ -525,7 +626,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 NataliaBaffetovnaForecastData = await GetNataliaBaffetovnaForecastDataAsync(tickers),
                 FinanceMarkerForecastData = await GetFinanceMarkerForecastDataAsync(tickers),
                 VladProDengiForecastData = await GetVladProDengiForecastDataAsync(tickers),
+                PredictNetProfitForecastData = await GetPredictNetProfitForecastDataAsync(tickers),
                 BondCouponData = await GetBondCouponsAsync(tickers),
+                FillFundamentalData = await GetFillFundamentalDataAsync(tickers),
                 ExtData = await GetExtDataAsync(tickers)
             };
 

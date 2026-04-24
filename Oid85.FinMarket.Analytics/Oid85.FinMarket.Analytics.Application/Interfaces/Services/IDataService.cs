@@ -68,9 +68,19 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<Dictionary<string, Forecast>> GetVladProDengiForecastDataAsync(List<string> tickers);
 
         /// <summary>
+        /// Получить данные по прогнозам (прогноз чистой прибыли)
+        /// </summary>
+        Task<Dictionary<string, Forecast>> GetPredictNetProfitForecastDataAsync(List<string> tickers);
+
+        /// <summary>
         /// Получить данные по див политикеб драйверам роста, рискам
         /// </summary>
         Task<Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo, string? Concept)>> GetExtDataAsync(List<string> tickers);
+
+        /// <summary>
+        /// Получить флаг заполненности данных по фундаменталу
+        /// </summary>
+        Task<Dictionary<string, bool>> GetFillFundamentalDataAsync(List<string> tickers);
 
         /// <summary>
         /// Получить контекст

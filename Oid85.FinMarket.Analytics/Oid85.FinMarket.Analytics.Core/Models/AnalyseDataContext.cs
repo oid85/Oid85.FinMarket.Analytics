@@ -61,9 +61,19 @@
         public Dictionary<string, Forecast> VladProDengiForecastData { get; set; } = [];
 
         /// <summary>
+        /// Консенсус прогнозы (прогноз чистой прибыли)
+        /// </summary>
+        public Dictionary<string, Forecast> PredictNetProfitForecastData { get; set; } = [];
+
+        /// <summary>
         /// Купоны (для облигаций)
         /// </summary>
         public Dictionary<string, List<BondCoupon>> BondCouponData { get; set; } = [];
+
+        /// <summary>
+        /// Флаг заполненности данных по фундаменталу
+        /// </summary>
+        public Dictionary<string, bool> FillFundamentalData { get; set; } = [];
 
         /// <summary>
         /// Доп. данные фундаментального анализа
@@ -91,16 +101,21 @@
             if (metrics is null) return null;
             if (metrics is []) return null;
 
+            string year = DateTime.Now.Year.ToString();
+
+            var metricsWithoutPredict = metrics.Where(x => x.Period != year).ToList();
+
             var metric = new FundamentalMetric
             {
-                Period = metrics[^1].Period,
+                Period = metricsWithoutPredict[^1].Period,
                 Pe = metrics.FindLast(x => x.Pe.HasValue)?.Pe,
-                Pbv = metrics.FindLast(x => x.Pbv.HasValue)?.Pbv,
-                Roa = metrics.FindLast(x => x.Roa.HasValue)?.Roa,
-                EvEbitda = metrics.FindLast(x => x.EvEbitda.HasValue)?.EvEbitda,
-                NetDebtEbitda = metrics.FindLast(x => x.NetDebtEbitda.HasValue)?.NetDebtEbitda,
+                Pbv = metricsWithoutPredict.FindLast(x => x.Pbv.HasValue)?.Pbv,
+                Roa = metricsWithoutPredict.FindLast(x => x.Roa.HasValue)?.Roa,
+                EvEbitda = metricsWithoutPredict.FindLast(x => x.EvEbitda.HasValue)?.EvEbitda,
+                NetDebtEbitda = metricsWithoutPredict.FindLast(x => x.NetDebtEbitda.HasValue)?.NetDebtEbitda,
                 Dividend = metrics.FindLast(x => x.Dividend.HasValue)?.Dividend,
-                NetProfit = metrics.FindLast(x => x.NetProfit.HasValue)?.NetProfit
+                NetProfit = metricsWithoutPredict.FindLast(x => x.NetProfit.HasValue)?.NetProfit,
+                NumberShares = metricsWithoutPredict.FindLast(x => x.NetProfit.HasValue)?.NumberShares
             };
 
             return metric;
@@ -162,9 +177,19 @@
         public Forecast? GetVladProDengiForecast(string ticker) => !VladProDengiForecastData.TryGetValue(ticker, out var result) ? null : result;
 
         /// <summary>
+        /// Получить консенсус прогноз по тикеру (прогноз чистой прибыли)
+        /// </summary>
+        public Forecast? GetPredictNetProfitForecast(string ticker) => !PredictNetProfitForecastData.TryGetValue(ticker, out var result) ? null : result;
+
+        /// <summary>
         /// Получить купоны по тикеру (для облигаций)
         /// </summary>
         public List<BondCoupon> GetBondCoupons(string ticker) => !BondCouponData.TryGetValue(ticker, out var result) ? [] : result;
+
+        /// <summary>
+        /// Получить флаг заполненности данных по фундаменталу
+        /// </summary>
+        public bool? GetFillFundamental(string ticker) => !FillFundamentalData.TryGetValue(ticker, out var result) ? false : result;
 
         /// <summary>
         /// Получить доп. данные фундаментального анализа по тикеру

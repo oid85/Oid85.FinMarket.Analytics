@@ -45,5 +45,12 @@
 
             return value.Value * arg.Value;
         }
+
+        public static double? Mult(this double value, double? arg)
+        {
+            if (!arg.HasValue) return null;
+
+            return value * arg.Value;
+        }
     }
 }

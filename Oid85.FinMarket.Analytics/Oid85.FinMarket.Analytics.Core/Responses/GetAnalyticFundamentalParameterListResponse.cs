@@ -17,6 +17,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public bool FillData { get; set; }
         public FundamentalScore? Score { get; set; } = null;
         public double BenchmarkChange { get; set; }
+        public string Concept { get; set; } = string.Empty;
         public List<string> Periods { get; set; } = [];
         public List<double?> Price { get; set; } = [];
         public List<double?> NumberShares { get; set; } = [];

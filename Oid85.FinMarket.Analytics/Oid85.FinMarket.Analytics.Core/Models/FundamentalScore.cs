@@ -8,6 +8,8 @@
         public bool DividendYieldOk { get; set; } = false;
         public bool IsDividendAristocrat { get; set; } = false;
         public bool NetProfitOk { get; set; } = false;
+        public bool EpsOk { get; set; } = false;
+        public bool FcfOk { get; set; } = false;
         public bool NetDebtOk{ get; set; } = false;
         public double ScoreValue { get; set; } = 0.0;        
     }
