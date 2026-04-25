@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+﻿using System.Linq;
+using Oid85.FinMarket.Analytics.Application.Helpers;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
@@ -210,6 +211,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var fundamentalParameterItem in response.FundamentalParameters) 
                 fundamentalParameterItem.Number = number++;
+
+            response.TotalCount = fundamentalParameterItems.Count;
+            response.NoFillDataCount = fundamentalParameterItems.Count(x => !x.FillData);
+            response.NoFillDataTickers = string.Join(", ", fundamentalParameterItems.Where(x => !x.FillData).Select(x => x.Ticker).ToList());
 
             return response;
         }

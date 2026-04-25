@@ -4,6 +4,9 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class GetAnalyticFundamentalParameterListResponse
     {
+        public int TotalCount { get; set; }
+        public int NoFillDataCount { get; set; }
+        public string NoFillDataTickers { get; set; }
         public List<GetAnalyticFundamentalParameterListItemResponse> FundamentalParameters { get; set; } = [];
     }
 
