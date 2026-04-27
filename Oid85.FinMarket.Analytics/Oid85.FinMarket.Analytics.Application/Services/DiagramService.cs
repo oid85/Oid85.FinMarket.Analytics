@@ -61,7 +61,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,
                         InPortfolio = instrument.InPortfolio,
-                        Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-12))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
+                        Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddYears(-1))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
                         TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
                         DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? value.Yield!.Value.RoundTo(1) : null
                     });

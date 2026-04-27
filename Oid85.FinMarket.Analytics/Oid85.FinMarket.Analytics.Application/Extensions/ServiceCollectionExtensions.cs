@@ -9,7 +9,8 @@ public static class ServiceCollectionExtensions
     public static void ConfigureApplicationServices(
         this IServiceCollection services)
     {
-        services.AddTransient<IDataService, DataService>();
+        services.AddScoped<IDataService, DataService>();
+
         services.AddTransient<ITrendDynamicService, TrendDynamicService>();
         services.AddTransient<IWeekTrendService, WeekTrendService>();
         services.AddTransient<ICompareTrendService, CompareTrendService>();
@@ -21,5 +22,6 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ILifePortfolioService, LifePortfolioService>();
         services.AddTransient<IBondAnalyseService, BondAnalyseService>();
         services.AddTransient<IDiagramService, DiagramService>();
+        services.AddTransient<IColorPaleteService, ColorPaleteService>();
     }
 }

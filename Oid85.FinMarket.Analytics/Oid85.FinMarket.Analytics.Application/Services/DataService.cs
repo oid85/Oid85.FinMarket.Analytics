@@ -85,7 +85,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<Dictionary<string, List<DateValue<double>>>> GetClosePriceDataAsync(List<string> tickers)
         {
-            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-3));
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             var candleData = await GetCandleDataAsync(tickers);
@@ -470,6 +470,38 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
+        public async Task<Dictionary<string, Forecast>> GetMozgovikForecastDataAsync(List<string> tickers)
+        {
+            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
+            var fundamentalParameterList = await GetFundamentalParameterListAsync();
+            var candleData = await GetCandleDataAsync(tickers);
+
+            var result = new Dictionary<string, Forecast>();
+
+            foreach (var ticker in tickers)
+            {
+                if (!candleData.ContainsKey(ticker)) continue;
+
+                var price = candleData[ticker].Last().Close;
+
+                var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
+                var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.MozgovikForecast)?.Value).LastOrDefault();
+
+                if (!consensusPrice.HasValue) continue;
+
+                result.Add(ticker, new()
+                {
+                    Ticker = ticker,
+                    ConsensusPrice = consensusPrice,
+                    CurrentPrice = price,
+                    UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
+                });
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc />
         public async Task<Dictionary<string, Forecast>> GetPredictNetProfitForecastDataAsync(List<string> tickers)
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
@@ -516,6 +548,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<Dictionary<string, List<FundamentalMetric>>> GetFundamentalMetricDataAsync(List<string> tickers)
         {
+            var candleData = await GetCandleDataAsync(tickers);
+
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
 
             var fundamentalParameterList = await GetFundamentalParameterListAsync();
@@ -526,32 +560,82 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 var fundamentalParametersByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
 
+                var candles = !candleData.TryGetValue(ticker, out var tickerCandles) ? [] : tickerCandles;
+
                 var metrics = new List<FundamentalMetric>();
 
                 foreach (var period in periods)
                 {
+                    var periodCandles = candles?.Where(x => x.Date.Year == int.Parse(period))?.ToList() ?? [];
+
+                    var price = periodCandles?.LastOrDefault()?.Close;
+
                     var fundamentalParametersByPeriod = fundamentalParametersByTicker.Where(x => x.Period == period).ToList();
 
-                    var ev = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Ev)?.Value;
-                    var ebitda = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Ebitda)?.Value;
-                    var netDebt = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetDebt)?.Value;
+                    var numberShares = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NumberShares)?.Value.RoundTo(2);
+                    var pe = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Pe)?.Value.RoundTo(2);
+                    var pbv = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Pbv)?.Value.RoundTo(2);
+                    var roa = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Roa)?.Value.RoundTo(2);
+                    var roe = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Roe)?.Value.RoundTo(2);
+                    var fcf = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Fcf)?.Value.RoundTo(2);
+                    var eps = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Eps)?.Value.RoundTo(2);
+                    var dividend = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Dividend)?.Value.RoundTo(2);
+                    var netProfit = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value.RoundTo(2);
+                    var revenue = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Revenue)?.Value.RoundTo(2);
+                    var marketCap = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.MarketCap)?.Value.RoundTo(2);
+                    var ev = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Ev)?.Value.RoundTo(2);
+                    var ebitda = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Ebitda)?.Value.RoundTo(2);
+                    var netDebt = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetDebt)?.Value.RoundTo(2);
 
-                    var metric = new FundamentalMetric
+                    var evEbitda = ev.Div(ebitda).RoundTo(2);
+                    var ebitdaRevenue = ebitda.Div(revenue).RoundTo(2);
+                    var netDebtEbitda = netDebt.Div(ebitda).RoundTo(2);
+                    var dividendYield = dividend.Div(price).Mult(100.0).RoundTo(2);
+
+                    var deltaMinMax = GetDeltaMinMax(periodCandles);
+
+                    metrics.Add(
+                        new ()
+                        {
+                            Price = price,
+                            Period = period,
+                            NumberShares = numberShares,
+                            Pe = pe,
+                            Pbv = pbv,
+                            Roa = roa,
+                            Roe = roe,
+                            Ev = ev,
+                            MarketCap = marketCap,
+                            Ebitda = ebitda,
+                            NetDebt = netDebt,
+                            Revenue = revenue,
+                            Fcf = fcf,
+                            Eps = eps,
+                            Dividend = dividend,
+                            DividendYield = dividendYield,
+                            NetProfit = netProfit,
+                            EvEbitda = evEbitda,
+                            NetDebtEbitda = netDebtEbitda,
+                            EbitdaRevenue = ebitdaRevenue,
+                            DeltaMinMax = deltaMinMax
+                        });
+
+                    static double? GetDeltaMinMax(List<Candle>? candles)
                     {
-                        Period = period,
-                        Pe = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Pe)?.Value,
-                        Pbv = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Pbv)?.Value,
-                        Roa = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Roa)?.Value,
-                        Fcf = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Fcf)?.Value,
-                        Eps = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Eps)?.Value,
-                        Dividend = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Dividend)?.Value,
-                        NetProfit = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value,
-                        NumberShares = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NumberShares)?.Value,
-                        EvEbitda = MathUtils.DivideNullable(ev, ebitda),
-                        NetDebtEbitda = MathUtils.DivideNullable(netDebt, ebitda)
-                    };
+                        if (candles is null) return null;
 
-                    metrics.Add(metric);
+                        var maxCandle = candles.MaxBy(x => x.Close);
+                        var minCandle = candles.MinBy(x => x.Close);
+
+                        if (maxCandle is null || minCandle is null) return null;
+
+                        double max = maxCandle.Close;
+                        double min = minCandle.Close;
+
+                        return maxCandle.Date < minCandle.Date
+                            ? -1 * Math.Abs(((max - min) / max * 100.0).RoundTo(2)) // Падение от максимума
+                            : Math.Abs(((max - min) / min * 100.0).RoundTo(2));     // Рост от минимума
+                    }
                 }
 
                 result.Add(ticker, metrics);
@@ -628,6 +712,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 NataliaBaffetovnaForecastData = await GetNataliaBaffetovnaForecastDataAsync(tickers),
                 FinanceMarkerForecastData = await GetFinanceMarkerForecastDataAsync(tickers),
                 VladProDengiForecastData = await GetVladProDengiForecastDataAsync(tickers),
+                MozgovikForecastData = await GetMozgovikForecastDataAsync(tickers),
                 PredictNetProfitForecastData = await GetPredictNetProfitForecastDataAsync(tickers),
                 BondCouponData = await GetBondCouponsAsync(tickers),
                 FillFundamentalData = await GetFillFundamentalDataAsync(tickers),
@@ -636,7 +721,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<List<Candle>> GetCandlesByTickerAsync(string ticker)
         {
-            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-10));
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             var response = await finMarketStorageServiceApiClient.GetCandleListAsync(

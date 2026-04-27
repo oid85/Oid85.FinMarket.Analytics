@@ -125,6 +125,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public Forecast? VladProDengiForecast { get; set; } = null;
 
         /// <summary>
+        /// Прогноз от Mozgovik
+        /// </summary>
+        public Forecast? MozgovikForecast { get; set; } = null;
+
+        /// <summary>
         /// Прогноз методом прогноза чистой прибыли
         /// </summary>
         public Forecast? PredictNetProfitForecast { get; set; } = null;
@@ -162,7 +167,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         /// <summary>
         /// Идея
         /// </summary>
-        public string? Concept { get; set; } = null;
+        public string? Concept { get; set; } = null;        
     }
 
     public class PriceDiagramDataPoint

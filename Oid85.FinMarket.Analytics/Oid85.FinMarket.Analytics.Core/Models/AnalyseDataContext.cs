@@ -61,6 +61,11 @@
         public Dictionary<string, Forecast> VladProDengiForecastData { get; set; } = [];
 
         /// <summary>
+        /// Консенсус прогнозы (Mozgovik)
+        /// </summary>
+        public Dictionary<string, Forecast> MozgovikForecastData { get; set; } = [];
+
+        /// <summary>
         /// Консенсус прогнозы (прогноз чистой прибыли)
         /// </summary>
         public Dictionary<string, Forecast> PredictNetProfitForecastData { get; set; } = [];
@@ -177,6 +182,11 @@
         /// Получить консенсус прогноз по тикеру (VladProDengi)
         /// </summary>
         public Forecast? GetVladProDengiForecast(string ticker) => !VladProDengiForecastData.TryGetValue(ticker, out var result) ? null : result;
+
+        /// <summary>
+        /// Получить консенсус прогноз по тикеру (Mozgovik)
+        /// </summary>
+        public Forecast? GetMozgovikForecast(string ticker) => !MozgovikForecastData.TryGetValue(ticker, out var result) ? null : result;
 
         /// <summary>
         /// Получить консенсус прогноз по тикеру (прогноз чистой прибыли)

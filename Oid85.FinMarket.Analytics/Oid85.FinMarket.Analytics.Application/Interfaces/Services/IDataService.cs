@@ -1,4 +1,5 @@
 ﻿using Oid85.FinMarket.Analytics.Core.Models;
+using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
@@ -66,6 +67,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить данные по прогнозам (VladProDengi)
         /// </summary>
         Task<Dictionary<string, Forecast>> GetVladProDengiForecastDataAsync(List<string> tickers);
+
+        /// <summary>
+        /// Получить данные по прогнозам (Mozgovik)
+        /// </summary>
+        Task<Dictionary<string, Forecast>> GetMozgovikForecastDataAsync(List<string> tickers);
 
         /// <summary>
         /// Получить данные по прогнозам (прогноз чистой прибыли)
