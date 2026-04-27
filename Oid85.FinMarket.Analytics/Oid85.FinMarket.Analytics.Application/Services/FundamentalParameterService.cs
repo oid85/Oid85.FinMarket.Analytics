@@ -163,6 +163,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     item.MarketCap.Add(metrics[i].MarketCap);
                     item.Dividend.Add(metrics[i].Dividend);
                     item.Roa.Add(metrics[i].Roa);
+                    item.Roe.Add(metrics[i].Roe);
                     item.Pbv.Add(metrics[i].Pbv);
                     item.EvEbitda.Add(metrics[i].EvEbitda);
                     item.NetDebtEbitda.Add(metrics[i].NetDebtEbitda);
@@ -176,6 +177,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         item.FillData &= item.Pe.Last().HasValue;
                         item.FillData &= item.Pbv.Last().HasValue;
                         item.FillData &= item.Roa.Last().HasValue;
+                        item.FillData &= item.Roe.Last().HasValue;
                         item.FillData &= item.MarketCap.Last().HasValue;
                         item.FillData &= item.Revenue.Last().HasValue;
                         item.FillData &= item.NetProfit.Last().HasValue;

@@ -36,6 +36,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<double?> DividendYield { get; set; } = [];
         public List<double?> Dividend { get; set; } = [];
         public List<double?> Roa { get; set; } = [];
+        public List<double?> Roe { get; set; } = [];
         public List<double?> Pbv { get; set; } = [];
         public List<double?> EvEbitda { get; set; } = [];
         public List<double?> NetDebtEbitda { get; set; } = [];
