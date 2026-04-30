@@ -3,12 +3,12 @@
     /// <summary>
     /// Числовой параметр для вывода на экран
     /// </summary>
-    public class NumberParameter
+    public class Parameter<T>
     {
         /// <summary>
         /// Значение
         /// </summary>
-        public double? Value { get; set; } = null;
+        public T? Value { get; set; } = default;
 
         /// <summary>
         /// Описание
@@ -19,10 +19,5 @@
         /// Цвет фона
         /// </summary>
         public string ColorFill { get; set; }  = "#FFFFFF";
-
-        /// <summary>
-        /// Цвет текста
-        /// </summary>
-        public string ColorStroke { get; set; } = "#000000";
     }
 }

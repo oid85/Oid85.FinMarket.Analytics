@@ -12,12 +12,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class DataService(
         IParameterRepository parameterRepository,
+        IInstrumentRepository instrumentRepository,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IDataService
     {
         private Dictionary<string, List<Candle>>? _candleData = null;
         private List<FundamentalParameterListItem>? _fundamentalParameters = null;
         private List<ForecastListItem>? _forecasts = null;
+        private AnalyseDataContext? _analyseDataContext = null;
 
         /// <inheritdoc />
         public async Task<Dictionary<string, List<BondCoupon>>> GetBondCouponsAsync(List<string> tickers)
@@ -698,8 +700,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<AnalyseDataContext> GetAnalyseDataContextAsync(List<string> tickers) =>
-            new AnalyseDataContext
+        public async Task<AnalyseDataContext> GetAnalyseDataContextAsync()
+        {
+            if (_analyseDataContext is not null) return _analyseDataContext;
+
+            var instruments = (await instrumentRepository.GetInstrumentsAsync())!.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+            var tickers = instruments.Select(x => x.Ticker).ToList();
+
+            _analyseDataContext = new AnalyseDataContext
             {
                 CandleData = await GetCandleDataAsync(tickers),
                 UltimateSmootherData = await GetUltimateSmootherDataAsync(tickers),
@@ -718,6 +726,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 FillFundamentalData = await GetFillFundamentalDataAsync(tickers),
                 ExtData = await GetExtDataAsync(tickers)
             };
+
+            return _analyseDataContext;
+        }
 
         private async Task<List<Candle>> GetCandlesByTickerAsync(string ticker)
         {

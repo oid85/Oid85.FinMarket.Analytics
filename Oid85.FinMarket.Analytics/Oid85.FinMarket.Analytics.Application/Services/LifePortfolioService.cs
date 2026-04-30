@@ -7,7 +7,8 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class LifePortfolioService(
-        ILifePortfolioPositionRepository lifePortfolioPositionRepository) 
+        ILifePortfolioPositionRepository lifePortfolioPositionRepository,
+        IInstrumentRepository instrumentRepository) 
         : ILifePortfolioService
     {
         public async Task<EditLifePortfolioPositionResponse> EditLifePortfolioPositionAsync(EditLifePortfolioPositionRequest request)
@@ -21,7 +22,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string path = @"c:\Users\79131\Downloads\Snowball Holdings.csv";
             var lines = await File.ReadAllLinesAsync(path);
 
+            // Удалим старые позиции
             await lifePortfolioPositionRepository.DeleteAllLifePortfolioPositionAsync();
+
+            // Сбросим флаг InPortfolio
+            var tickers = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Select(x => x.Ticker).ToList();
+            
+            foreach (var ticker in tickers)
+            {
+                var instrument = await instrumentRepository.GetInstrumentByTickerAsync(ticker);
+                instrument!.InPortfolio = false;
+                await instrumentRepository.EditInstrumentAsync(instrument);
+            }
 
             for (int i = 1; i < lines.Length; i++)
             {
@@ -36,6 +48,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 };
 
                 await lifePortfolioPositionRepository.AddLifePortfolioPositionAsync(lifePosition);
+
+                // Установим флаг InPortfolio
+                var instrument = await instrumentRepository.GetInstrumentByTickerAsync(lifePosition.Ticker);
+                instrument!.InPortfolio = true;
+                await instrumentRepository.EditInstrumentAsync(instrument);
             }
 
             return new();

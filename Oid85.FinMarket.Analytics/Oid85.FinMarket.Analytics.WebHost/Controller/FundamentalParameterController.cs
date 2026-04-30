@@ -13,7 +13,7 @@ namespace Oid85.FinMarket.Analytics.WebHost.Controller;
 [Route("api/fundamental-parameters")]
 [ApiController]
 public class FundamentalParameterController(
-    IFundamentalParameterService fundamentalParameterService)
+    IFundamentalService fundamentalParameterService)
     : BaseController
 {
     /// <summary>

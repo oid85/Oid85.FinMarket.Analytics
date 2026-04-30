@@ -13,7 +13,7 @@ namespace Oid85.FinMarket.Analytics.WebHost.Controller;
 [Route("api/macro-parameters")]
 [ApiController]
 public class MacroParameterController(
-    IMacroParameterService macroParameterService)
+    IMacroService macroParameterService)
     : BaseController
 {
     /// <summary>

@@ -93,7 +93,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 bondAnalyseItems.Add(bondAnalyseItem);
             }
 
-            response.Items = [.. bondAnalyseItems.OrderByDescending(x => x.Yield)];
+            response.Items = [
+                .. bondAnalyseItems.Where(x => x.InPortfolio).OrderByDescending(x => x.Yield),
+                .. bondAnalyseItems.Where(x => !x.InPortfolio).OrderByDescending(x => x.Yield)
+                ];
 
             return response;
         }

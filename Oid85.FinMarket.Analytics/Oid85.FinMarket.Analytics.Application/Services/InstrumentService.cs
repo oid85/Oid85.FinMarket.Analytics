@@ -10,8 +10,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class InstrumentService(
         IInstrumentRepository instrumentRepository,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
-        IDataService dataService)
+        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
         : IInstrumentService
     {
         /// <inheritdoc />

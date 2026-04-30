@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Oid85.FinMarket.Analytics.Application.Factories;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Factories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Application.Services;
 
@@ -10,18 +12,19 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services)
     {
         services.AddScoped<IDataService, DataService>();
+        services.AddScoped<ITrendDynamicService, TrendDynamicService>();
+        services.AddScoped<IWeekTrendService, WeekTrendService>();
+        services.AddScoped<ICompareTrendService, CompareTrendService>();
+        services.AddScoped<IInstrumentService, InstrumentService>();
+        services.AddScoped<IFundamentalService, FundamentalService>();
+        services.AddScoped<IMacroService, MacroService>();
+        services.AddScoped<IPortfolioService, PortfolioService>();
+        services.AddScoped<IBondPortfolioService, BondPortfolioService>();
+        services.AddScoped<ILifePortfolioService, LifePortfolioService>();
+        services.AddScoped<IBondAnalyseService, BondAnalyseService>();
+        services.AddScoped<IDiagramService, DiagramService>();
+        services.AddScoped<IColorPaleteService, ColorPaleteService>();
 
-        services.AddTransient<ITrendDynamicService, TrendDynamicService>();
-        services.AddTransient<IWeekTrendService, WeekTrendService>();
-        services.AddTransient<ICompareTrendService, CompareTrendService>();
-        services.AddTransient<IInstrumentService, InstrumentService>();
-        services.AddTransient<IFundamentalParameterService, FundamentalParameterService>();
-        services.AddTransient<IMacroParameterService, MacroParameterService>();
-        services.AddTransient<IPortfolioService, PortfolioService>();
-        services.AddTransient<IBondPortfolioService, BondPortfolioService>();
-        services.AddTransient<ILifePortfolioService, LifePortfolioService>();
-        services.AddTransient<IBondAnalyseService, BondAnalyseService>();
-        services.AddTransient<IDiagramService, DiagramService>();
-        services.AddTransient<IColorPaleteService, ColorPaleteService>();
+        services.AddScoped<IFundamentalParameterFactory, FundamentalParameterFactory>();
     }
 }

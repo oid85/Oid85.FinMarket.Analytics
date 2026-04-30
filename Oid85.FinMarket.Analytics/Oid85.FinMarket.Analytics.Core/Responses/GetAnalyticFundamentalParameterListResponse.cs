@@ -24,7 +24,8 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<string> Periods { get; set; } = [];
         public List<double?> Price { get; set; } = [];
         public List<double?> NumberShares { get; set; } = [];
-        public List<double?> Pe { get; set; } = [];
+        public List<Parameter<double?>?> Pe { get; set; } = [];
+        public List<Parameter<double?>?> Pbv { get; set; } = [];
         public List<double?> Ebitda { get; set; } = [];
         public List<double?> Revenue { get; set; } = [];
         public List<double?> NetProfit { get; set; } = [];
@@ -37,7 +38,6 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<double?> Dividend { get; set; } = [];
         public List<double?> Roa { get; set; } = [];
         public List<double?> Roe { get; set; } = [];
-        public List<double?> Pbv { get; set; } = [];
         public List<double?> EvEbitda { get; set; } = [];
         public List<double?> NetDebtEbitda { get; set; } = [];
         public List<double?> EbitdaRevenue { get; set; } = [];

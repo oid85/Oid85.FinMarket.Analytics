@@ -6,7 +6,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
     /// <summary>
     /// Сервис макроэкономических параметров
     /// </summary>
-    public interface IMacroParameterService
+    public interface IMacroService
     {
         /// <summary>
         /// Создание/изменение макроэкономического параметра

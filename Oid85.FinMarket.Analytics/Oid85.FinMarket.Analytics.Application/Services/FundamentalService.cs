@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using Oid85.FinMarket.Analytics.Application.Helpers;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Factories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -14,13 +14,14 @@ using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
-    public class FundamentalParameterService(
+    public class FundamentalService(
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         IInstrumentService instrumentService,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
-        IDataService dataService)
-        : IFundamentalParameterService
+        IDataService dataService,
+        IFundamentalParameterFactory fundamentalParameterFactory)
+        : IFundamentalService
     {
         /// <inheritdoc />
         public async Task<CreateOrUpdateAnalyticFundamentalParameterResponse> CreateOrUpdateAnalyticFundamentalParameterAsync(CreateOrUpdateAnalyticFundamentalParameterRequest request)
@@ -126,8 +127,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
-            var tickers = instruments.Select(x => x.Ticker).ToList();
-            var analyseDataContext = await dataService.GetAnalyseDataContextAsync(tickers);
+            
+            var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
             var items = new List<GetAnalyticFundamentalParameterListItemResponse>();
 
@@ -152,7 +153,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     item.Price.Add(metrics[i].Price);
                     item.NumberShares.Add(metrics[i].NumberShares);
-                    item.Pe.Add(metrics[i].Pe);
+
+                    item.Pe.Add(await fundamentalParameterFactory.CreatePeAsync(instrument.Ticker, periods[i]));
+                    item.Pbv.Add(await fundamentalParameterFactory.CreatePbvAsync(instrument.Ticker, periods[i]));
+
                     item.Ebitda.Add(metrics[i].Ebitda);
                     item.Revenue.Add(metrics[i].Revenue);
                     item.NetProfit.Add(metrics[i].NetProfit);
@@ -163,8 +167,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     item.MarketCap.Add(metrics[i].MarketCap);
                     item.Dividend.Add(metrics[i].Dividend);
                     item.Roa.Add(metrics[i].Roa);
-                    item.Roe.Add(metrics[i].Roe);
-                    item.Pbv.Add(metrics[i].Pbv);
+                    item.Roe.Add(metrics[i].Roe);                    
                     item.EvEbitda.Add(metrics[i].EvEbitda);
                     item.NetDebtEbitda.Add(metrics[i].NetDebtEbitda);
                     item.EbitdaRevenue.Add(metrics[i].EbitdaRevenue);
@@ -174,8 +177,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     if (periods[i] == (int.Parse(predictYear) - 1).ToString())
                     {
                         item.FillData = item.NumberShares.Last().HasValue;
-                        item.FillData &= item.Pe.Last().HasValue;
-                        item.FillData &= item.Pbv.Last().HasValue;
+                        item.FillData &= item.Pe.Last() is not null;
+                        item.FillData &= item.Pbv.Last() is not null;
                         item.FillData &= item.Roa.Last().HasValue;
                         item.FillData &= item.Roe.Last().HasValue;
                         item.FillData &= item.MarketCap.Last().HasValue;
@@ -333,7 +336,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments.Select(x => x.Ticker).ToList();
             var instrument = instruments.Find(x => x.Ticker == request.Ticker)!;
 
-            var analyseDataContext = await dataService.GetAnalyseDataContextAsync(tickers);
+            var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
             var dividend = analyseDataContext.GetDividend(instrument.Ticker);
             var consensusForecast = analyseDataContext.GetConsensusForecast(instrument.Ticker);

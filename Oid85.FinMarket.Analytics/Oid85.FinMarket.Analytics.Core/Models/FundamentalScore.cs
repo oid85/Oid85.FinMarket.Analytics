@@ -2,6 +2,7 @@
 {
     public class FundamentalScore
     {
+        public Parameter<double>? Pe { get; set; } = null;
         public bool PeOk { get; set; } = false;
         public bool EvOk { get; set; } = false;
         public bool PbvOk { get; set; } = false;
@@ -11,6 +12,6 @@
         public bool EpsOk { get; set; } = false;
         public bool FcfOk { get; set; } = false;
         public bool NetDebtOk{ get; set; } = false;
-        public double ScoreValue { get; set; } = 0.0;        
+        public double ScoreValue { get; set; } = 0.0;
     }
 }

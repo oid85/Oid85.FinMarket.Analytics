@@ -9,9 +9,9 @@ using Oid85.FinMarket.Storage.Core.Requests;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
-    public class MacroParameterService(
+    public class MacroService(
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
-        : IMacroParameterService
+        : IMacroService
     {
         public async Task<CreateOrUpdateAnalyticMacroParameterResponse> CreateOrUpdateAnalyticMacroParameterAsync(CreateOrUpdateAnalyticMacroParameterRequest request)
         {

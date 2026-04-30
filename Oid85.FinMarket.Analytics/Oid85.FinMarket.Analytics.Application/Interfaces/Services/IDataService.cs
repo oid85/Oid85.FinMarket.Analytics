@@ -1,5 +1,4 @@
 ﻿using Oid85.FinMarket.Analytics.Core.Models;
-using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
@@ -91,6 +90,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Получить контекст
         /// </summary>
-        Task<AnalyseDataContext> GetAnalyseDataContextAsync(List<string> tickers);
+        Task<AnalyseDataContext> GetAnalyseDataContextAsync();
     }
 }

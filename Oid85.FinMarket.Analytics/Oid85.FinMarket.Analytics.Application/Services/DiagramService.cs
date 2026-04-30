@@ -1,5 +1,4 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Helpers;
-using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
@@ -11,8 +10,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class DiagramService(
         IInstrumentService instrumentService,
-        IDataService dataService,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient) 
+        IDataService dataService) 
         : IDiagramService
     {
         public async Task<GetClosePriceDiagramResponse> GetClosePriceDiagramAsync(GetClosePriceDiagramRequest request)

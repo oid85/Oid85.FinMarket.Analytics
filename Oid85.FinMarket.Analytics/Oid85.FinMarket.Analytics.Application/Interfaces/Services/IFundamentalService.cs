@@ -6,7 +6,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
     /// <summary>
     /// Сервис фундаментальных параметров
     /// </summary>
-    public interface IFundamentalParameterService
+    public interface IFundamentalService
     {
         /// <summary>
         /// Создание/изменение фундаментального параметра
