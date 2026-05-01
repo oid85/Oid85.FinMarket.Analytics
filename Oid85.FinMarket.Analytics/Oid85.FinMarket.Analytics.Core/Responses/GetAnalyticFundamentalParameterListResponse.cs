@@ -24,23 +24,23 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<string> Periods { get; set; } = [];
         public List<double?> Price { get; set; } = [];
         public List<double?> NumberShares { get; set; } = [];
-        public List<Parameter<double?>?> Pe { get; set; } = [];
-        public List<Parameter<double?>?> Pbv { get; set; } = [];
         public List<double?> Ebitda { get; set; } = [];
-        public List<double?> Revenue { get; set; } = [];
-        public List<double?> NetProfit { get; set; } = [];
-        public List<double?> Eps { get; set; } = [];
-        public List<double?> Fcf { get; set; } = [];
         public List<double?> Ev { get; set; } = [];
-        public List<double?> NetDebt { get; set; } = [];
         public List<double?> MarketCap { get; set; } = [];
-        public List<double?> DividendYield { get; set; } = [];
         public List<double?> Dividend { get; set; } = [];
-        public List<double?> Roa { get; set; } = [];
-        public List<double?> Roe { get; set; } = [];
-        public List<double?> EvEbitda { get; set; } = [];
-        public List<double?> NetDebtEbitda { get; set; } = [];
-        public List<double?> EbitdaRevenue { get; set; } = [];
-        public List<double?> DeltaMinMax { get; set; } = [];        
+        public List<Parameter<double?>?> Pe { get; set; } = [];
+        public List<Parameter<double?>?> Pbv { get; set; } = [];        
+        public List<Parameter<double?>?> Revenue { get; set; } = [];
+        public List<Parameter<double?>?> NetProfit { get; set; } = [];
+        public List<Parameter<double?>?> Eps { get; set; } = [];
+        public List<Parameter<double?>?> Fcf { get; set; } = [];        
+        public List<Parameter<double?>?> NetDebt { get; set; } = [];        
+        public List<Parameter<double?>?> DividendYield { get; set; } = [];        
+        public List<Parameter<double?>?> Roa { get; set; } = [];
+        public List<Parameter<double?>?> Roe { get; set; } = [];
+        public List<Parameter<double?>?> EvEbitda { get; set; } = [];
+        public List<Parameter<double?>?> NetDebtEbitda { get; set; } = [];
+        public List<Parameter<double?>?> EbitdaRevenue { get; set; } = [];
+        public List<Parameter<double?>?> DeltaMinMax { get; set; } = [];        
     }
 }

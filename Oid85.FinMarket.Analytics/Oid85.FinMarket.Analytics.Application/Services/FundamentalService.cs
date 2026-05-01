@@ -153,40 +153,39 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     item.Price.Add(metrics[i].Price);
                     item.NumberShares.Add(metrics[i].NumberShares);
+                    item.Ebitda.Add(metrics[i].Ebitda);
+                    item.MarketCap.Add(metrics[i].MarketCap);
+                    item.Ev.Add(metrics[i].Ev);
+                    item.Dividend.Add(metrics[i].Dividend);
 
                     item.Pe.Add(await fundamentalParameterFactory.CreatePeAsync(instrument.Ticker, periods[i]));
                     item.Pbv.Add(await fundamentalParameterFactory.CreatePbvAsync(instrument.Ticker, periods[i]));
+                    item.Revenue.Add(await fundamentalParameterFactory.CreateRevenueAsync(instrument.Ticker, periods[i]));
+                    item.NetProfit.Add(await fundamentalParameterFactory.CreateNetProfitAsync(instrument.Ticker, periods[i]));
+                    item.Fcf.Add(await fundamentalParameterFactory.CreateFcfAsync(instrument.Ticker, periods[i]));
+                    item.Eps.Add(await fundamentalParameterFactory.CreateEpsAsync(instrument.Ticker, periods[i]));
+                    item.NetDebt.Add(await fundamentalParameterFactory.CreateNetDebtAsync(instrument.Ticker, periods[i]));
+                    item.Roa.Add(await fundamentalParameterFactory.CreateRoaAsync(instrument.Ticker, periods[i]));
+                    item.Roe.Add(await fundamentalParameterFactory.CreateRoeAsync(instrument.Ticker, periods[i]));
+                    item.EvEbitda.Add(await fundamentalParameterFactory.CreateEvEbitdaAsync(instrument.Ticker, periods[i]));
+                    item.NetDebtEbitda.Add(await fundamentalParameterFactory.CreateNetDebtEbitdaAsync(instrument.Ticker, periods[i]));
+                    item.EbitdaRevenue.Add(await fundamentalParameterFactory.CreateEbitdaRevenueAsync(instrument.Ticker, periods[i]));
+                    item.DividendYield.Add(await fundamentalParameterFactory.CreateDividendYieldAsync(instrument.Ticker, periods[i]));
+                    item.DeltaMinMax.Add(await fundamentalParameterFactory.CreateDeltaMinMaxAsync(instrument.Ticker, periods[i]));
 
-                    item.Ebitda.Add(metrics[i].Ebitda);
-                    item.Revenue.Add(metrics[i].Revenue);
-                    item.NetProfit.Add(metrics[i].NetProfit);
-                    item.Fcf.Add(metrics[i].Fcf);
-                    item.Eps.Add(metrics[i].Eps);
-                    item.Ev.Add(metrics[i].Ev);
-                    item.NetDebt.Add(metrics[i].NetDebt);
-                    item.MarketCap.Add(metrics[i].MarketCap);
-                    item.Dividend.Add(metrics[i].Dividend);
-                    item.Roa.Add(metrics[i].Roa);
-                    item.Roe.Add(metrics[i].Roe);                    
-                    item.EvEbitda.Add(metrics[i].EvEbitda);
-                    item.NetDebtEbitda.Add(metrics[i].NetDebtEbitda);
-                    item.EbitdaRevenue.Add(metrics[i].EbitdaRevenue);
-                    item.DividendYield.Add(metrics[i].DividendYield);
-                    item.DeltaMinMax.Add(metrics[i].DeltaMinMax);
-                    
                     if (periods[i] == (int.Parse(predictYear) - 1).ToString())
                     {
                         item.FillData = item.NumberShares.Last().HasValue;
-                        item.FillData &= item.Pe.Last() is not null;
-                        item.FillData &= item.Pbv.Last() is not null;
-                        item.FillData &= item.Roa.Last().HasValue;
-                        item.FillData &= item.Roe.Last().HasValue;
                         item.FillData &= item.MarketCap.Last().HasValue;
-                        item.FillData &= item.Revenue.Last().HasValue;
-                        item.FillData &= item.NetProfit.Last().HasValue;
-                        item.FillData &= item.Eps.Last().HasValue;
-                        item.FillData &= item.Fcf.Last().HasValue;
                         item.FillData &= item.Dividend.Last().HasValue;
+                        item.FillData &= item.Pe.Last()?.Value is not null;
+                        item.FillData &= item.Pbv.Last()?.Value is not null;
+                        item.FillData &= item.Roa.Last()?.Value is not null;
+                        item.FillData &= item.Roe.Last()?.Value is not null;                        
+                        item.FillData &= item.Revenue.Last()?.Value is not null;
+                        item.FillData &= item.NetProfit.Last()?.Value is not null;
+                        item.FillData &= item.Eps.Last()?.Value is not null;
+                        item.FillData &= item.Fcf.Last()?.Value is not null;                        
                     }
                 }
 

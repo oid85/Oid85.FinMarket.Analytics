@@ -14,7 +14,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var metric = await GetMetricAsync(ticker, period);
             
-            if (metric is null) return (KnownColors.White, "");
+            if (metric is null) return (KnownColors.White, string.Empty);
             
             if (metric.Pe.HasValue)
             {
@@ -25,13 +25,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var sectorMetricValues = sectorMetrics.Where(x => x.Pe.HasValue).ToList();
 
                 int totalCount = sectorMetricValues.Count;
-                int isMoreThanCount = sectorMetricValues.Count(x => x.Pe!.Value >= metric.Pe.Value);
+                int predicatCount = sectorMetricValues.Count(x => x.Pe!.Value >= metric.Pe.Value || x.Pe!.Value < 0.0);
 
-                double ratio = Convert.ToDouble(isMoreThanCount) / Convert.ToDouble(totalCount);
+                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) return (KnownColors.Green, $"P/E низкое в секторе - меньше, чем у 75% компаний сектора");
                 else if (ratio > 0.5) return (KnownColors.LightGreen, $"P/E ниже среднего в секторе - меньше, чем у 50% компаний сектора");
-                else if (ratio > 0.25) return (KnownColors.Yellow, $"P/E выше среднего  в секторе - меньше, чем у 25% компаний сектора");
+                else if (ratio > 0.25) return (KnownColors.Yellow, $"P/E выше среднего в секторе - меньше, чем у 25% компаний сектора");
                 else return (KnownColors.Red, $"P/E высокое в секторе");
             }
 
@@ -42,15 +42,258 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, "");
+            if (metric is null) return (KnownColors.White, string.Empty);
 
             if (metric.Pbv.HasValue)
             {
-                if (metric.Pbv.Value <= 0.0)
-                    return (KnownColors.Red, "P/BV отрицательный. Отрицательный P/BV (Price to Book Value) означает, что собственный капитал компании отрицателен. Это свидетельствует о том, что обязательства компании превышают стоимость всех её активов. Это крайне негативный сигнал, указывающий на то, что бизнес работает исключительно за счет заемных средств и имеет долги, превышающие активы");
-
+                if (metric.Pbv.Value <= 0.0) return (KnownColors.Red, "P/BV отрицательный. Отрицательный P/BV означает, что собственный капитал компании отрицателен. Это свидетельствует о том, что обязательства компании превышают стоимость всех её активов. Это крайне негативный сигнал, указывающий на то, что бизнес работает исключительно за счет заемных средств и имеет долги, превышающие активы");
                 if (metric.Pbv.Value < 1.0) return (KnownColors.Green, $"Стоимость компании меньше её собственного капитала");
                 if (metric.Pbv.Value >= 1.0) return (KnownColors.Red, $"Стоимость компании превышает её балансовую стоимость");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorRevenueAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.Revenue.HasValue)
+            {
+                if (metric.Revenue.Value <= 0.0) return (KnownColors.Red, "Отрицательная выручка");
+                if (metric.Revenue.Value > 0.0) return (KnownColors.Green, "Положительная выручка");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorNetProfitAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.NetProfit.HasValue)
+            {
+                if (metric.NetProfit.Value <= 0.0) return (KnownColors.Red, "Отрицательная чистая прибыль");
+                if (metric.NetProfit.Value > 0.0) return (KnownColors.Green, "Положительная чистая прибыль");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorFcfAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.Fcf.HasValue)
+            {
+                if (metric.Fcf.Value <= 0.0) return (KnownColors.Red, "Отрицательный денежный поток");
+                if (metric.Fcf.Value > 0.0) return (KnownColors.Green, "Положительный денежный поток");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorEpsAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.Eps.HasValue)
+            {
+                if (metric.Eps.Value <= 0.0) return (KnownColors.Red, "Отрицательная прибыль на акцию");
+                if (metric.Eps.Value > 0.0) return (KnownColors.Green, "Положительная прибыль на акцию");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorNetDebtAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.NetDebt.HasValue)
+            {
+                if (metric.NetDebt.Value <= 0.0) return (KnownColors.Green, "Отрицательная долг");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorRoaAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.Roa.HasValue)
+            {
+                if (metric.Roa.Value <= 0.0)
+                    return (KnownColors.Red, "ROA отрицательный");
+
+                var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
+                var sectorMetricValues = sectorMetrics.Where(x => x.Roa.HasValue).ToList();
+
+                int totalCount = sectorMetricValues.Count;
+                int predicatCount = sectorMetricValues.Count(x => x.Roa!.Value <= metric.Roa.Value || x.Roa!.Value < 0.0);
+
+                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+
+                if (ratio > 0.75) return (KnownColors.Green, $"ROA высокое в секторе - выше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (KnownColors.LightGreen, $"ROA выше среднего в секторе - выше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (KnownColors.Yellow, $"ROA ниже среднего в секторе - выше, чем у 25% компаний сектора");
+                else return (KnownColors.Red, $"ROA низкое в секторе");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorRoeAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.Roe.HasValue)
+            {
+                if (metric.Roe.Value <= 0.0)
+                    return (KnownColors.Red, "ROE отрицательный");
+
+                var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
+                var sectorMetricValues = sectorMetrics.Where(x => x.Roe.HasValue).ToList();
+
+                int totalCount = sectorMetricValues.Count;
+                int predicatCount = sectorMetricValues.Count(x => x.Roe!.Value <= metric.Roe.Value || x.Roe!.Value < 0.0);
+
+                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+
+                if (ratio > 0.75) return (KnownColors.Green, $"ROE высокое в секторе - выше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (KnownColors.LightGreen, $"ROE выше среднего в секторе - выше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (KnownColors.Yellow, $"ROE ниже среднего в секторе - выше, чем у 25% компаний сектора");
+                else return (KnownColors.Red, $"ROE низкое в секторе");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorEvEbitdaAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.EvEbitda.HasValue)
+            {
+                if (metric.EvEbitda.Value <= 0.0)
+                    return (KnownColors.Red, "EV/EBITDA отрицательный");
+
+                var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
+                var sectorMetricValues = sectorMetrics.Where(x => x.EvEbitda.HasValue).ToList();
+
+                int totalCount = sectorMetricValues.Count;
+                int predicatCount = sectorMetricValues.Count(x => x.EvEbitda!.Value >= metric.EvEbitda.Value || x.EvEbitda!.Value < 0.0);
+
+                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+
+                if (ratio > 0.75) return (KnownColors.Green, $"EV/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (KnownColors.LightGreen, $"EV/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (KnownColors.Yellow, $"EV/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора");
+                else return (KnownColors.Red, $"EV/EBITDA высокое в секторе");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorNetDebtEbitdaAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.NetDebtEbitda.HasValue)
+            {
+                if (metric.NetDebtEbitda.Value <= 0.0)
+                    return (KnownColors.Green, "NetDebt/EBITDA отрицательный");
+
+                var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
+                var sectorMetricValues = sectorMetrics.Where(x => x.NetDebtEbitda.HasValue).ToList();
+
+                int totalCount = sectorMetricValues.Count;
+                int predicatCount = sectorMetricValues.Count(x => x.NetDebtEbitda!.Value >= metric.NetDebtEbitda.Value);
+
+                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+
+                if (ratio > 0.75) return (KnownColors.Green, $"NetDebt/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (KnownColors.LightGreen, $"NetDebt/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (KnownColors.Yellow, $"NetDebt/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора");
+                else return (KnownColors.Red, $"NetDebt/EBITDA высокое в секторе");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorEbitdaRevenueAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.EbitdaRevenue.HasValue)
+            {
+                if (metric.EbitdaRevenue.Value <= 0.0)
+                    return (KnownColors.Red, "EBITDA Margin отрицательный");
+
+                var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
+                var sectorMetricValues = sectorMetrics.Where(x => x.EbitdaRevenue.HasValue).ToList();
+
+                int totalCount = sectorMetricValues.Count;
+                int predicatCount = sectorMetricValues.Count(x => x.EbitdaRevenue!.Value <= metric.EbitdaRevenue.Value || x.EbitdaRevenue!.Value < 0.0);
+
+                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+
+                if (ratio > 0.75) return (KnownColors.Green, $"EBITDA Margin высокое в секторе - выше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (KnownColors.LightGreen, $"EBITDA Margin выше среднего в секторе - выше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (KnownColors.Yellow, $"EBITDA Margin ниже среднего в секторе - выше, чем у 25% компаний сектора");
+                else return (KnownColors.Red, $"EBITDA Margin низкое в секторе");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorDividendYieldAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.DividendYield.HasValue)
+            {
+                if (metric.DividendYield.Value == 0.0) return (KnownColors.Red, "Дивидендов нет");
+                if (metric.DividendYield.Value > 10.0) return (KnownColors.Green, "Дивидендная доходность больше 10 %");
+                if (metric.DividendYield.Value > 0.0) return (KnownColors.Yellow, "Дивидендная доходность до 10 %");
+            }
+
+            return (KnownColors.White, string.Empty);
+        }
+
+        public async Task<(string Color, string Description)> GetColorDeltaMinMaxAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return (KnownColors.White, string.Empty);
+
+            if (metric.DeltaMinMax.HasValue)
+            {                
+                if (metric.DeltaMinMax.Value < 0.0) return (KnownColors.Red, "Падение цены");
+                if (metric.DeltaMinMax.Value > 0.0) return (KnownColors.Green, "Рост цены");
             }
 
             return (KnownColors.White, string.Empty);
@@ -65,7 +308,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         private async Task<List<FundamentalMetric>> GetSectorMetricsAsync(string ticker, string period)
-        {                        
+        {
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
             var instruments = (await instrumentRepository.GetInstrumentsAsync())!.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
