@@ -193,7 +193,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.EvEbitda.HasValue)
             {
                 if (metric.EvEbitda.Value <= 0.0)
-                    return (KnownColors.Red, "EV/EBITDA отрицательный. Компания работает в убыток на операционном уровне (EBITDA < 0), операционных доходов не хватает для покрытия расходов");
+                    return (KnownColors.Red, "EV/EBITDA отрицательный");
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.EvEbitda.HasValue).ToList();
