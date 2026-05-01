@@ -127,7 +127,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
-            
+            var analyticInstruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
+
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
             var items = new List<GetAnalyticFundamentalParameterListItemResponse>();
@@ -138,6 +139,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Periods = periods,
                     Ticker = instrument.Ticker,
+                    Sector = analyticInstruments.First(x => x.Ticker == instrument.Ticker)?.Sector ?? string.Empty,
                     Name = instrument.Name,
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
@@ -194,7 +196,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 items.Add(item);
             }
 
-            var response = new GetAnalyticFundamentalParameterListResponse { FundamentalParameters = [.. items.OrderByDescending(x => x.Score?.ScoreValue)] };
+            var response = new GetAnalyticFundamentalParameterListResponse { FundamentalParameters = [.. items.OrderBy(x => x.Sector)] };
 
             int number = 1;
 

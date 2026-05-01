@@ -15,6 +15,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public int Number { get; set; }
         public string Ticker { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public string Sector { get; set; } = string.Empty;
         public bool IsSelected { get; set; }
         public bool InPortfolio { get; set; }
         public bool FillData { get; set; }
