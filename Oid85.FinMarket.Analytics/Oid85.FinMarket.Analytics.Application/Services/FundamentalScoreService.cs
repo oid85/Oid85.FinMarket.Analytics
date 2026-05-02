@@ -46,9 +46,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreatePeAsync(ticker, predictYear);
-            if (result!.Value.HasValue) return result;
+            if (result is null) return null;
+            if (result.Value.HasValue) return result;
 
-            return await analyseParameterFactory.CreatePeAsync(ticker, year);
+            result = await analyseParameterFactory.CreatePeAsync(ticker, year);
+            if (result is null) return null;
+
+            return result;
         }
 
         private async Task<AnalyseParameter<double?>?> GetPbvAsync(string ticker)
@@ -57,9 +61,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreatePbvAsync(ticker, predictYear);
+            if (result is null) return null;
             if (result!.Value.HasValue) return result;
 
-            return await analyseParameterFactory.CreatePbvAsync(ticker, year);
+            result = await analyseParameterFactory.CreatePbvAsync(ticker, year);
+            if (result is null) return null;
+
+            return result;
         }
 
         private async Task<AnalyseParameter<double?>?> GeEvEbitdaAsync(string ticker)
@@ -68,9 +76,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreateEvEbitdaAsync(ticker, predictYear);
+            if (result is null) return null;
             if (result!.Value.HasValue) return result;
 
-            return await analyseParameterFactory.CreateEvEbitdaAsync(ticker, year);
+            result = await analyseParameterFactory.CreateEvEbitdaAsync(ticker, year);
+            if (result is null) return null;
+
+            return result;
         }
 
         private async Task<AnalyseParameter<double?>?> GetNetDebtEbitdaAsync(string ticker)
@@ -79,9 +91,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, predictYear);
+            if (result is null) return null;
             if (result!.Value.HasValue) return result;
 
-            return await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, year);
+            result = await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, year);
+            if (result is null) return null;
+
+            return result;
         }
 
         private async Task<AnalyseParameter<bool?>?> GetDividendAristocratAsync(string ticker) =>
