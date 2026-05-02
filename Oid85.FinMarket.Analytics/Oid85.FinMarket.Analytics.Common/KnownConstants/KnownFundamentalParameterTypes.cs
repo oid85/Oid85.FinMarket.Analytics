@@ -5,6 +5,7 @@ public static class KnownFundamentalParameterTypes
     public const string NumberShares = "NumberShares";
     public const string Pe = "Pe";
     public const string Ebitda = "Ebitda";
+    public const string OwnCapital = "OwnCapital";
     public const string Revenue = "Revenue";
     public const string NetProfit = "NetProfit";
     public const string Fcf = "Fcf";

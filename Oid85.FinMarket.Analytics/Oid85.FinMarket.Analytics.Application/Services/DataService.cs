@@ -1,4 +1,6 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using System.Diagnostics.Metrics;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Factories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -587,6 +589,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     var marketCap = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.MarketCap)?.Value.RoundTo(2);
                     var ev = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Ev)?.Value.RoundTo(2);
                     var ebitda = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Ebitda)?.Value.RoundTo(2);
+                    var ownCapital = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.OwnCapital)?.Value.RoundTo(2);
                     var netDebt = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetDebt)?.Value.RoundTo(2);
 
                     var evEbitda = ev.Div(ebitda).RoundTo(2);
@@ -599,6 +602,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     metrics.Add(
                         new ()
                         {
+                            Ticker = ticker,
                             Price = price,
                             Period = period,
                             NumberShares = numberShares,
@@ -609,6 +613,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             Ev = ev,
                             MarketCap = marketCap,
                             Ebitda = ebitda,
+                            OwnCapital = ownCapital,
                             NetDebt = netDebt,
                             Revenue = revenue,
                             Fcf = fcf,

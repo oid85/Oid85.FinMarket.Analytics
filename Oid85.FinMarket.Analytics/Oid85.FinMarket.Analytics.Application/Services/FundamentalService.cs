@@ -156,6 +156,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     item.Price.Add(metrics[i].Price);
                     item.NumberShares.Add(metrics[i].NumberShares);
                     item.Ebitda.Add(metrics[i].Ebitda);
+                    item.OwnCapital.Add(metrics[i].OwnCapital);
                     item.MarketCap.Add(metrics[i].MarketCap);
                     item.Ev.Add(metrics[i].Ev);
                     item.Dividend.Add(metrics[i].Dividend);

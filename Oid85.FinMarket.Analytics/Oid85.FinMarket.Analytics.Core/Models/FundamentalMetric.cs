@@ -2,6 +2,7 @@
 {
     public class FundamentalMetric
     {
+        public string Ticker { get; set; } = string.Empty;
         public string Period { get; set; } = string.Empty;
         public double? NumberShares { get; set; } = null;
         public double? Price { get; set; } = null;
@@ -19,6 +20,7 @@
         public double? DeltaMinMax { get; set; } = null;
         public double? Ev { get; set; } = null;
         public double? Ebitda { get; set; } = null;
+        public double? OwnCapital { get; set; } = null;
         public double? NetDebt { get; set; } = null;
         public double? Revenue { get; set; } = null;
         public double? EbitdaRevenue { get; set; } = null;

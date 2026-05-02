@@ -10,16 +10,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IDataService dataService) 
         : IColorPaleteService
     {
-        public async Task<(string Color, string Description)> GetColorPeAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorPeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
             
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
             
             if (metric.Pe.HasValue)
             {
                 if (metric.Pe.Value <= 0.0)
-                    return (KnownColors.Red, "P/E отрицательный. Отрицательный P/E (цена/прибыль) означает, что компания понесла убытки в отчетном периоде, так как чистая прибыль (знаменатель) стала отрицательной. Это сигнал финансовых трудностей, указывающий, что компания не окупается, а теряет акционерный капитал");
+                    return (0.0, KnownColors.Red, "P/E отрицательный. Отрицательный P/E (цена/прибыль) означает, что компания понесла убытки в отчетном периоде, так как чистая прибыль (знаменатель) стала отрицательной. Это сигнал финансовых трудностей, указывающий, что компания не окупается, а теряет акционерный капитал");
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.Pe.HasValue).ToList();
@@ -29,13 +29,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
 
-                if (ratio > 0.75) return (KnownColors.Green, $"P/E низкое в секторе - меньше, чем у 75% компаний сектора");
-                else if (ratio > 0.5) return (KnownColors.LightGreen, $"P/E ниже среднего в секторе - меньше, чем у 50% компаний сектора");
-                else if (ratio > 0.25) return (KnownColors.Yellow, $"P/E выше среднего в секторе - меньше, чем у 25% компаний сектора");
-                else return (KnownColors.Red, $"P/E высокое в секторе");
+                if (ratio > 0.75) return (ratio, KnownColors.Green, $"P/E низкое в секторе - меньше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (ratio, KnownColors.LightGreen, $"P/E ниже среднего в секторе - меньше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (ratio, KnownColors.Yellow, $"P/E выше среднего в секторе - меньше, чем у 25% компаний сектора");
+                else return (ratio, KnownColors.Red, $"P/E высокое в секторе");
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
         public async Task<(string Color, string Description)> GetColorPbvAsync(string ticker, string period)

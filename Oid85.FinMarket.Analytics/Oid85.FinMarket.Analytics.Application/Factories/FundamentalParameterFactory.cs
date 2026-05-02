@@ -9,25 +9,26 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
         IColorPaleteService colorPaleteService) 
         : IFundamentalParameterFactory
     {
-        public async Task<Parameter<double?>?> CreatePeAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreatePeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
             if (metric is null) return null;
 
-            var (color, description) = await colorPaleteService.GetColorPeAsync(ticker, period);
+            var (ratio, color, description) = await colorPaleteService.GetColorPeAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.Pe,
                 Description = description,
-                ColorFill = color
+                ColorFill = color,
+                Ratio = ratio
             };
 
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreatePbvAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreatePbvAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -35,7 +36,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorPbvAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.Pbv,
                 Description = description,
@@ -45,7 +46,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateRevenueAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateRevenueAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -53,7 +54,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorRevenueAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.Revenue,
                 Description = description,
@@ -63,7 +64,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateNetProfitAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateNetProfitAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -71,7 +72,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorNetProfitAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.NetProfit,
                 Description = description,
@@ -81,7 +82,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateFcfAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateFcfAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -89,7 +90,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorFcfAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.Fcf,
                 Description = description,
@@ -99,7 +100,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateEpsAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateEpsAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -107,7 +108,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorEpsAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.Eps,
                 Description = description,
@@ -117,7 +118,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateNetDebtAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateNetDebtAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -125,7 +126,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorNetDebtAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.NetDebt,
                 Description = description,
@@ -135,7 +136,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateRoaAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateRoaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -143,7 +144,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorRoaAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.Roa,
                 Description = description,
@@ -153,7 +154,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateRoeAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateRoeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -161,7 +162,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorRoeAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.Roe,
                 Description = description,
@@ -171,7 +172,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateEvEbitdaAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateEvEbitdaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -179,7 +180,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorEvEbitdaAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.EvEbitda,
                 Description = description,
@@ -189,7 +190,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateNetDebtEbitdaAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateNetDebtEbitdaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -197,7 +198,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorNetDebtEbitdaAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.NetDebtEbitda,
                 Description = description,
@@ -207,7 +208,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateEbitdaRevenueAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateEbitdaRevenueAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -215,7 +216,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorEbitdaRevenueAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.EbitdaRevenue,
                 Description = description,
@@ -225,7 +226,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateDividendYieldAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateDividendYieldAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -233,7 +234,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorDividendYieldAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.DividendYield,
                 Description = description,
@@ -243,7 +244,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<Parameter<double?>?> CreateDeltaMinMaxAsync(string ticker, string period)
+        public async Task<AnalyseParameter<double?>?> CreateDeltaMinMaxAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
@@ -251,7 +252,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             var (color, description) = await colorPaleteService.GetColorDeltaMinMaxAsync(ticker, period);
 
-            var displayParameter = new Parameter<double?>
+            var displayParameter = new AnalyseParameter<double?>
             {
                 Value = metric.DeltaMinMax,
                 Description = description,

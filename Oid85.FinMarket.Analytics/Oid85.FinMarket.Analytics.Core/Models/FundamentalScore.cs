@@ -2,7 +2,6 @@
 {
     public class FundamentalScore
     {
-        public Parameter<double>? Pe { get; set; } = null;
         public bool PeOk { get; set; } = false;
         public bool EvOk { get; set; } = false;
         public bool PbvOk { get; set; } = false;

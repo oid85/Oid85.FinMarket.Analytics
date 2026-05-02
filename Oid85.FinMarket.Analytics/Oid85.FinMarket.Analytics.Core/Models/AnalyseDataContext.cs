@@ -112,17 +112,28 @@
 
             var metric = new FundamentalMetric
             {
-                Period = metricsWithoutPredict[^1].Period,
+                Ticker = ticker,
+                Period = metricsWithoutPredict.Last().Period,
+                NumberShares = metricsWithoutPredict.FindLast(x => x.NetProfit.HasValue)?.NumberShares,
                 Pe = metrics.FindLast(x => x.Pe.HasValue)?.Pe,
                 Pbv = metricsWithoutPredict.FindLast(x => x.Pbv.HasValue)?.Pbv,
                 Fcf = metricsWithoutPredict.FindLast(x => x.Pe.HasValue)?.Fcf,
                 Eps = metricsWithoutPredict.FindLast(x => x.Pbv.HasValue)?.Eps,
                 Roa = metricsWithoutPredict.FindLast(x => x.Roa.HasValue)?.Roa,
+                Roe = metricsWithoutPredict.FindLast(x => x.Roa.HasValue)?.Roe,
+                NetProfit = metricsWithoutPredict.FindLast(x => x.NetProfit.HasValue)?.NetProfit,
+                Revenue = metricsWithoutPredict.FindLast(x => x.Revenue.HasValue)?.Revenue,
+                NetDebt = metricsWithoutPredict.FindLast(x => x.NetDebt.HasValue)?.NetDebt,
+                MarketCap = metricsWithoutPredict.FindLast(x => x.MarketCap.HasValue)?.MarketCap,
+                Ev = metricsWithoutPredict.FindLast(x => x.Ev.HasValue)?.Ev,
+                Ebitda = metricsWithoutPredict.FindLast(x => x.Ebitda.HasValue)?.Ebitda,
+                OwnCapital = metricsWithoutPredict.FindLast(x => x.OwnCapital.HasValue)?.OwnCapital,
                 EvEbitda = metricsWithoutPredict.FindLast(x => x.EvEbitda.HasValue)?.EvEbitda,
                 NetDebtEbitda = metricsWithoutPredict.FindLast(x => x.NetDebtEbitda.HasValue)?.NetDebtEbitda,
+                EbitdaRevenue = metricsWithoutPredict.FindLast(x => x.EbitdaRevenue.HasValue)?.EbitdaRevenue,
                 Dividend = metrics.FindLast(x => x.Dividend.HasValue)?.Dividend,
-                NetProfit = metricsWithoutPredict.FindLast(x => x.NetProfit.HasValue)?.NetProfit,
-                NumberShares = metricsWithoutPredict.FindLast(x => x.NetProfit.HasValue)?.NumberShares
+                DividendYield = metrics.FindLast(x => x.DividendYield.HasValue)?.DividendYield,
+                DeltaMinMax = metricsWithoutPredict.FindLast(x => x.DeltaMinMax.HasValue)?.DeltaMinMax
             };
 
             return metric;
