@@ -31,11 +31,6 @@
         public Dictionary<string, double> BenchmarkChangeData { get; set; } = [];
 
         /// <summary>
-        /// Рейтинг на основе данных фундаментального анализа
-        /// </summary>
-        public Dictionary<string, FundamentalScore> FundamentalScoreData { get; set; } = [];
-
-        /// <summary>
         /// Фундаментальные данные
         /// </summary>
         public Dictionary<string, List<FundamentalMetric>> FundamentalMetricData { get; set; } = [];
@@ -163,11 +158,6 @@
         /// Получить изменение относительно индекса полной доходности MCFTR по тикеру
         /// </summary>
         public double? GetBenchmarkChange(string ticker) => !BenchmarkChangeData.TryGetValue(ticker, out var result) ? null : result;
-
-        /// <summary>
-        /// Получить рейтинг на основе данных фундаментального анализа по тикеру
-        /// </summary>
-        public FundamentalScore? GetFundamentalScore(string ticker) => !FundamentalScoreData.TryGetValue(ticker, out var result) ? null : result;
 
         /// <summary>
         /// Получить фундаментальные данные по тикеру

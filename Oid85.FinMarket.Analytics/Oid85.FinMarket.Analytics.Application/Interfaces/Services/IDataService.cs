@@ -38,11 +38,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<Dictionary<string, double>> GetBenchmarkChangeDataAsync(List<string> tickers);
 
         /// <summary>
-        /// Получить рейтинг по фундаментальным данным
-        /// </summary>
-        Task<Dictionary<string, FundamentalScore>> GetFundamentalScoreDataAsync(List<string> tickers);
-
-        /// <summary>
         /// Получить метрики по фундаментальным данным
         /// </summary>
         Task<Dictionary<string, List<FundamentalMetric>>> GetFundamentalMetricDataAsync(List<string> tickers);

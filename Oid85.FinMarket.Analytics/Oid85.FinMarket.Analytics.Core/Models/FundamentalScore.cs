@@ -2,15 +2,11 @@
 {
     public class FundamentalScore
     {
-        public bool PeOk { get; set; } = false;
-        public bool EvOk { get; set; } = false;
-        public bool PbvOk { get; set; } = false;
-        public bool DividendYieldOk { get; set; } = false;
-        public bool IsDividendAristocrat { get; set; } = false;
-        public bool NetProfitOk { get; set; } = false;
-        public bool EpsOk { get; set; } = false;
-        public bool FcfOk { get; set; } = false;
-        public bool NetDebtOk{ get; set; } = false;
+        public AnalyseParameter<double?>? Pe { get; set; } = null;
+        public AnalyseParameter<double?>? Pbv { get; set; } = null;
+        public AnalyseParameter<double?>? EvEbitda { get; set; } = null;
+        public AnalyseParameter<double?>? NetDebtEbitda { get; set; } = null;
+        public AnalyseParameter<bool?>? DividendAristocrat { get; set; } = null;
         public double ScoreValue { get; set; } = 0.0;
     }
 }

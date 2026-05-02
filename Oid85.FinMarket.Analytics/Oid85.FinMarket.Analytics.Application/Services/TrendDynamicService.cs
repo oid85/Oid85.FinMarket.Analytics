@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using System.Threading.Tasks;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
@@ -11,7 +12,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class TrendDynamicService(
         IInstrumentRepository instrumentRepository,
-        IDataService dataService)
+        IDataService dataService,
+        IFundamentalScoreService fundamentalScoreService)
         : ITrendDynamicService
     {
         /// <inheritdoc />
@@ -24,8 +26,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-            var dividendData = await dataService.GetDividendDataAsync(tickers);
-            var scoreData = await dataService.GetFundamentalScoreDataAsync(tickers);
+            var dividendData = await dataService.GetDividendDataAsync(tickers);            
             var forecastData = await dataService.GetConsensusForecastDataAsync();
             var nataliaBaffetovnaForecastData = await dataService.GetNataliaBaffetovnaForecastDataAsync(tickers);            
             var financeMarkerForecastData = await dataService.GetFinanceMarkerForecastDataAsync(tickers);
@@ -39,23 +40,22 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var response = new GetTrendDynamicResponse
             {
                 Dates = dates,
-                Indexes = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData, vladProDengiForecastData, mozgovikForecastData, predictNetProfitForecastData, fillFundamentalData, extData),
-                Shares = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData, vladProDengiForecastData, mozgovikForecastData, predictNetProfitForecastData, fillFundamentalData, extData),
-                Futures = GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData, dividendData, scoreData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData, vladProDengiForecastData, mozgovikForecastData, predictNetProfitForecastData, fillFundamentalData, extData)
+                Indexes = await GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)], ultimateSmootherData, candleData, dividendData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData, vladProDengiForecastData, mozgovikForecastData, predictNetProfitForecastData, fillFundamentalData, extData),
+                Shares = await GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)], ultimateSmootherData, candleData, dividendData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData, vladProDengiForecastData, mozgovikForecastData, predictNetProfitForecastData, fillFundamentalData, extData),
+                Futures = await GetTrendDynamicData(dates, startDate, today, [.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)], ultimateSmootherData, candleData, dividendData, forecastData, nataliaBaffetovnaForecastData, financeMarkerForecastData, vladProDengiForecastData, mozgovikForecastData, predictNetProfitForecastData, fillFundamentalData, extData)
             };
 
             return response;
         }
 
-        private static List<TrendDynamicData> GetTrendDynamicData(
+        private async Task<List<TrendDynamicData>> GetTrendDynamicData(
             List<DateOnly> dates,
             DateOnly from,
             DateOnly to,
             List<Instrument> instruments,
             Dictionary<string, List<DateValue<double>>> ultimateSmootherData,
             Dictionary<string, List<Candle>> candleData,
-            Dictionary<string, Dividend> dividendData,
-            Dictionary<string, FundamentalScore> scoreData,
+            Dictionary<string, Dividend> dividendData,            
             Dictionary<string, Forecast> forecastData,
             Dictionary<string, Forecast> nataliaBaffetovnaForecastData,
             Dictionary<string, Forecast> financeMarkerForecastData,
@@ -79,7 +79,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Name = instrument.Name,
                     InPortfolio = instrument.InPortfolio,
                     DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? Math.Round(value.Yield!.Value, 1) : null,
-                    Score = scoreData.TryGetValue(instrument.Ticker, out FundamentalScore? score) ? score : null,
+                    Score = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker),
                     Forecast = forecastData.TryGetValue(instrument.Ticker, out Forecast? forecast) ? forecast : null,
                     NataliaBaffetovnaForecast = nataliaBaffetovnaForecastData.TryGetValue(instrument.Ticker, out Forecast? nataliaBaffetovnaForecast) ? nataliaBaffetovnaForecast : null,
                     FinanceMarkerForecast = financeMarkerForecastData.TryGetValue(instrument.Ticker, out Forecast? financeMarkerForecast) ? financeMarkerForecast : null,

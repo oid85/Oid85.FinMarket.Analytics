@@ -20,7 +20,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IInstrumentService instrumentService,
         IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
         IDataService dataService,
-        IFundamentalParameterFactory fundamentalParameterFactory)
+        IFundamentalScoreService fundamentalScoreService,
+        IAnalyseParameterFactory analyseParameterFactory)
         : IFundamentalService
     {
         /// <inheritdoc />
@@ -161,20 +162,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     item.Ev.Add(metrics[i].Ev);
                     item.Dividend.Add(metrics[i].Dividend);
 
-                    item.Pe.Add(await fundamentalParameterFactory.CreatePeAsync(instrument.Ticker, periods[i]));
-                    item.Pbv.Add(await fundamentalParameterFactory.CreatePbvAsync(instrument.Ticker, periods[i]));
-                    item.Revenue.Add(await fundamentalParameterFactory.CreateRevenueAsync(instrument.Ticker, periods[i]));
-                    item.NetProfit.Add(await fundamentalParameterFactory.CreateNetProfitAsync(instrument.Ticker, periods[i]));
-                    item.Fcf.Add(await fundamentalParameterFactory.CreateFcfAsync(instrument.Ticker, periods[i]));
-                    item.Eps.Add(await fundamentalParameterFactory.CreateEpsAsync(instrument.Ticker, periods[i]));
-                    item.NetDebt.Add(await fundamentalParameterFactory.CreateNetDebtAsync(instrument.Ticker, periods[i]));
-                    item.Roa.Add(await fundamentalParameterFactory.CreateRoaAsync(instrument.Ticker, periods[i]));
-                    item.Roe.Add(await fundamentalParameterFactory.CreateRoeAsync(instrument.Ticker, periods[i]));
-                    item.EvEbitda.Add(await fundamentalParameterFactory.CreateEvEbitdaAsync(instrument.Ticker, periods[i]));
-                    item.NetDebtEbitda.Add(await fundamentalParameterFactory.CreateNetDebtEbitdaAsync(instrument.Ticker, periods[i]));
-                    item.EbitdaRevenue.Add(await fundamentalParameterFactory.CreateEbitdaRevenueAsync(instrument.Ticker, periods[i]));
-                    item.DividendYield.Add(await fundamentalParameterFactory.CreateDividendYieldAsync(instrument.Ticker, periods[i]));
-                    item.DeltaMinMax.Add(await fundamentalParameterFactory.CreateDeltaMinMaxAsync(instrument.Ticker, periods[i]));
+                    item.Pe.Add(await analyseParameterFactory.CreatePeAsync(instrument.Ticker, periods[i]));
+                    item.Pbv.Add(await analyseParameterFactory.CreatePbvAsync(instrument.Ticker, periods[i]));
+                    item.Revenue.Add(await analyseParameterFactory.CreateRevenueAsync(instrument.Ticker, periods[i]));
+                    item.NetProfit.Add(await analyseParameterFactory.CreateNetProfitAsync(instrument.Ticker, periods[i]));
+                    item.Fcf.Add(await analyseParameterFactory.CreateFcfAsync(instrument.Ticker, periods[i]));
+                    item.Eps.Add(await analyseParameterFactory.CreateEpsAsync(instrument.Ticker, periods[i]));
+                    item.NetDebt.Add(await analyseParameterFactory.CreateNetDebtAsync(instrument.Ticker, periods[i]));
+                    item.Roa.Add(await analyseParameterFactory.CreateRoaAsync(instrument.Ticker, periods[i]));
+                    item.Roe.Add(await analyseParameterFactory.CreateRoeAsync(instrument.Ticker, periods[i]));
+                    item.EvEbitda.Add(await analyseParameterFactory.CreateEvEbitdaAsync(instrument.Ticker, periods[i]));
+                    item.NetDebtEbitda.Add(await analyseParameterFactory.CreateNetDebtEbitdaAsync(instrument.Ticker, periods[i]));
+                    item.EbitdaRevenue.Add(await analyseParameterFactory.CreateEbitdaRevenueAsync(instrument.Ticker, periods[i]));
+                    item.DividendYield.Add(await analyseParameterFactory.CreateDividendYieldAsync(instrument.Ticker, periods[i]));
+                    item.DeltaMinMax.Add(await analyseParameterFactory.CreateDeltaMinMaxAsync(instrument.Ticker, periods[i]));
 
                     if (periods[i] == (int.Parse(predictYear) - 1).ToString())
                     {
@@ -192,7 +193,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     }
                 }
 
-                item.Score = analyseDataContext.GetFundamentalScore(instrument.Ticker);
+                item.Score = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);
 
                 items.Add(item);
             }
@@ -347,7 +348,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var vladProDengiForecast = analyseDataContext.GetVladProDengiForecast(instrument.Ticker);
             var mozgovikForecast = analyseDataContext.GetMozgovikForecast(instrument.Ticker);
             var predictNetProfitForecast = analyseDataContext.GetPredictNetProfitForecast(instrument.Ticker);
-            var fundamentalScore = analyseDataContext.GetFundamentalScore(instrument.Ticker);
+            var fundamentalScore = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);
             var benchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker);
             var companyFundamentalMetric = analyseDataContext.GetFundamentalMetric(instrument.Ticker);
             var companyFundamentalMetrics = analyseDataContext.GetFundamentalMetrics(instrument.Ticker);

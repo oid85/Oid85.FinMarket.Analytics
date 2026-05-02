@@ -38,20 +38,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return (0.0, KnownColors.White, string.Empty);
         }
 
-        public async Task<(string Color, string Description)> GetColorPbvAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorPbvAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
 
             if (metric.Pbv.HasValue)
             {
-                if (metric.Pbv.Value <= 0.0) return (KnownColors.Red, "P/BV отрицательный. Отрицательный P/BV означает, что собственный капитал компании отрицателен. Это свидетельствует о том, что обязательства компании превышают стоимость всех её активов. Это крайне негативный сигнал, указывающий на то, что бизнес работает исключительно за счет заемных средств и имеет долги, превышающие активы");
-                if (metric.Pbv.Value < 1.0) return (KnownColors.Green, $"Стоимость компании меньше её собственного капитала");
-                if (metric.Pbv.Value >= 1.0) return (KnownColors.Red, $"Стоимость компании превышает её балансовую стоимость");
+                if (metric.Pbv.Value <= 0.0) return (0.0, KnownColors.Red, "P/BV отрицательный. Отрицательный P/BV означает, что собственный капитал компании отрицателен. Это свидетельствует о том, что обязательства компании превышают стоимость всех её активов. Это крайне негативный сигнал, указывающий на то, что бизнес работает исключительно за счет заемных средств и имеет долги, превышающие активы");
+                if (metric.Pbv.Value < 1.0) return (1.0, KnownColors.Green, $"Стоимость компании меньше её собственного капитала");
+                if (metric.Pbv.Value >= 1.0) return (0.0, KnownColors.Red, $"Стоимость компании превышает её балансовую стоимость");
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
         public async Task<(string Color, string Description)> GetColorRevenueAsync(string ticker, string period)
@@ -184,16 +184,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return (KnownColors.White, string.Empty);
         }
 
-        public async Task<(string Color, string Description)> GetColorEvEbitdaAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorEvEbitdaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
 
             if (metric.EvEbitda.HasValue)
             {
                 if (metric.EvEbitda.Value <= 0.0)
-                    return (KnownColors.Red, "EV/EBITDA отрицательный");
+                    return (0.0, KnownColors.Red, "EV/EBITDA отрицательный");
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.EvEbitda.HasValue).ToList();
@@ -203,25 +203,25 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
 
-                if (ratio > 0.75) return (KnownColors.Green, $"EV/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора");
-                else if (ratio > 0.5) return (KnownColors.LightGreen, $"EV/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора");
-                else if (ratio > 0.25) return (KnownColors.Yellow, $"EV/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора");
-                else return (KnownColors.Red, $"EV/EBITDA высокое в секторе");
+                if (ratio > 0.75) return (ratio, KnownColors.Green, $"EV/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (ratio, KnownColors.LightGreen, $"EV/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (ratio, KnownColors.Yellow, $"EV/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора");
+                else return (ratio, KnownColors.Red, $"EV/EBITDA высокое в секторе");
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
-        public async Task<(string Color, string Description)> GetColorNetDebtEbitdaAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorNetDebtEbitdaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
 
             if (metric.NetDebtEbitda.HasValue)
             {
                 if (metric.NetDebtEbitda.Value <= 0.0)
-                    return (KnownColors.Green, "NetDebt/EBITDA отрицательный");
+                    return (1.0, KnownColors.Green, "NetDebt/EBITDA отрицательный");
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.NetDebtEbitda.HasValue).ToList();
@@ -231,13 +231,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
 
-                if (ratio > 0.75) return (KnownColors.Green, $"NetDebt/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора");
-                else if (ratio > 0.5) return (KnownColors.LightGreen, $"NetDebt/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора");
-                else if (ratio > 0.25) return (KnownColors.Yellow, $"NetDebt/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора");
-                else return (KnownColors.Red, $"NetDebt/EBITDA высокое в секторе");
+                if (ratio > 0.75) return (ratio, KnownColors.Green, $"NetDebt/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (ratio, KnownColors.LightGreen, $"NetDebt/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (ratio, KnownColors.Yellow, $"NetDebt/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора");
+                else return (ratio, KnownColors.Red, $"NetDebt/EBITDA высокое в секторе");
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
         public async Task<(string Color, string Description)> GetColorEbitdaRevenueAsync(string ticker, string period)

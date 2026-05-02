@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICompareTrendService, CompareTrendService>();
         services.AddScoped<IInstrumentService, InstrumentService>();
         services.AddScoped<IFundamentalService, FundamentalService>();
+        services.AddScoped<IFundamentalScoreService, FundamentalScoreService>();
         services.AddScoped<IMacroService, MacroService>();
         services.AddScoped<IPortfolioService, PortfolioService>();
         services.AddScoped<IBondPortfolioService, BondPortfolioService>();
@@ -25,6 +26,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDiagramService, DiagramService>();
         services.AddScoped<IColorPaleteService, ColorPaleteService>();
 
-        services.AddScoped<IFundamentalParameterFactory, FundamentalParameterFactory>();
+        services.AddScoped<IAnalyseParameterFactory, AnalyseParameterFactory>();
     }
 }

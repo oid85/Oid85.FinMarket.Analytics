@@ -2,7 +2,7 @@
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Factories
 {
-    public interface IFundamentalParameterFactory
+    public interface IAnalyseParameterFactory
     {
         Task<AnalyseParameter<double?>?> CreatePeAsync(string ticker, string period);
         Task<AnalyseParameter<double?>?> CreatePbvAsync(string ticker, string period);
@@ -18,5 +18,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Factories
         Task<AnalyseParameter<double?>?> CreateEbitdaRevenueAsync(string ticker, string period);
         Task<AnalyseParameter<double?>?> CreateDividendYieldAsync(string ticker, string period);
         Task<AnalyseParameter<double?>?> CreateDeltaMinMaxAsync(string ticker, string period);
+        Task<AnalyseParameter<bool?>?> CreateDividendAristocratAsync(string ticker);
     }
 }
