@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
+using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Models;
 
 namespace Oid85.FinMarket.Analytics.Application.Factories
@@ -25,7 +26,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Pe,
                 Description = description,
                 ColorFill = color,
-                Ratio = ratio
+                Ratio = ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -44,7 +45,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Pbv,
                 Description = description,
                 ColorFill = color,
-                Ratio = ratio
+                Ratio = ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -189,7 +190,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.EvEbitda,
                 Description = description,
                 ColorFill = color,
-                Ratio = ratio
+                Ratio = ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -208,7 +209,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.NetDebtEbitda,
                 Description = description,
                 ColorFill = color,
-                Ratio = ratio
+                Ratio = ratio.RoundTo(2)
             };
 
             return displayParameter;
