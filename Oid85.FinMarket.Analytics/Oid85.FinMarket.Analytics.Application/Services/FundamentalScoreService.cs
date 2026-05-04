@@ -58,11 +58,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreatePeAsync(ticker, predictYear);
-            if (result is null) return null;
+            if (result is null) return new();
             if (result.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreatePeAsync(ticker, year);
-            if (result is null) return null;
+            if (result is null) return new();
 
             return result;
         }
@@ -73,11 +73,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreatePbvAsync(ticker, predictYear);
-            if (result is null) return null;
+            if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreatePbvAsync(ticker, year);
-            if (result is null) return null;
+            if (result is null) return new();
 
             return result;
         }
@@ -88,11 +88,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreateEvEbitdaAsync(ticker, predictYear);
-            if (result is null) return null;
+            if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreateEvEbitdaAsync(ticker, year);
-            if (result is null) return null;
+            if (result is null) return new();
 
             return result;
         }
@@ -103,11 +103,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, predictYear);
-            if (result is null) return null;
+            if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, year);
-            if (result is null) return null;
+            if (result is null) return new();
 
             return result;
         }
