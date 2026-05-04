@@ -1,4 +1,5 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
@@ -10,7 +11,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class DiagramService(
         IInstrumentService instrumentService,
-        IDataService dataService) 
+        IDataService dataService,
+        IParameterRepository parameterRepository) 
         : IDiagramService
     {
         public async Task<GetClosePriceDiagramResponse> GetClosePriceDiagramAsync(GetClosePriceDiagramRequest request)
@@ -51,6 +53,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var items = new List<GetClosePriceDiagramItemResponse>();
 
+            var years = int.Parse((await parameterRepository.GetParameterValueAsync(KnownParameters.DiagramPeriodShortYears)) ?? "1");
+
             foreach (var instrument in instruments)
             {
                 items.Add(
@@ -59,7 +63,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,
                         InPortfolio = instrument.InPortfolio,
-                        Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddYears(-1))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
+                        Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * years))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
                         TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
                         DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? value.Yield!.Value.RoundTo(1) : null
                     });
