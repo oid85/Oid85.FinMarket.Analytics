@@ -3,7 +3,7 @@
     /// <summary>
     /// Числовой параметр для вывода на экран
     /// </summary>
-    public class AnalyseParameter<T>
+    public class AnalyseRatioParameter<T>
     {
         /// <summary>
         /// Значение
@@ -19,5 +19,10 @@
         /// Цвет фона
         /// </summary>
         public string ColorFill { get; set; }  = "#FFFFFF";
+
+        /// <summary>
+        /// Оценочный коэффициент
+        /// </summary>
+        public double Ratio { get; set; } = 0.0;
     }
 }

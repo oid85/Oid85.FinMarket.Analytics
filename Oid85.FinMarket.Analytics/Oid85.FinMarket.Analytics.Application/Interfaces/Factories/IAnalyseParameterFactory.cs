@@ -4,20 +4,20 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Factories
 {
     public interface IAnalyseParameterFactory
     {
-        Task<AnalyseParameter<double?>?> CreatePeAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreatePbvAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateRevenueAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateNetProfitAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateFcfAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateEpsAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateNetDebtAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateRoaAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateRoeAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateEvEbitdaAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateNetDebtEbitdaAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateEbitdaRevenueAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateDividendYieldAsync(string ticker, string period);
-        Task<AnalyseParameter<double?>?> CreateDeltaMinMaxAsync(string ticker, string period);
-        Task<AnalyseParameter<bool?>?> CreateDividendAristocratAsync(string ticker);
+        Task<AnalyseRatioParameter<double?>?> CreatePeAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreatePbvAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateRevenueAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateNetProfitAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateFcfAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateEpsAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateNetDebtAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateRoaAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateRoeAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateEvEbitdaAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateNetDebtEbitdaAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateEbitdaRevenueAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateDividendYieldAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateDeltaMinMaxAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<bool?>?> CreateDividendAristocratAsync(string ticker);
     }
 }

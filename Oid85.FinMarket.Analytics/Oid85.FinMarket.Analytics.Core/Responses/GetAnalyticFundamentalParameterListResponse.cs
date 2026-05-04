@@ -30,19 +30,19 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<double?> Ev { get; set; } = [];
         public List<double?> MarketCap { get; set; } = [];
         public List<double?> Dividend { get; set; } = [];
-        public List<AnalyseParameter<double?>?> Pe { get; set; } = [];
-        public List<AnalyseParameter<double?>?> Pbv { get; set; } = [];        
-        public List<AnalyseParameter<double?>?> Revenue { get; set; } = [];
-        public List<AnalyseParameter<double?>?> NetProfit { get; set; } = [];
-        public List<AnalyseParameter<double?>?> Eps { get; set; } = [];
-        public List<AnalyseParameter<double?>?> Fcf { get; set; } = [];        
-        public List<AnalyseParameter<double?>?> NetDebt { get; set; } = [];        
-        public List<AnalyseParameter<double?>?> DividendYield { get; set; } = [];        
-        public List<AnalyseParameter<double?>?> Roa { get; set; } = [];
-        public List<AnalyseParameter<double?>?> Roe { get; set; } = [];
-        public List<AnalyseParameter<double?>?> EvEbitda { get; set; } = [];
-        public List<AnalyseParameter<double?>?> NetDebtEbitda { get; set; } = [];
-        public List<AnalyseParameter<double?>?> EbitdaRevenue { get; set; } = [];
-        public List<AnalyseParameter<double?>?> DeltaMinMax { get; set; } = [];        
+        public List<AnalyseRatioParameter<double?>?> Pe { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> Pbv { get; set; } = [];        
+        public List<AnalyseRatioParameter<double?>?> Revenue { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> NetProfit { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> Eps { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> Fcf { get; set; } = [];        
+        public List<AnalyseRatioParameter<double?>?> NetDebt { get; set; } = [];        
+        public List<AnalyseRatioParameter<double?>?> DividendYield { get; set; } = [];        
+        public List<AnalyseRatioParameter<double?>?> Roa { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> Roe { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> EvEbitda { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> NetDebtEbitda { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> EbitdaRevenue { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> DeltaMinMax { get; set; } = [];        
     }
 }

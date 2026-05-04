@@ -1,5 +1,6 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
+using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -8,7 +9,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class LifePortfolioService(
         ILifePortfolioPositionRepository lifePortfolioPositionRepository,
-        IInstrumentRepository instrumentRepository) 
+        IInstrumentRepository instrumentRepository,
+        IParameterRepository parameterRepository) 
         : ILifePortfolioService
     {
         public async Task<EditLifePortfolioPositionResponse> EditLifePortfolioPositionAsync(EditLifePortfolioPositionRequest request)
@@ -19,7 +21,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<ImportLifePortfolioPositionListResponse> ImportLifePortfolioPositionListAsync(ImportLifePortfolioPositionListRequest request)
         {
-            string path = @"c:\Users\79131\Downloads\Snowball Holdings.csv";
+            string path = (await parameterRepository.GetParameterValueAsync(KnownParameters.SnowballHoldingsFilePath))!;
             var lines = await File.ReadAllLinesAsync(path);
 
             // Удалим старые позиции
@@ -51,8 +53,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 // Установим флаг InPortfolio
                 var instrument = await instrumentRepository.GetInstrumentByTickerAsync(lifePosition.Ticker);
-                instrument!.InPortfolio = true;
-                await instrumentRepository.EditInstrumentAsync(instrument);
+                
+                if (instrument is not null)
+                {
+                    instrument!.InPortfolio = true;
+                    await instrumentRepository.EditInstrumentAsync(instrument);
+                }
             }
 
             return new();

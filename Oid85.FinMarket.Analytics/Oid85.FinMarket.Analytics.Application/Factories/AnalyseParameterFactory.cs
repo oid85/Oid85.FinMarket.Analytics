@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using Hangfire.Dashboard;
-using Oid85.FinMarket.Analytics.Application.Interfaces.Factories;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Factories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -14,15 +12,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
         IParameterRepository parameterRepository) 
         : IAnalyseParameterFactory
     {
-        public async Task<AnalyseParameter<double?>?> CreatePeAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreatePeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (ratio, color, description) = await colorPaleteService.GetColorPeAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Pe,
                 Description = description,
@@ -33,15 +31,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreatePbvAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreatePbvAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (ratio, color, description) = await colorPaleteService.GetColorPbvAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Pbv,
                 Description = description,
@@ -52,15 +50,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateRevenueAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateRevenueAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorRevenueAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Revenue,
                 Description = description,
@@ -70,15 +68,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateNetProfitAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateNetProfitAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorNetProfitAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.NetProfit,
                 Description = description,
@@ -88,15 +86,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateFcfAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateFcfAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorFcfAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Fcf,
                 Description = description,
@@ -106,15 +104,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateEpsAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateEpsAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorEpsAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Eps,
                 Description = description,
@@ -124,15 +122,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateNetDebtAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateNetDebtAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorNetDebtAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.NetDebt,
                 Description = description,
@@ -142,15 +140,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateRoaAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateRoaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorRoaAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Roa,
                 Description = description,
@@ -160,15 +158,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateRoeAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateRoeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorRoeAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Roe,
                 Description = description,
@@ -178,15 +176,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateEvEbitdaAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateEvEbitdaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (ratio, color, description) = await colorPaleteService.GetColorEvEbitdaAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.EvEbitda,
                 Description = description,
@@ -197,15 +195,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateNetDebtEbitdaAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateNetDebtEbitdaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (ratio, color, description) = await colorPaleteService.GetColorNetDebtEbitdaAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.NetDebtEbitda,
                 Description = description,
@@ -216,15 +214,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateEbitdaRevenueAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateEbitdaRevenueAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorEbitdaRevenueAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.EbitdaRevenue,
                 Description = description,
@@ -234,15 +232,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateDividendYieldAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateDividendYieldAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorDividendYieldAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.DividendYield,
                 Description = description,
@@ -252,15 +250,15 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<double?>?> CreateDeltaMinMaxAsync(string ticker, string period)
+        public async Task<AnalyseRatioParameter<double?>?> CreateDeltaMinMaxAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return null;
+            if (metric is null) return new();
 
             var (color, description) = await colorPaleteService.GetColorDeltaMinMaxAsync(ticker, period);
 
-            var displayParameter = new AnalyseParameter<double?>
+            var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.DeltaMinMax,
                 Description = description,
@@ -270,7 +268,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
-        public async Task<AnalyseParameter<bool?>?> CreateDividendAristocratAsync(string ticker)
+        public async Task<AnalyseRatioParameter<bool?>?> CreateDividendAristocratAsync(string ticker)
         {
             string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
 
@@ -290,7 +288,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             bool isDividendAristokrat = count >= 4;
 
-            var displayParameter = new AnalyseParameter<bool?>
+            var displayParameter = new AnalyseRatioParameter<bool?>
             {
                 Value = isDividendAristokrat,
                 Description = isDividendAristokrat ? "Дивидендный аристократ" : string.Empty,

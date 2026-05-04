@@ -181,7 +181,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         item.FillData = item.NumberShares.Last().HasValue;
                         item.FillData &= item.MarketCap.Last().HasValue;
-                        item.FillData &= item.Dividend.Last().HasValue;
+                        item.FillData &= item.Dividend.Last().HasValue;                        
                         item.FillData &= item.Pe.Last()?.Value is not null;
                         item.FillData &= item.Pbv.Last()?.Value is not null;
                         item.FillData &= item.Roa.Last()?.Value is not null;

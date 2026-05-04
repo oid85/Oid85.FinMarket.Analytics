@@ -7,4 +7,5 @@ public static class KnownParameters
     public const string MinTotalNumberSharesInPortfolio = "MinTotalNumberSharesInPortfolio";
     public const string Periods = "Periods";
     public const string PredictYear = "PredictYear";
+    public const string SnowballHoldingsFilePath = "SnowballHoldingsFilePath";
 }

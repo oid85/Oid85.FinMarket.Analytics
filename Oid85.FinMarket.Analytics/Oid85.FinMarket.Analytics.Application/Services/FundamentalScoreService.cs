@@ -27,6 +27,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += netDebtEbitda?.Ratio ?? 0.0;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0;
 
+            double limitLo = 5.0 / 3.0;
+            double limitHi = limitLo * 2.0;
+            
             var score = new FundamentalScore
             {
                 Pe = pe,
@@ -34,13 +37,22 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 EvEbitda = evEbitda,
                 NetDebtEbitda = netDebtEbitda,
                 DividendAristocrat = dividendAristocrat,
-                ScoreValue = scoreValue.RoundTo(2)
+                Score = new AnalyseParameter<double>
+                {
+                    Value = scoreValue.RoundTo(2),
+                    ColorFill = scoreValue >= limitHi
+                        ? KnownColors.Green 
+                        : scoreValue >= limitLo
+                            ? KnownColors.Yellow
+                            : KnownColors.White,
+                    Description = string.Empty
+                }
             };
 
             return score;
         }
 
-        private async Task<AnalyseParameter<double?>?> GetPeAsync(string ticker)
+        private async Task<AnalyseRatioParameter<double?>?> GetPeAsync(string ticker)
         {
             string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
             string year = (int.Parse(predictYear) - 1).ToString();
@@ -55,7 +67,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return result;
         }
 
-        private async Task<AnalyseParameter<double?>?> GetPbvAsync(string ticker)
+        private async Task<AnalyseRatioParameter<double?>?> GetPbvAsync(string ticker)
         {
             string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
             string year = (int.Parse(predictYear) - 1).ToString();
@@ -70,7 +82,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return result;
         }
 
-        private async Task<AnalyseParameter<double?>?> GeEvEbitdaAsync(string ticker)
+        private async Task<AnalyseRatioParameter<double?>?> GeEvEbitdaAsync(string ticker)
         {
             string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
             string year = (int.Parse(predictYear) - 1).ToString();
@@ -85,7 +97,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return result;
         }
 
-        private async Task<AnalyseParameter<double?>?> GetNetDebtEbitdaAsync(string ticker)
+        private async Task<AnalyseRatioParameter<double?>?> GetNetDebtEbitdaAsync(string ticker)
         {
             string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
             string year = (int.Parse(predictYear) - 1).ToString();
@@ -100,7 +112,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return result;
         }
 
-        private async Task<AnalyseParameter<bool?>?> GetDividendAristocratAsync(string ticker) =>
+        private async Task<AnalyseRatioParameter<bool?>?> GetDividendAristocratAsync(string ticker) =>
             await analyseParameterFactory.CreateDividendAristocratAsync(ticker);
     }
 }
