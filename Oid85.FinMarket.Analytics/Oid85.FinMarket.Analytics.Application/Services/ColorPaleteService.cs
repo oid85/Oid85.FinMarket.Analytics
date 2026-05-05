@@ -87,34 +87,40 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return (0.0, KnownColors.White, string.Empty);
         }
 
-        public async Task<(string Color, string Description)> GetColorFcfAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorFcfAsync(string ticker, string period)
         {
+            var prevMetric = await GetMetricAsync(ticker, (int.Parse(period) - 1).ToString());
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (prevMetric is null) return (0.0, KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
 
-            if (metric.Fcf.HasValue)
+            if (prevMetric.Fcf.HasValue && metric.Fcf.HasValue)
             {
-                if (metric.Fcf.Value <= 0.0) return (KnownColors.Red, "Отрицательный денежный поток");
-                if (metric.Fcf.Value > 0.0) return (KnownColors.Green, "Положительный денежный поток");
+                if (metric.Fcf.Value <= 0.0) return (0.0, KnownColors.Red, "Отрицательный FCF");
+                if (prevMetric.Fcf.Value > 0.0 && metric.Fcf.Value > 0.0 && metric.Fcf.Value > prevMetric.Fcf.Value) return (1.0, KnownColors.Green, "Рост FCF");
+                if (prevMetric.Fcf.Value > 0.0 && metric.Fcf.Value > 0.0 && metric.Fcf.Value <= prevMetric.Fcf.Value) return (0.75, KnownColors.Yellow, "Падение FCF");
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
-        public async Task<(string Color, string Description)> GetColorEpsAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorEpsAsync(string ticker, string period)
         {
+            var prevMetric = await GetMetricAsync(ticker, (int.Parse(period) - 1).ToString());
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (prevMetric is null) return (0.0, KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
 
-            if (metric.Eps.HasValue)
+            if (prevMetric.Eps.HasValue && metric.Eps.HasValue)
             {
-                if (metric.Eps.Value <= 0.0) return (KnownColors.Red, "Отрицательная прибыль на акцию");
-                if (metric.Eps.Value > 0.0) return (KnownColors.Green, "Положительная прибыль на акцию");
+                if (metric.Eps.Value <= 0.0) return (0.0, KnownColors.Red, "Отрицательная EPS");
+                if (prevMetric.Eps.Value > 0.0 && metric.Eps.Value > 0.0 && metric.Eps.Value > prevMetric.Eps.Value) return (1.0, KnownColors.Green, "Рост EPS");
+                if (prevMetric.Eps.Value > 0.0 && metric.Eps.Value > 0.0 && metric.Eps.Value <= prevMetric.Eps.Value) return (0.75, KnownColors.Yellow, "Падение EPS");
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
         public async Task<(string Color, string Description)> GetColorNetDebtAsync(string ticker, string period)

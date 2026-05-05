@@ -20,6 +20,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var evEbitda = await GeEvEbitdaAsync(ticker);
             var netDebtEbitda = await GetNetDebtEbitdaAsync(ticker);
             var netProfit = await GetNetProfitAsync(ticker);
+            var fcf = await GetFcfAsync(ticker);
+            var eps = await GetEpsAsync(ticker);
             var dividendAristocrat = await GetDividendAristocratAsync(ticker);
 
             double scoreValue = pe?.Ratio ?? 0.0;
@@ -27,9 +29,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += evEbitda?.Ratio ?? 0.0;
             scoreValue += netDebtEbitda?.Ratio ?? 0.0;
             scoreValue += netProfit?.Ratio ?? 0.0;
+            scoreValue += fcf?.Ratio ?? 0.0;
+            scoreValue += eps?.Ratio ?? 0.0;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0;
 
-            double limitLo = 6.0 / 3.0;
+            double limitLo = 8.0 / 3.0;
             double limitHi = limitLo * 2.0;
             
             var score = new FundamentalScore
@@ -39,6 +43,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 EvEbitda = evEbitda,
                 NetDebtEbitda = netDebtEbitda,
                 NetProfit = netProfit,
+                Fcf = fcf,
+                Eps = eps,
                 DividendAristocrat = dividendAristocrat,
                 Score = new AnalyseParameter<double>
                 {
@@ -125,6 +131,36 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (result!.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreateNetProfitAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetFcfAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateFcfAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateFcfAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetEpsAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateEpsAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateEpsAsync(ticker, year);
             if (result is null) return new();
 
             return result;
