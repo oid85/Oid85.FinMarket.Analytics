@@ -6,7 +6,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<(double Ratio, string Color, string Description)> GetColorPeAsync(string ticker, string period);
         Task<(double Ratio, string Color, string Description)> GetColorPbvAsync(string ticker, string period);
         Task<(string Color, string Description)> GetColorRevenueAsync(string ticker, string period);
-        Task<(string Color, string Description)> GetColorNetProfitAsync(string ticker, string period);
+        Task<(double Ratio, string Color, string Description)> GetColorNetProfitAsync(string ticker, string period);
         Task<(string Color, string Description)> GetColorFcfAsync(string ticker, string period);
         Task<(string Color, string Description)> GetColorEpsAsync(string ticker, string period);
         Task<(string Color, string Description)> GetColorNetDebtAsync(string ticker, string period);

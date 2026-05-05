@@ -19,15 +19,17 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var pbv = await GetPbvAsync(ticker);
             var evEbitda = await GeEvEbitdaAsync(ticker);
             var netDebtEbitda = await GetNetDebtEbitdaAsync(ticker);
+            var netProfit = await GetNetProfitAsync(ticker);
             var dividendAristocrat = await GetDividendAristocratAsync(ticker);
 
             double scoreValue = pe?.Ratio ?? 0.0;
             scoreValue += pbv?.Ratio ?? 0.0;
             scoreValue += evEbitda?.Ratio ?? 0.0;
             scoreValue += netDebtEbitda?.Ratio ?? 0.0;
+            scoreValue += netProfit?.Ratio ?? 0.0;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0;
 
-            double limitLo = 5.0 / 3.0;
+            double limitLo = 6.0 / 3.0;
             double limitHi = limitLo * 2.0;
             
             var score = new FundamentalScore
@@ -36,6 +38,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Pbv = pbv,
                 EvEbitda = evEbitda,
                 NetDebtEbitda = netDebtEbitda,
+                NetProfit = netProfit,
                 DividendAristocrat = dividendAristocrat,
                 Score = new AnalyseParameter<double>
                 {
@@ -107,6 +110,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (result!.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetNetProfitAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateNetProfitAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateNetProfitAsync(ticker, year);
             if (result is null) return new();
 
             return result;

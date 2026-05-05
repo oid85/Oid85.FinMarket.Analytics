@@ -37,7 +37,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                     for (int i = 0; i < parts.Length; i++)
                     {
-                        if (string.IsNullOrEmpty(parts[i].Trim())) continue;
+                        string part = parts[i].Replace(" ", "").Replace("%", "").Trim();
+
+                        if (string.IsNullOrEmpty(part)) continue;
 
                         createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(
                             new CreateOrUpdateFundamentalParameterItemRequest
@@ -45,7 +47,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                                 Ticker = request.Ticker,
                                 Type = request.Type,
                                 Period = (int.Parse(request.Period!) + i).ToString(),
-                                Value = StringUtils.ToDouble(parts[i]),
+                                Value = StringUtils.ToDouble(part),
                                 ExtData = request.ExtData ?? string.Empty
                             });
                     }
@@ -60,7 +62,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                     for (int i = 0; i < parts.Length; i++)
                     {
-                        if (string.IsNullOrEmpty(parts[i].Trim())) continue;
+                        string part = parts[i].Replace(" ", "").Replace("%", "").Trim();
+
+                        if (string.IsNullOrEmpty(part)) continue;
 
                         createOrUpdateFundamentalParameterRequest.FundamentalParameters.Add(
                             new CreateOrUpdateFundamentalParameterItemRequest
@@ -68,7 +72,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                                 Ticker = request.Ticker,
                                 Type = request.Type,
                                 Period = (int.Parse(request.Period!) + i).ToString(),
-                                Value = StringUtils.ToDouble(parts[i]),
+                                Value = StringUtils.ToDouble(part),
                                 ExtData = request.ExtData ?? string.Empty
                             });
                     }
@@ -181,6 +185,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         item.FillData = item.NumberShares.Last().HasValue;
                         item.FillData &= item.MarketCap.Last().HasValue;
+                        item.FillData &= item.OwnCapital.Last().HasValue;
                         item.FillData &= item.Dividend.Last().HasValue;                        
                         item.FillData &= item.Pe.Last()?.Value is not null;
                         item.FillData &= item.Pbv.Last()?.Value is not null;

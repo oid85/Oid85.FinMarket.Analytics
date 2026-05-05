@@ -75,13 +75,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (color, description) = await colorPaleteService.GetColorNetProfitAsync(ticker, period);
+            var (ratio, color, description) = await colorPaleteService.GetColorNetProfitAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.NetProfit,
                 Description = description,
-                ColorFill = color
+                ColorFill = color,
+                Ratio = ratio.RoundTo(2)
             };
 
             return displayParameter;

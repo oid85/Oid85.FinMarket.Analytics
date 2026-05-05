@@ -497,6 +497,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 bool fillFundamental = fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.NumberShares) is not null;
                 fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.MarketCap) is not null;
+                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.OwnCapital) is not null;
                 fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Dividend) is not null;
                 fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Pe) is not null;
                 fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Pbv) is not null;

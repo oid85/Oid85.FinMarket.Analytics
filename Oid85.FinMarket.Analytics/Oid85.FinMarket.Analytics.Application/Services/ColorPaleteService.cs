@@ -69,19 +69,22 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return (KnownColors.White, string.Empty);
         }
 
-        public async Task<(string Color, string Description)> GetColorNetProfitAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorNetProfitAsync(string ticker, string period)
         {
+            var prevMetric = await GetMetricAsync(ticker, (int.Parse(period) - 1).ToString());
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (prevMetric is null) return (0.0, KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
 
-            if (metric.NetProfit.HasValue)
+            if (prevMetric.NetProfit.HasValue && metric.NetProfit.HasValue)
             {
-                if (metric.NetProfit.Value <= 0.0) return (KnownColors.Red, "Отрицательная чистая прибыль");
-                if (metric.NetProfit.Value > 0.0) return (KnownColors.Green, "Положительная чистая прибыль");
+                if (metric.NetProfit.Value <= 0.0) return (0.0, KnownColors.Red, "Отрицательная чистая прибыль");
+                if (prevMetric.NetProfit.Value > 0.0 && metric.NetProfit.Value > 0.0 && metric.NetProfit.Value > prevMetric.NetProfit.Value) return (1.0, KnownColors.Green, "Рост чистой прибыли");
+                if (prevMetric.NetProfit.Value > 0.0 && metric.NetProfit.Value > 0.0 && metric.NetProfit.Value <= prevMetric.NetProfit.Value) return (0.75, KnownColors.Yellow, "Падение чистой прибыли");                
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
         public async Task<(string Color, string Description)> GetColorFcfAsync(string ticker, string period)
