@@ -236,6 +236,22 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             return displayParameter;
         }
 
+        public async Task<AnalyseRatioParameter<double?>?> CreateOwnCapitalNumberSharesAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return new();
+
+            var displayParameter = new AnalyseRatioParameter<double?>
+            {
+                Value = metric.OwnCapitalNumberShares,
+                Description = string.Empty,
+                ColorFill = KnownColors.White
+            };
+
+            return displayParameter;
+        }
+
         public async Task<AnalyseRatioParameter<double?>?> CreateDividendYieldAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);

@@ -178,6 +178,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     item.EvEbitda.Add(await analyseParameterFactory.CreateEvEbitdaAsync(instrument.Ticker, periods[i]));
                     item.NetDebtEbitda.Add(await analyseParameterFactory.CreateNetDebtEbitdaAsync(instrument.Ticker, periods[i]));
                     item.EbitdaRevenue.Add(await analyseParameterFactory.CreateEbitdaRevenueAsync(instrument.Ticker, periods[i]));
+                    item.OwnCapitalNumberShares.Add(await analyseParameterFactory.CreateOwnCapitalNumberSharesAsync(instrument.Ticker, periods[i]));
                     item.DividendYield.Add(await analyseParameterFactory.CreateDividendYieldAsync(instrument.Ticker, periods[i]));
                     item.DeltaMinMax.Add(await analyseParameterFactory.CreateDeltaMinMaxAsync(instrument.Ticker, periods[i]));
 

@@ -43,6 +43,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<AnalyseRatioParameter<double?>?> EvEbitda { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> NetDebtEbitda { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> EbitdaRevenue { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> OwnCapitalNumberShares { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> DeltaMinMax { get; set; } = [];        
     }
 }

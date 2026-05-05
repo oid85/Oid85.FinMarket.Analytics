@@ -24,6 +24,7 @@
         public double? NetDebt { get; set; } = null;
         public double? Revenue { get; set; } = null;
         public double? EbitdaRevenue { get; set; } = null;
+        public double? OwnCapitalNumberShares { get; set; } = null;
         public double? MarketCap { get; set; } = null;
     }
 }

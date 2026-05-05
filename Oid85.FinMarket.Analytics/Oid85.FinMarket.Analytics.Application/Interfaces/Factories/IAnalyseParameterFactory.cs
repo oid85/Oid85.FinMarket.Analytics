@@ -16,6 +16,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Factories
         Task<AnalyseRatioParameter<double?>?> CreateEvEbitdaAsync(string ticker, string period);
         Task<AnalyseRatioParameter<double?>?> CreateNetDebtEbitdaAsync(string ticker, string period);
         Task<AnalyseRatioParameter<double?>?> CreateEbitdaRevenueAsync(string ticker, string period);
+        Task<AnalyseRatioParameter<double?>?> CreateOwnCapitalNumberSharesAsync(string ticker, string period);
         Task<AnalyseRatioParameter<double?>?> CreateDividendYieldAsync(string ticker, string period);
         Task<AnalyseRatioParameter<double?>?> CreateDeltaMinMaxAsync(string ticker, string period);
         Task<AnalyseRatioParameter<bool?>?> CreateDividendAristocratAsync(string ticker);
