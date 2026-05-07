@@ -54,7 +54,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
         {
-            var lifePortfolioPositions = await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync();
+            var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
+
+            var lifePortfolioPositions = (await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync()).Where(x => !x.IsDeleted).ToList();
+
+            double lifeTotalSum = 0.0;
+
+            foreach (var position in lifePortfolioPositions)
+            {
+                var price = analyseDataContext.GetPrice(position.Ticker);
+
+                if (price.HasValue)
+                    lifeTotalSum += position.Size * price.Value;
+            }
+
+            await parameterRepository.SetParameterValueAsync(KnownParameters.TotalSum, lifeTotalSum.ToString("N0"));
 
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
