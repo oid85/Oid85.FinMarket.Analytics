@@ -38,6 +38,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<Dictionary<string, double>> GetBenchmarkChangeDataAsync(List<string> tickers);
 
         /// <summary>
+        /// Получить долю в индексе IMOEX
+        /// </summary>
+        Task<Dictionary<string, double?>> GetMoexIndexShareDataAsync(List<string> tickers);
+
+        /// <summary>
         /// Получить метрики по фундаментальным данным
         /// </summary>
         Task<Dictionary<string, List<FundamentalMetric>>> GetFundamentalMetricDataAsync(List<string> tickers);

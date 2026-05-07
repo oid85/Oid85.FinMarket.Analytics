@@ -149,6 +149,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
                     BenchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker),
+                    Moex = analyseDataContext.GetMoexIndexShare(instrument.Ticker),
                     Concept = analyseDataContext.GetExtData(instrument.Ticker)?.Concept
                 };
 

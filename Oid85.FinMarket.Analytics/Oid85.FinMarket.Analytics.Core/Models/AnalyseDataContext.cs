@@ -31,6 +31,11 @@
         public Dictionary<string, double> BenchmarkChangeData { get; set; } = [];
 
         /// <summary>
+        /// Доля в индексе IMOEX
+        /// </summary>
+        public Dictionary<string, double?> MoexIndexShareData { get; set; } = [];
+
+        /// <summary>
         /// Фундаментальные данные
         /// </summary>
         public Dictionary<string, List<FundamentalMetric>> FundamentalMetricData { get; set; } = [];
@@ -158,6 +163,11 @@
         /// Получить изменение относительно индекса полной доходности MCFTR по тикеру
         /// </summary>
         public double? GetBenchmarkChange(string ticker) => !BenchmarkChangeData.TryGetValue(ticker, out var result) ? null : result;
+
+        /// <summary>
+        /// Получить долю в индексе IMOEX по тикеру
+        /// </summary>
+        public double? GetMoexIndexShare(string ticker) => !MoexIndexShareData.TryGetValue(ticker, out var result) ? null : result;
 
         /// <summary>
         /// Получить фундаментальные данные по тикеру

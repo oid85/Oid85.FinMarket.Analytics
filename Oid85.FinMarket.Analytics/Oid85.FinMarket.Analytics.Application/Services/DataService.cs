@@ -175,6 +175,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
         }
 
+        public async Task<Dictionary<string, double?>> GetMoexIndexShareDataAsync(List<string> tickers)
+        {
+            var fundamentalParameterList = await GetFundamentalParameterListAsync();
+
+            var result = new Dictionary<string, double?>();
+
+            foreach (var ticker in tickers)
+            {
+                var moexIndexShare = fundamentalParameterList.Find(x => x.Ticker == ticker && x.Type == KnownFundamentalParameterTypes.Moex)?.Value;
+                result.Add(ticker, moexIndexShare);
+            }
+
+            return result;
+        }
+
         /// <inheritdoc />
         public async Task<Dictionary<string, Forecast>> GetConsensusForecastDataAsync()
         {
@@ -553,6 +568,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 ClosePriceData = await GetClosePriceDataAsync(tickers),
                 DividendData = await GetDividendDataAsync(tickers),
                 BenchmarkChangeData = await GetBenchmarkChangeDataAsync(tickers),
+                MoexIndexShareData = await GetMoexIndexShareDataAsync(tickers),
                 FundamentalMetricData = await GetFundamentalMetricDataAsync(tickers),
                 ConsensusForecastData = await GetConsensusForecastDataAsync(),
                 NataliaBaffetovnaForecastData = await GetNataliaBaffetovnaForecastDataAsync(tickers),
