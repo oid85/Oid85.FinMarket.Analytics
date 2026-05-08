@@ -72,5 +72,15 @@
         /// Позиция в реальном портфеле
         /// </summary>
         public int LifeSize { get; set; }
+
+        /// <summary>
+        /// Разница между реальной и расчетной позицией
+        /// </summary>
+        public int Delta { get; set; }
+
+        /// <summary>
+        /// Разница между реальной и расчетной позицией в процентах
+        /// </summary>
+        public double DeltaPercent { get; set; }
     }
 }

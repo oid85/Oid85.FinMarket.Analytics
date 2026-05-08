@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
+using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Enums;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -175,12 +176,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 }
 
                 portfolioPosition.LifeSize = lifePortfolioPositions.Find(x => x.Ticker == portfolioPosition.Ticker)?.Size ?? 0;
+                portfolioPosition.Delta = portfolioPosition.LifeSize - portfolioPosition.Size;
+                portfolioPosition.DeltaPercent = (Convert.ToDouble(portfolioPosition.Delta) / Convert.ToDouble(portfolioPosition.Size) * 100.0).RoundTo(2);
             }
 
             var response = new GetPortfolioPositionListResponse()
             {
                 TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)]
+                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.DeltaPercent)]
             };
 
             int number = 1;
