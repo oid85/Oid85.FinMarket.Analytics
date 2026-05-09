@@ -12,15 +12,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class DiagramService(
         IInstrumentService instrumentService,
         IDataService dataService,
-        IParameterRepository parameterRepository) 
+        IParameterRepository parameterRepository)
         : IDiagramService
     {
         public async Task<GetClosePriceDiagramResponse> GetClosePriceDiagramAsync(GetClosePriceDiagramRequest request)
-        {                        
+        {
             var allInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
                 .ToList();
 
-            List<string> indexTickers = [ KnownIndexTickers.IMOEX, KnownIndexTickers.MCFTR, KnownIndexTickers.RGBI, KnownIndexTickers.RVI ];
+            List<string> indexTickers = [KnownIndexTickers.IMOEX, KnownIndexTickers.MCFTR, KnownIndexTickers.RGBI, KnownIndexTickers.RVI];
 
             var indexes = allInstruments
                 .Where(x => x.Type == KnownInstrumentTypes.Index)
@@ -58,7 +58,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             foreach (var instrument in instruments)
             {
                 items.Add(
-                    new ()
+                    new()
                     {
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,

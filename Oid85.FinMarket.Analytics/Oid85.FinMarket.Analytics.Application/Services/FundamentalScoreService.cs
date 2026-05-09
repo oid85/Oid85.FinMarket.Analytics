@@ -9,7 +9,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class FundamentalScoreService(
         IParameterRepository parameterRepository,
-        IAnalyseParameterFactory analyseParameterFactory) 
+        IAnalyseParameterFactory analyseParameterFactory)
         : IFundamentalScoreService
     {
         /// <inheritdoc />
@@ -35,7 +35,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             double limitLo = 8.0 / 3.0;
             double limitHi = limitLo * 2.0;
-            
+
             var score = new FundamentalScore
             {
                 Pe = pe,
@@ -50,7 +50,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Value = scoreValue.RoundTo(2),
                     ColorFill = scoreValue >= limitHi
-                        ? KnownColors.Green 
+                        ? KnownColors.Green
                         : scoreValue >= limitLo
                             ? KnownColors.Yellow
                             : KnownColors.White,

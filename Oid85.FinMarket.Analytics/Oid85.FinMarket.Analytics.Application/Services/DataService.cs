@@ -40,10 +40,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
 
                 var coupons = couponsTwoYear
-                    .Where(x => 
-                        x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) && 
+                    .Where(x =>
+                        x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) &&
                         x.CouponDate <= DateOnly.FromDateTime(DateTime.Today.AddYears(1)))
-                    .Select(x => new BondCoupon 
+                    .Select(x => new BondCoupon
                     {
                         Ticker = x.Ticker,
                         CouponNumber = x.CouponNumber,
@@ -100,7 +100,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (!candleData.ContainsKey(ticker)) continue;
 
                 var candles = candleData[ticker].Where(x => x.Date >= from && x.Date <= to);
-                var dateValues = candles.Select(x => new DateValue<double> { Date = x.Date, Value = x.Close}).ToList();
+                var dateValues = candles.Select(x => new DateValue<double> { Date = x.Date, Value = x.Close }).ToList();
 
                 data.Add(ticker, dateValues);
             }
@@ -162,12 +162,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (ultimateSmootherData.TryGetValue(ticker, out List<DateValue<double>>? dateValues))
                 {
                     var filteredDateValues = dateValues.Where(x => x.Date >= startDate && x.Date <= today).ToList();
-                    
+
                     if (filteredDateValues.Count == 0)
                         return 0.0;
-                    
+
                     var result = (filteredDateValues.Last().Value - filteredDateValues.First().Value) / filteredDateValues.First().Value * 100.0;
-                    
+
                     return Math.Round(result, 2);
                 }
 
@@ -194,7 +194,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<Dictionary<string, Forecast>> GetConsensusForecastDataAsync()
         {
             var forecasts = await GetConsensusForecastListAsync();
-            var tickers = forecasts.Select(x => x.Ticker).ToList();            
+            var tickers = forecasts.Select(x => x.Ticker).ToList();
             var candleData = await GetCandleDataAsync(tickers);
 
             var result = new Dictionary<string, Forecast>();
@@ -202,12 +202,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             foreach (var forecast in forecasts)
             {
                 if (!candleData.ContainsKey(forecast.Ticker)) continue;
-                
+
                 var price = candleData[forecast.Ticker].Last().Close;
 
                 result.Add(
                     forecast.Ticker,
-                    new ()
+                    new()
                     {
                         Ticker = forecast.Ticker,
                         ConsensusPrice = forecast.ConsensusPrice,
@@ -235,16 +235,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 if (!candleData.ContainsKey(ticker)) continue;
 
-                var price = candleData[ticker].Last().Close;                
+                var price = candleData[ticker].Last().Close;
 
                 var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
                 var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.NataliaBaffetovnaForecast)?.Value).LastOrDefault();
 
                 if (!consensusPrice.HasValue) continue;
 
-                result.Add(ticker, new () 
-                { 
-                    Ticker = ticker, 
+                result.Add(ticker, new()
+                {
+                    Ticker = ticker,
                     ConsensusPrice = consensusPrice,
                     CurrentPrice = price,
                     UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
@@ -446,7 +446,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     var deltaMinMax = GetDeltaMinMax(periodCandles);
 
                     metrics.Add(
-                        new ()
+                        new()
                         {
                             Ticker = ticker,
                             Price = price,
@@ -499,7 +499,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         public async Task<Dictionary<string, bool>> GetFillFundamentalDataAsync(List<string> tickers)
-        {            
+        {
             string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
 
             var fundamentalParameterList = await GetFundamentalParameterListAsync();
@@ -524,7 +524,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.NetProfit) is not null;
                 fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Eps) is not null;
                 fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Fcf) is not null;
-                
+
                 result.Add(ticker, fillFundamental);
             }
 
@@ -590,7 +590,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             var response = await finMarketStorageServiceApiClient.GetCandleListAsync(
-                new ()
+                new()
                 {
                     From = from,
                     To = to,

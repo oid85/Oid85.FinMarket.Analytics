@@ -132,7 +132,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         IsSelected = x.IsSelected,
                         InPortfolio = x.InPortfolio,
                         ManualCoefficient = x.ManualCoefficient,
-                        Sector= x.Sector
+                        Sector = x.Sector
                     })
                 .ToList();
 

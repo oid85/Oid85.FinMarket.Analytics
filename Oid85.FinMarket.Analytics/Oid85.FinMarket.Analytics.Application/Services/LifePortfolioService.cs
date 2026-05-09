@@ -10,7 +10,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class LifePortfolioService(
         ILifePortfolioPositionRepository lifePortfolioPositionRepository,
         IInstrumentRepository instrumentRepository,
-        IParameterRepository parameterRepository) 
+        IParameterRepository parameterRepository)
         : ILifePortfolioService
     {
         public async Task<EditLifePortfolioPositionResponse> EditLifePortfolioPositionAsync(EditLifePortfolioPositionRequest request)
@@ -29,7 +29,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             // Сбросим флаг InPortfolio
             var tickers = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Select(x => x.Ticker).ToList();
-            
+
             foreach (var ticker in tickers)
             {
                 var instrument = await instrumentRepository.GetInstrumentByTickerAsync(ticker);
@@ -53,7 +53,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 // Установим флаг InPortfolio
                 var instrument = await instrumentRepository.GetInstrumentByTickerAsync(lifePosition.Ticker);
-                
+
                 if (instrument is not null)
                 {
                     instrument!.InPortfolio = true;

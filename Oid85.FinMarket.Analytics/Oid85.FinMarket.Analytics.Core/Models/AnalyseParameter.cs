@@ -18,6 +18,6 @@
         /// <summary>
         /// Цвет фона
         /// </summary>
-        public string ColorFill { get; set; }  = "#FFFFFF";
+        public string ColorFill { get; set; } = "#FFFFFF";
     }
 }

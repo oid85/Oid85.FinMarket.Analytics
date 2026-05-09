@@ -16,7 +16,7 @@
         public double? NetDebtEbitda { get; set; } = null;
         public double? Dividend { get; set; } = null;
         public double? DividendYield { get; set; } = null;
-        public double? NetProfit { get; set; } = null;        
+        public double? NetProfit { get; set; } = null;
         public double? DeltaMinMax { get; set; } = null;
         public double? Ev { get; set; } = null;
         public double? Ebitda { get; set; } = null;

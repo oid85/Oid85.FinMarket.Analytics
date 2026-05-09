@@ -10,7 +10,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
     public class AnalyseParameterFactory(
         IDataService dataService,
         IColorPaleteService colorPaleteService,
-        IParameterRepository parameterRepository) 
+        IParameterRepository parameterRepository)
         : IAnalyseParameterFactory
     {
         public async Task<AnalyseRatioParameter<double?>?> CreatePeAsync(string ticker, string period)
@@ -297,7 +297,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             var metric3 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 3).ToString());
             var metric4 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 4).ToString());
             var metric5 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 5).ToString());
-            
+
             int count = 0;
 
             if (metric1 is not null && metric1.Dividend.HasValue && metric1.Dividend.Value > 0) count++;

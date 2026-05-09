@@ -19,6 +19,6 @@
         public double MaxTarget { get; set; }
         public double PriceChange { get; set; }
         public double PriceChangeRel { get; set; }
-        public string RecommendationString { get; set; }        
+        public string RecommendationString { get; set; }
     }
 }

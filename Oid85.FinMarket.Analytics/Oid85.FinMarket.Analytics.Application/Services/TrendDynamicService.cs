@@ -25,9 +25,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-            var dividendData = await dataService.GetDividendDataAsync(tickers);            
+            var dividendData = await dataService.GetDividendDataAsync(tickers);
             var forecastData = await dataService.GetConsensusForecastDataAsync();
-            var nataliaBaffetovnaForecastData = await dataService.GetNataliaBaffetovnaForecastDataAsync(tickers);            
+            var nataliaBaffetovnaForecastData = await dataService.GetNataliaBaffetovnaForecastDataAsync(tickers);
             var financeMarkerForecastData = await dataService.GetFinanceMarkerForecastDataAsync(tickers);
             var vladProDengiForecastData = await dataService.GetVladProDengiForecastDataAsync(tickers);
             var mozgovikForecastData = await dataService.GetMozgovikForecastDataAsync(tickers);

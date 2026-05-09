@@ -7,15 +7,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class ColorPaleteService(
         IInstrumentRepository instrumentRepository,
-        IDataService dataService) 
+        IDataService dataService)
         : IColorPaleteService
     {
         public async Task<(double Ratio, string Color, string Description)> GetColorPeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
-            
+
             if (metric is null) return (0.0, KnownColors.White, string.Empty);
-            
+
             if (metric.Pe.HasValue)
             {
                 if (metric.Pe.Value <= 0.0)
@@ -81,7 +81,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 if (metric.NetProfit.Value <= 0.0) return (0.0, KnownColors.Red, "Отрицательная чистая прибыль");
                 if (prevMetric.NetProfit.Value > 0.0 && metric.NetProfit.Value > 0.0 && metric.NetProfit.Value > prevMetric.NetProfit.Value) return (1.0, KnownColors.Green, "Рост чистой прибыли");
-                if (prevMetric.NetProfit.Value > 0.0 && metric.NetProfit.Value > 0.0 && metric.NetProfit.Value <= prevMetric.NetProfit.Value) return (0.75, KnownColors.Yellow, "Падение чистой прибыли");                
+                if (prevMetric.NetProfit.Value > 0.0 && metric.NetProfit.Value > 0.0 && metric.NetProfit.Value <= prevMetric.NetProfit.Value) return (0.75, KnownColors.Yellow, "Падение чистой прибыли");
             }
 
             return (0.0, KnownColors.White, string.Empty);
@@ -300,7 +300,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric is null) return (KnownColors.White, string.Empty);
 
             if (metric.DeltaMinMax.HasValue)
-            {                
+            {
                 if (metric.DeltaMinMax.Value < 0.0) return (KnownColors.Red, "Падение цены");
                 if (metric.DeltaMinMax.Value > 0.0) return (KnownColors.Green, "Рост цены");
             }

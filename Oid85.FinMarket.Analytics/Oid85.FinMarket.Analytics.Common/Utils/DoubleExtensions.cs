@@ -32,7 +32,7 @@
         }
 
         public static double? Div(this double value, double arg)
-        {            
+        {
             if (arg == 0.0) return null;
 
             return value / arg;

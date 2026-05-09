@@ -6,7 +6,7 @@ using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities;
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {
     public class LifePortfolioPositionRepository(
-        IDbContextFactory<FinMarketContext> contextFactory) 
+        IDbContextFactory<FinMarketContext> contextFactory)
         : ILifePortfolioPositionRepository
     {
         public async Task AddLifePortfolioPositionAsync(LifePortfolioPosition lifePosition)

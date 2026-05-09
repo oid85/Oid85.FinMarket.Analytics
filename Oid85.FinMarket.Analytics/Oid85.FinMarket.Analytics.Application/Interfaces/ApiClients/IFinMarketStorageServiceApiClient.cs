@@ -78,6 +78,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
         /// <summary>
         /// Получить прогнозы
         /// </summary>
-        Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request);        
+        Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request);
     }
 }

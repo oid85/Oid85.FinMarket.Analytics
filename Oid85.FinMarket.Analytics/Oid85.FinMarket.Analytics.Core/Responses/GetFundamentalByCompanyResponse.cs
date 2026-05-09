@@ -148,7 +148,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         /// Изменение относительно индекса полной доходности MCFTR
         /// </summary>
         public double? BenchmarkChange { get; set; } = null;
-        
+
         /// <summary>
         /// Дивидендная политика
         /// </summary>
@@ -167,7 +167,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         /// <summary>
         /// Идея
         /// </summary>
-        public string? Concept { get; set; } = null;        
+        public string? Concept { get; set; } = null;
     }
 
     public class PriceDiagramDataPoint

@@ -56,19 +56,6 @@ public class FundamentalParameterController(
             result => new BaseResponse<DeleteAnalyticFundamentalParameterResponse> { Result = result });
 
     /// <summary>
-    /// Пузырьковая диаграмма
-    /// </summary>
-    [HttpPost("bubble")]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalParameterBubbleDiagramResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalParameterBubbleDiagramResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalParameterBubbleDiagramResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> GetAnalyticFundamentalParameterBubbleDiagramAsync(
-        [FromBody] GetAnalyticFundamentalParameterBubbleDiagramRequest request) =>
-        GetResponseAsync(
-            () => fundamentalParameterService.GetAnalyticFundamentalParameterBubbleDiagramAsync(request),
-            result => new BaseResponse<GetAnalyticFundamentalParameterBubbleDiagramResponse> { Result = result });
-
-    /// <summary>
     /// Получить фундаментальные параметры по сектору
     /// </summary>
     [HttpPost("sector")]

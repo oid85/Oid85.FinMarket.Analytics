@@ -55,9 +55,23 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
         {
+            var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
+                .Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+
+            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
+                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.InPortfolio)
+                .OrderBy(x => x.Ticker)
+                .ToList();
+
+            var sharesTickers = instruments.Select(x => x.Ticker).ToList();
+
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
-            var lifePortfolioPositions = (await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync()).Where(x => !x.IsDeleted).ToList();
+            var lifePortfolioPositions = (await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync())
+                .Where(x => !x.IsDeleted)
+                .Where(x => sharesTickers.Contains(x.Ticker))
+                .ToList();
 
             double lifeTotalSum = 0.0;
 
@@ -70,15 +84,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             await parameterRepository.SetParameterValueAsync(KnownParameters.TotalSum, lifeTotalSum.ToString("N0"));
-
-            var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
-                .Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
-
-            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
-                .Where(x => x.InPortfolio)
-                .OrderBy(x => x.Ticker)
-                .ToList();
 
             foreach (var instrument in instruments)
             {
@@ -153,9 +158,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 portfolioPositions.Add(portfolioPosition);
             }
-            
+
             double totalSum = Convert.ToDouble(((await parameterRepository.GetParameterValueAsync(KnownParameters.TotalSum)) ?? "0").Replace(" ", "").Trim());
-            
+
             int minTotalNumberSharesInPortfolio = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.MinTotalNumberSharesInPortfolio)) ?? "0");
 
             double baseUnit = portfolioPositions.Count < minTotalNumberSharesInPortfolio

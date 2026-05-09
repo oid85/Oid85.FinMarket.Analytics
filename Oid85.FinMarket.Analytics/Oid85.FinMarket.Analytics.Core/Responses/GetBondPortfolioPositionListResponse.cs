@@ -7,7 +7,7 @@
         public double YearCouponSum { get; set; }
         public double YearCouponPrc { get; set; }
         public double MonthCouponSum { get; set; }
-        public List<GetBondPortfolioPositionListItemResponse> PortfolioPositions { get; set; } = [];        
+        public List<GetBondPortfolioPositionListItemResponse> PortfolioPositions { get; set; } = [];
     }
 
     public class GetBondPortfolioPositionListItemResponse
@@ -76,7 +76,7 @@
         /// Информационное сообщение
         /// </summary>
         public string Message { get; set; } = string.Empty;
-        
+
         /// <summary>
         /// Позиция в реальном портфеле
         /// </summary>

@@ -67,7 +67,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             foreach (var instrument in instruments)
             {
                 var storageInstrument = storageInstruments.Find(x => x.Ticker == instrument.Ticker);
-                
+
                 var portfolioPosition = new GetBondPortfolioPositionListItemResponse()
                 {
                     Ticker = instrument.Ticker,

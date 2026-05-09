@@ -32,19 +32,19 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<double?> MarketCap { get; set; } = [];
         public List<double?> Dividend { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> Pe { get; set; } = [];
-        public List<AnalyseRatioParameter<double?>?> Pbv { get; set; } = [];        
+        public List<AnalyseRatioParameter<double?>?> Pbv { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> Revenue { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> NetProfit { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> Eps { get; set; } = [];
-        public List<AnalyseRatioParameter<double?>?> Fcf { get; set; } = [];        
-        public List<AnalyseRatioParameter<double?>?> NetDebt { get; set; } = [];        
-        public List<AnalyseRatioParameter<double?>?> DividendYield { get; set; } = [];        
+        public List<AnalyseRatioParameter<double?>?> Fcf { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> NetDebt { get; set; } = [];
+        public List<AnalyseRatioParameter<double?>?> DividendYield { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> Roa { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> Roe { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> EvEbitda { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> NetDebtEbitda { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> EbitdaRevenue { get; set; } = [];
         public List<AnalyseRatioParameter<double?>?> OwnCapitalNumberShares { get; set; } = [];
-        public List<AnalyseRatioParameter<double?>?> DeltaMinMax { get; set; } = [];        
+        public List<AnalyseRatioParameter<double?>?> DeltaMinMax { get; set; } = [];
     }
 }
