@@ -22,5 +22,6 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public Forecast? VladProDengiForecast { get; set; } = null;
         public Forecast? MozgovikForecast { get; set; } = null;
         public Forecast? PredictNetProfitForecast { get; set; } = null;
+        public double? FallingFromMax { get; set; } = null;
     }
 }

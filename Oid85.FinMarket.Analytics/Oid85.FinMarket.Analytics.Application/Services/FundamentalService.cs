@@ -456,6 +456,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     var instrument = instruments.Find(x => x.Ticker == ticker);
 
+                    var candles = analyseDataContext.GetCandles(ticker).Where(x => x.Date > DateOnly.FromDateTime(DateTime.Today.AddYears(-1)));
+                    double maxPrice = candles.Select(x => x.Close).Max();
+                    double lastCandlePrice = candles.Last().Close;
+                    double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
+
                     var ratingItem = new FundamentalRatingItem
                     {
                         Ticker = ticker,
@@ -469,7 +474,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         FinanceMarkerForecast = analyseDataContext.GetFinanceMarkerForecast(ticker),
                         VladProDengiForecast = analyseDataContext.GetVladProDengiForecast(ticker),
                         MozgovikForecast = analyseDataContext.GetMozgovikForecast(ticker),
-                        PredictNetProfitForecast = analyseDataContext.GetPredictNetProfitForecast(ticker)
+                        PredictNetProfitForecast = analyseDataContext.GetPredictNetProfitForecast(ticker),
+                        FallingFromMax = fallingFromMax.RoundTo(2)
                     };
 
                     items.Add(ratingItem);
