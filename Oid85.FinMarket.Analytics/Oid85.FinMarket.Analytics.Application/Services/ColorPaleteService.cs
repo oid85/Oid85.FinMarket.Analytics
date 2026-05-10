@@ -80,8 +80,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (prevMetric.NetProfit.HasValue && metric.NetProfit.HasValue)
             {
                 if (metric.NetProfit.Value <= 0.0) return (0.0, KnownColors.Red, "Отрицательная чистая прибыль");
-                if (prevMetric.NetProfit.Value > 0.0 && metric.NetProfit.Value > 0.0 && metric.NetProfit.Value > prevMetric.NetProfit.Value) return (1.0, KnownColors.Green, "Рост чистой прибыли");
-                if (prevMetric.NetProfit.Value > 0.0 && metric.NetProfit.Value > 0.0 && metric.NetProfit.Value <= prevMetric.NetProfit.Value) return (0.75, KnownColors.Yellow, "Падение чистой прибыли");
+                if (metric.NetProfit.Value > 0.0 && metric.NetProfit.Value > prevMetric.NetProfit.Value) return (1.0, KnownColors.Green, "Рост чистой прибыли");
+                if (metric.NetProfit.Value <= prevMetric.NetProfit.Value) return (0.75, KnownColors.Yellow, "Падение чистой прибыли");
             }
 
             return (0.0, KnownColors.White, string.Empty);
@@ -98,8 +98,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (prevMetric.Fcf.HasValue && metric.Fcf.HasValue)
             {
                 if (metric.Fcf.Value <= 0.0) return (0.0, KnownColors.Red, "Отрицательный FCF");
-                if (prevMetric.Fcf.Value > 0.0 && metric.Fcf.Value > 0.0 && metric.Fcf.Value > prevMetric.Fcf.Value) return (1.0, KnownColors.Green, "Рост FCF");
-                if (prevMetric.Fcf.Value > 0.0 && metric.Fcf.Value > 0.0 && metric.Fcf.Value <= prevMetric.Fcf.Value) return (0.75, KnownColors.Yellow, "Падение FCF");
+                if (metric.Fcf.Value > 0.0 && metric.Fcf.Value > prevMetric.Fcf.Value) return (1.0, KnownColors.Green, "Рост FCF");
+                if (metric.Fcf.Value <= prevMetric.Fcf.Value) return (0.75, KnownColors.Yellow, "Падение FCF");
             }
 
             return (0.0, KnownColors.White, string.Empty);
@@ -116,8 +116,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (prevMetric.Eps.HasValue && metric.Eps.HasValue)
             {
                 if (metric.Eps.Value <= 0.0) return (0.0, KnownColors.Red, "Отрицательная EPS");
-                if (prevMetric.Eps.Value > 0.0 && metric.Eps.Value > 0.0 && metric.Eps.Value > prevMetric.Eps.Value) return (1.0, KnownColors.Green, "Рост EPS");
-                if (prevMetric.Eps.Value > 0.0 && metric.Eps.Value > 0.0 && metric.Eps.Value <= prevMetric.Eps.Value) return (0.75, KnownColors.Yellow, "Падение EPS");
+                if (metric.Eps.Value > 0.0 && metric.Eps.Value > prevMetric.Eps.Value) return (1.0, KnownColors.Green, "Рост EPS");
+                if (metric.Eps.Value <= prevMetric.Eps.Value) return (0.75, KnownColors.Yellow, "Падение EPS");
             }
 
             return (0.0, KnownColors.White, string.Empty);
