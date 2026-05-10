@@ -8,6 +8,7 @@ using Oid85.FinMarket.Analytics.Core.Models;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class FundamentalScoreService(
+        IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         IAnalyseParameterFactory analyseParameterFactory)
         : IFundamentalScoreService
@@ -15,6 +16,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<FundamentalScore?> GetFundamentalScoreAsync(string ticker)
         {
+            var instrument = (await instrumentRepository.GetInstrumentsAsync() ?? [])
+                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .FirstOrDefault(x => x.Ticker == ticker);
+
+            string sector = instrument?.Sector ?? string.Empty;
+
+            bool isBanks = sector == "Банки";
+
             var pe = await GetPeAsync(ticker);
             var pbv = await GetPbvAsync(ticker);
             var evEbitda = await GeEvEbitdaAsync(ticker);
@@ -26,14 +35,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             double scoreValue = pe?.Ratio ?? 0.0;
             scoreValue += pbv?.Ratio ?? 0.0;
-            scoreValue += evEbitda?.Ratio ?? 0.0;
-            scoreValue += netDebtEbitda?.Ratio ?? 0.0;
+            if (!isBanks) scoreValue += evEbitda?.Ratio ?? 0.0;
+            if (!isBanks) scoreValue += netDebtEbitda?.Ratio ?? 0.0;
             scoreValue += netProfit?.Ratio ?? 0.0;
             scoreValue += fcf?.Ratio ?? 0.0;
             scoreValue += eps?.Ratio ?? 0.0;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0;
 
-            double limitLo = 8.0 / 3.0;
+            int criteriaCount = isBanks ? 6 : 8;
+
+            double limitLo = criteriaCount / 3.0;
             double limitHi = limitLo * 2.0;
 
             var score = new FundamentalScore

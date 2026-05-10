@@ -10,7 +10,6 @@ using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
 using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
@@ -435,24 +434,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var sector in sectors)
             {
-                var sectorTickers = instruments
-                    .Where(x => x.Sector == sector)
-                    .Select(x => x.Ticker)
-                    .ToList();
+                var sectorTickers = instruments.Where(x => x.Sector == sector).Select(x => x.Ticker).ToList();
+                var sectorScores = scores.Where(x => sectorTickers.Contains(x.Ticker)).ToList();
 
-                var inPortfolioSectorTickers = instruments
-                    .Where(x => x.Sector == sector)
-                    .Where(x => x.InPortfolio)
-                    .Select(x => x.Ticker)
-                    .ToList();
-
-                List<(string Ticker, FundamentalScore Score)> sectorScores = 
-                    [
-                        .. scores.Where(x => sectorTickers.Contains(x.Ticker)).OrderByDescending(x => x.Score.Score.Value).Take(3), 
-                        .. scores.Where(x => inPortfolioSectorTickers.Contains(x.Ticker))
-                    ];
-                
-                foreach (var (ticker, score) in sectorScores.DistinctBy(x => x.Ticker))
+                foreach (var (ticker, score) in sectorScores)
                 {
                     var instrument = instruments.Find(x => x.Ticker == ticker);
 
