@@ -10,6 +10,7 @@ using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
 using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
@@ -207,10 +208,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var response = new GetAnalyticFundamentalParameterListResponse { FundamentalParameters = [.. items.OrderByDescending(x => x.Score?.Score.Value)] };
 
-            int number = 1;
-
-            foreach (var fundamentalParameterItem in response.FundamentalParameters)
-                fundamentalParameterItem.Number = number++;
+            int number = 1; foreach (var item in response.FundamentalParameters) item.Number = number++;
 
             response.TotalCount = items.Count;
             response.NoFillDataCount = items.Count(x => !x.FillData);
@@ -413,6 +411,78 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
         }
 
+        /// <inheritdoc />
+        public async Task<GetAnalyticFundamentalRatingListResponse> GetAnalyticFundamentalRatingListAsync(GetAnalyticFundamentalRatingListRequest request)
+        {
+            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? [])
+                .Where(x => x.Type == KnownInstrumentTypes.Share)                
+                .ToList();
+
+            var sectors = (await instrumentService.GetSectorListAsync(new ())).Sectors;
+            var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
+
+            var scores = new List<(string Ticker, FundamentalScore Score)>();
+
+            foreach (var instrument in instruments)
+            {
+                var score = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);
+
+                if (score is not null)
+                    scores.Add((instrument.Ticker, score));
+            };
+
+            var items = new List<FundamentalRatingItem>();
+
+            foreach (var sector in sectors)
+            {
+                var sectorTickers = instruments
+                    .Where(x => x.Sector == sector)
+                    .Select(x => x.Ticker)
+                    .ToList();
+
+                var inPortfolioSectorTickers = instruments
+                    .Where(x => x.Sector == sector)
+                    .Where(x => x.InPortfolio)
+                    .Select(x => x.Ticker)
+                    .ToList();
+
+                List<(string Ticker, FundamentalScore Score)> sectorScores = 
+                    [
+                        .. scores.Where(x => sectorTickers.Contains(x.Ticker)).OrderByDescending(x => x.Score.Score.Value).Take(3), 
+                        .. scores.Where(x => inPortfolioSectorTickers.Contains(x.Ticker))
+                    ];
+                
+                foreach (var (ticker, score) in sectorScores.DistinctBy(x => x.Ticker))
+                {
+                    var instrument = instruments.Find(x => x.Ticker == ticker);
+
+                    var ratingItem = new FundamentalRatingItem
+                    {
+                        Ticker = ticker,
+                        Name = instrument?.Name ?? string.Empty,
+                        Sector = instrument?.Sector ?? string.Empty,
+                        InPortfolio = instrument?.InPortfolio ?? false,
+                        Score = score,
+                        Metric = analyseDataContext.GetFundamentalMetric(ticker),
+                        Forecast = analyseDataContext.GetConsensusForecast(ticker),
+                        NataliaBaffetovnaForecast = analyseDataContext.GetNataliaBaffetovnaForecast(ticker),
+                        FinanceMarkerForecast = analyseDataContext.GetFinanceMarkerForecast(ticker),
+                        VladProDengiForecast = analyseDataContext.GetVladProDengiForecast(ticker),
+                        MozgovikForecast = analyseDataContext.GetMozgovikForecast(ticker),
+                        PredictNetProfitForecast = analyseDataContext.GetPredictNetProfitForecast(ticker)
+                    };
+
+                    items.Add(ratingItem);
+                }
+            }
+
+            var response = new GetAnalyticFundamentalRatingListResponse { Items = [.. items.OrderByDescending(x => x.Score?.Score.Value)] };
+
+            int number = 1; foreach (var item in response.Items) item.Number = number++;
+
+            return response;
+        }
+
         private static List<(string Period, double Value)> GetFundamentalParameterValues(List<FundamentalParameterListItem> fundamentalParameters, string ticker, string type, List<string> periods)
         {
             if (fundamentalParameters is null) return [];
@@ -427,14 +497,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             return result;
-        }
-
-        private static double? GetFundamentalParameterValue(List<FundamentalParameterListItem> fundamentalParameters, string ticker, string type, string period)
-        {
-            if (fundamentalParameters is null)
-                return null;
-
-            return fundamentalParameters.Find(x => x.Ticker == ticker && x.Type == type && x.Period == period)?.Value;
         }
     }
 }
