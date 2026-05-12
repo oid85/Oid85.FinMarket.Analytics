@@ -88,6 +88,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<Dictionary<string, bool>> GetFillFundamentalDataAsync(List<string> tickers);
 
         /// <summary>
+        /// Получить актуальный отчет
+        /// </summary>
+        Task<Dictionary<string, string>> GetReportDataAsync(List<string> tickers);
+
+        /// <summary>
         /// Получить контекст
         /// </summary>
         Task<AnalyseDataContext> GetAnalyseDataContextAsync();

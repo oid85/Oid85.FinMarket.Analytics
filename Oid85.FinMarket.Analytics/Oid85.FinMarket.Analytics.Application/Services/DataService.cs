@@ -500,9 +500,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<Dictionary<string, bool>> GetFillFundamentalDataAsync(List<string> tickers)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-
             var fundamentalParameterList = await GetFundamentalParameterListAsync();
+
+            int year = DateTime.Today.Year; 
+            int month = DateTime.Today.Month;
+            int kv = 0;
+
+            if (month == 1 || month == 3 || month == 3) { kv = 0; year--; }
+            if (month == 4 || month == 5 || month == 6) kv = 1;
+            if (month == 7 || month == 8 || month == 9) kv = 2;
+            if (month == 10 || month == 11 || month == 12) kv = 3;
+
+            var reportData = (year + kv / 10.0).RoundTo(1);
 
             var result = new Dictionary<string, bool>();
 
@@ -510,22 +519,31 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 var fundamentalParametersByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
 
-                string lastPeriod = (int.Parse(predictYear) - 1).ToString();
+                var report = fundamentalParametersByTicker.Find(x => x.Type == KnownFundamentalParameterTypes.Report)?.Value;
 
-                bool fillFundamental = fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.NumberShares) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.MarketCap) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.OwnCapital) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Dividend) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Pe) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Pbv) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Roa) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Roe) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Revenue) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.NetProfit) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Eps) is not null;
-                fillFundamental &= fundamentalParametersByTicker.Find(x => x.Period == lastPeriod && x.Type == KnownFundamentalParameterTypes.Fcf) is not null;
+                if (!report.HasValue)
+                    result.Add(ticker, false);
 
-                result.Add(ticker, fillFundamental);
+                else
+                    result.Add(ticker, report.Value == reportData);
+            }
+
+            return result;
+        }
+
+        public async Task<Dictionary<string, string>> GetReportDataAsync(List<string> tickers)
+        {
+            var fundamentalParameterList = await GetFundamentalParameterListAsync();
+
+            var result = new Dictionary<string, string>();
+
+            foreach (var ticker in tickers)
+            {
+                var fundamentalParametersByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
+
+                string report = fundamentalParametersByTicker.Find(x => x.Type == KnownFundamentalParameterTypes.Report)?.Value.ToString() ?? string.Empty;
+
+                result.Add(ticker, report);
             }
 
             return result;
@@ -578,6 +596,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 PredictNetProfitForecastData = await GetPredictNetProfitForecastDataAsync(tickers),
                 BondCouponData = await GetBondCouponsAsync(tickers),
                 FillFundamentalData = await GetFillFundamentalDataAsync(tickers),
+                ReportData = await GetReportDataAsync(tickers),
                 ExtData = await GetExtDataAsync(tickers)
             };
 

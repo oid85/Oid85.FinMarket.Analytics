@@ -7,16 +7,16 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public int TotalCount { get; set; }
         public int NoFillDataCount { get; set; }
         public string NoFillDataTickers { get; set; }
-        public List<GetAnalyticFundamentalParameterListItemResponse> FundamentalParameters { get; set; } = [];
+        public List<AnalyticFundamentalParameterListItem> FundamentalParameters { get; set; } = [];
     }
 
-    public class GetAnalyticFundamentalParameterListItemResponse
+    public class AnalyticFundamentalParameterListItem
     {
         public int Number { get; set; }
         public string Ticker { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Sector { get; set; } = string.Empty;
-        public bool IsSelected { get; set; }
+        public string Report { get; set; } = string.Empty;
         public bool InPortfolio { get; set; }
         public bool FillData { get; set; }
         public FundamentalScore? Score { get; set; } = null;

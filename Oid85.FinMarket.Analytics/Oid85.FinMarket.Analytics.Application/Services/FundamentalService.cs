@@ -136,21 +136,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
-            var items = new List<GetAnalyticFundamentalParameterListItemResponse>();
+            var items = new List<AnalyticFundamentalParameterListItem>();
 
             foreach (var instrument in instruments)
             {
-                var item = new GetAnalyticFundamentalParameterListItemResponse
+                var item = new AnalyticFundamentalParameterListItem
                 {
                     Periods = periods,
                     Ticker = instrument.Ticker,
                     Sector = analyticInstruments.First(x => x.Ticker == instrument.Ticker)?.Sector ?? string.Empty,
                     Name = instrument.Name,
-                    IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
                     BenchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker),
                     Moex = analyseDataContext.GetMoexIndexShare(instrument.Ticker),
-                    Concept = analyseDataContext.GetExtData(instrument.Ticker)?.Concept
+                    Concept = analyseDataContext.GetExtData(instrument.Ticker)?.Concept,
+                    Report = analyseDataContext.GetReport(instrument.Ticker)
                 };
 
                 var metrics = analyseDataContext.GetFundamentalMetrics(instrument.Ticker);
@@ -183,21 +183,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     item.DividendYield.Add(await analyseParameterFactory.CreateDividendYieldAsync(instrument.Ticker, periods[i]));
                     item.DeltaMinMax.Add(await analyseParameterFactory.CreateDeltaMinMaxAsync(instrument.Ticker, periods[i]));
 
-                    if (periods[i] == (int.Parse(predictYear) - 1).ToString())
-                    {
-                        item.FillData = item.NumberShares.Last().HasValue;
-                        item.FillData &= item.MarketCap.Last().HasValue;
-                        item.FillData &= item.OwnCapital.Last().HasValue;
-                        item.FillData &= item.Dividend.Last().HasValue;
-                        item.FillData &= item.Pe.Last()?.Value is not null;
-                        item.FillData &= item.Pbv.Last()?.Value is not null;
-                        item.FillData &= item.Roa.Last()?.Value is not null;
-                        item.FillData &= item.Roe.Last()?.Value is not null;
-                        item.FillData &= item.Revenue.Last()?.Value is not null;
-                        item.FillData &= item.NetProfit.Last()?.Value is not null;
-                        item.FillData &= item.Eps.Last()?.Value is not null;
-                        item.FillData &= item.Fcf.Last()?.Value is not null;
-                    }
+                    item.FillData = analyseDataContext.GetFillFundamental(instrument.Ticker) ?? false;
                 }
 
                 item.Score = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);

@@ -81,6 +81,11 @@
         public Dictionary<string, bool> FillFundamentalData { get; set; } = [];
 
         /// <summary>
+        /// Актуальный отчет
+        /// </summary>
+        public Dictionary<string, string> ReportData { get; set; } = [];
+
+        /// <summary>
         /// Доп. данные фундаментального анализа
         /// </summary>
         public Dictionary<string, (string? DividendPolyticInfo, string? GrowthDriverInfo, string? RiskInfo, string? Concept)> ExtData { get; set; } = [];
@@ -213,6 +218,11 @@
         /// Получить флаг заполненности данных по фундаменталу
         /// </summary>
         public bool? GetFillFundamental(string ticker) => !FillFundamentalData.TryGetValue(ticker, out var result) ? false : result;
+
+        /// <summary>
+        /// Получить актуальный отчет
+        /// </summary>
+        public string GetReport(string ticker) => !ReportData.TryGetValue(ticker, out var result) ? string.Empty : result;
 
         /// <summary>
         /// Получить доп. данные фундаментального анализа по тикеру
