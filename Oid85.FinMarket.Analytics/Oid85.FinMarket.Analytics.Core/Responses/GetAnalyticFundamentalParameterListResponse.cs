@@ -28,6 +28,8 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<double?> NumberShares { get; set; } = [];
         public List<double?> Ebitda { get; set; } = [];
         public List<double?> OwnCapital { get; set; } = [];
+        public List<double?> Liabilities { get; set; } = [];
+        public List<double?> Assets { get; set; } = [];
         public List<double?> Ev { get; set; } = [];
         public List<double?> MarketCap { get; set; } = [];
         public List<double?> Dividend { get; set; } = [];

@@ -436,6 +436,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     var ebitda = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Ebitda)?.Value.RoundTo(2);
                     var ownCapital = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.OwnCapital)?.Value.RoundTo(2);
                     var netDebt = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetDebt)?.Value.RoundTo(2);
+                    var assets = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Assets)?.Value.RoundTo(2);
+                    var liabilities = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Liabilities)?.Value.RoundTo(2);
 
                     var evEbitda = ev.Div(ebitda).RoundTo(2);
                     var ebitdaRevenue = ebitda.Div(revenue).RoundTo(2);
@@ -461,6 +463,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             Ebitda = ebitda,
                             OwnCapital = ownCapital,
                             NetDebt = netDebt,
+                            Assets = assets,
+                            Liabilities = liabilities,
                             Revenue = revenue,
                             Fcf = fcf,
                             Eps = eps,

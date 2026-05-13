@@ -21,6 +21,8 @@
         public double? Ev { get; set; } = null;
         public double? Ebitda { get; set; } = null;
         public double? OwnCapital { get; set; } = null;
+        public double? Liabilities { get; set; } = null;
+        public double? Assets { get; set; } = null;
         public double? NetDebt { get; set; } = null;
         public double? Revenue { get; set; } = null;
         public double? EbitdaRevenue { get; set; } = null;

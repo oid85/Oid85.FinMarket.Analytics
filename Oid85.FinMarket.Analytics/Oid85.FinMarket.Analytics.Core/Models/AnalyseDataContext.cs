@@ -111,34 +111,32 @@
             if (metrics is null) return null;
             if (metrics is []) return null;
 
-            string year = DateTime.Now.Year.ToString();
-
-            var metricsWithoutPredict = metrics.Where(x => x.Period != year).ToList();
-
             var metric = new FundamentalMetric
             {
                 Ticker = ticker,
-                Period = metricsWithoutPredict.Last().Period,
-                NumberShares = metricsWithoutPredict.FindLast(x => x.NetProfit.HasValue)?.NumberShares,
+                Period = metrics.Last().Period,
+                NumberShares = metrics.FindLast(x => x.NetProfit.HasValue)?.NumberShares,
                 Pe = metrics.FindLast(x => x.Pe.HasValue)?.Pe,
-                Pbv = metricsWithoutPredict.FindLast(x => x.Pbv.HasValue)?.Pbv,
-                Fcf = metricsWithoutPredict.FindLast(x => x.Pe.HasValue)?.Fcf,
-                Eps = metricsWithoutPredict.FindLast(x => x.Pbv.HasValue)?.Eps,
-                Roa = metricsWithoutPredict.FindLast(x => x.Roa.HasValue)?.Roa,
-                Roe = metricsWithoutPredict.FindLast(x => x.Roa.HasValue)?.Roe,
-                NetProfit = metricsWithoutPredict.FindLast(x => x.NetProfit.HasValue)?.NetProfit,
-                Revenue = metricsWithoutPredict.FindLast(x => x.Revenue.HasValue)?.Revenue,
-                NetDebt = metricsWithoutPredict.FindLast(x => x.NetDebt.HasValue)?.NetDebt,
-                MarketCap = metricsWithoutPredict.FindLast(x => x.MarketCap.HasValue)?.MarketCap,
-                Ev = metricsWithoutPredict.FindLast(x => x.Ev.HasValue)?.Ev,
-                Ebitda = metricsWithoutPredict.FindLast(x => x.Ebitda.HasValue)?.Ebitda,
-                OwnCapital = metricsWithoutPredict.FindLast(x => x.OwnCapital.HasValue)?.OwnCapital,
-                EvEbitda = metricsWithoutPredict.FindLast(x => x.EvEbitda.HasValue)?.EvEbitda,
-                NetDebtEbitda = metricsWithoutPredict.FindLast(x => x.NetDebtEbitda.HasValue)?.NetDebtEbitda,
-                EbitdaRevenue = metricsWithoutPredict.FindLast(x => x.EbitdaRevenue.HasValue)?.EbitdaRevenue,
+                Pbv = metrics.FindLast(x => x.Pbv.HasValue)?.Pbv,
+                Fcf = metrics.FindLast(x => x.Pe.HasValue)?.Fcf,
+                Eps = metrics.FindLast(x => x.Pbv.HasValue)?.Eps,
+                Roa = metrics.FindLast(x => x.Roa.HasValue)?.Roa,
+                Roe = metrics.FindLast(x => x.Roa.HasValue)?.Roe,
+                NetProfit = metrics.FindLast(x => x.NetProfit.HasValue)?.NetProfit,
+                Revenue = metrics.FindLast(x => x.Revenue.HasValue)?.Revenue,
+                NetDebt = metrics.FindLast(x => x.NetDebt.HasValue)?.NetDebt,
+                Assets = metrics.FindLast(x => x.Assets.HasValue)?.Assets,
+                Liabilities = metrics.FindLast(x => x.Liabilities.HasValue)?.Liabilities,
+                MarketCap = metrics.FindLast(x => x.MarketCap.HasValue)?.MarketCap,
+                Ev = metrics.FindLast(x => x.Ev.HasValue)?.Ev,
+                Ebitda = metrics.FindLast(x => x.Ebitda.HasValue)?.Ebitda,
+                OwnCapital = metrics.FindLast(x => x.OwnCapital.HasValue)?.OwnCapital,
+                EvEbitda = metrics.FindLast(x => x.EvEbitda.HasValue)?.EvEbitda,
+                NetDebtEbitda = metrics.FindLast(x => x.NetDebtEbitda.HasValue)?.NetDebtEbitda,
+                EbitdaRevenue = metrics.FindLast(x => x.EbitdaRevenue.HasValue)?.EbitdaRevenue,
                 Dividend = metrics.FindLast(x => x.Dividend.HasValue)?.Dividend,
                 DividendYield = metrics.FindLast(x => x.DividendYield.HasValue)?.DividendYield,
-                DeltaMinMax = metricsWithoutPredict.FindLast(x => x.DeltaMinMax.HasValue)?.DeltaMinMax
+                DeltaMinMax = metrics.FindLast(x => x.DeltaMinMax.HasValue)?.DeltaMinMax
             };
 
             return metric;

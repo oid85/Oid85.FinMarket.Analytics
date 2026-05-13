@@ -28,4 +28,6 @@ public static class KnownFundamentalParameterTypes
     public const string RiskInfo = "RiskInfo";
     public const string Concept = "Concept";
     public const string Report = "Report";
+    public const string Liabilities = "Liabilities";
+    public const string Assets = "Assets";
 }

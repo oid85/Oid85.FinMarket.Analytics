@@ -166,6 +166,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     item.MarketCap.Add(metrics[i].MarketCap);
                     item.Ev.Add(metrics[i].Ev);
                     item.Dividend.Add(metrics[i].Dividend);
+                    item.Assets.Add(metrics[i].Assets);
+                    item.Liabilities.Add(metrics[i].Liabilities);
 
                     item.Pe.Add(await analyseParameterFactory.CreatePeAsync(instrument.Ticker, periods[i]));
                     item.Pbv.Add(await analyseParameterFactory.CreatePbvAsync(instrument.Ticker, periods[i]));
