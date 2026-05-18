@@ -6,4 +6,5 @@ public static class KnownInstrumentTypes
     public const string Future = "Future";
     public const string Bond = "Bond";
     public const string Index = "Index";
+    public const string Etf = "Etf";
 }

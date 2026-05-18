@@ -19,6 +19,11 @@
         public string Ticker { get; set; } = string.Empty;
 
         /// <summary>
+        /// Сектор
+        /// </summary>
+        public string Sector { get; set; } = string.Empty;
+
+        /// <summary>
         /// Наименование компании
         /// </summary>
         public string Name { get; set; } = string.Empty;
@@ -62,11 +67,6 @@
         /// Цена
         /// </summary>
         public double? Price { get; set; }
-
-        /// <summary>
-        /// Информационное сообщение
-        /// </summary>
-        public string Message { get; set; } = string.Empty;
 
         /// <summary>
         /// Позиция в реальном портфеле

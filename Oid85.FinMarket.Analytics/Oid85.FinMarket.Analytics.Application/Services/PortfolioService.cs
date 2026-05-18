@@ -58,6 +58,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
 
+            var instrumentsFromDb = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
+
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
                 .Where(x => x.InPortfolio)
@@ -111,6 +113,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
+                    Sector = instrumentsFromDb.Find(x => x.Ticker == instrument.Ticker)?.Sector ?? string.Empty,
                     ManualCoefficient = instrument.ManualCoefficient,
                     Price = candleData[instrument.Ticker].Last().Close
                 };
@@ -132,23 +135,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 }
 
                 portfolioPosition.DividendCoefficient = Math.Round(dividendCoefficient, 2);
-
-                var trendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]);
-
-                switch (trendState.TrendState)
-                {
-                    case TrendState.UpTrend:
-                        portfolioPosition.Message = trendState.Message;
-                        break;
-
-                    case TrendState.NoTrend:
-                        portfolioPosition.Message = trendState.Message;
-                        break;
-
-                    case TrendState.DownTrend:
-                        portfolioPosition.Message = trendState.Message;
-                        break;
-                }
 
                 portfolioPosition.TrendCoefficient = 1.0;
 
@@ -188,8 +174,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var response = new GetPortfolioPositionListResponse()
             {
                 TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.DeltaPercent)]
+                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.Sector)]
             };
+
+            foreach (var portfolioPosition in response.PortfolioPositions)
+            {
+                double lifeCost = response.PortfolioPositions.Where(x => x.Sector.Contains(portfolioPosition.Sector)).Select(x => x.Cost).Sum();
+                double sectorPercent = (lifeCost / totalSum * 100.0).RoundTo(2);
+                portfolioPosition.Sector += $" ({sectorPercent}) %";
+            }
 
             int number = 1;
 
