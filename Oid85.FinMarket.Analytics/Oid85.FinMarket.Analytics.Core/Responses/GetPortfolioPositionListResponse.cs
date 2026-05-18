@@ -3,10 +3,10 @@
     public class GetPortfolioPositionListResponse
     {
         public double TotalSum { get; set; }
-        public List<GetPortfolioPositionListItemResponse> PortfolioPositions { get; set; } = [];
+        public List<PortfolioPositionListItem> PortfolioPositions { get; set; } = [];
     }
 
-    public class GetPortfolioPositionListItemResponse
+    public class PortfolioPositionListItem
     {
         /// <summary>
         /// Номер

@@ -105,11 +105,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var dividendData = await dataService.GetDividendDataAsync(tickers);
 
-            var portfolioPositions = new List<GetPortfolioPositionListItemResponse>();
+            var portfolioPositions = new List<PortfolioPositionListItem>();
 
             foreach (var instrument in instruments)
             {
-                var portfolioPosition = new GetPortfolioPositionListItemResponse()
+                var portfolioPosition = new PortfolioPositionListItem()
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
