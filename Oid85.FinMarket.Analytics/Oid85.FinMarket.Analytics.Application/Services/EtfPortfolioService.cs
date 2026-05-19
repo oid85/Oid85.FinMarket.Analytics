@@ -10,16 +10,16 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
-    public class PortfolioService(
+    public class EtfPortfolioService(
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         ILifePortfolioPositionRepository lifePortfolioPositionRepository,
         IInstrumentService instrumentService,
         IDataService dataService)
-        : IPortfolioService
+        : IEtfPortfolioService
     {
         /// <inheritdoc />
-        public async Task<EditPortfolioPositionResponse> EditPortfolioPositionAsync(EditPortfolioPositionRequest request)
+        public async Task<EditEtfPortfolioPositionResponse> EditPortfolioPositionAsync(EditEtfPortfolioPositionRequest request)
         {
             var instrument = await instrumentRepository.GetInstrumentByTickerAsync(request.Ticker);
             instrument!.ManualCoefficient = request.ManualCoefficient;
@@ -45,116 +45,78 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return new();
         }
 
-        /// <inheritdoc />
-        public async Task<EditPortfolioTotalSumResponse> EditPortfolioTotalSumAsync(EditPortfolioTotalSumRequest request)
-        {
-            await parameterRepository.SetParameterValueAsync(KnownParameters.TotalSum, request.TotalSum.ToString("N0"));
-            return new();
-        }
 
         /// <inheritdoc />
-        public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
+        public async Task<GetEtfPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetEtfPortfolioPositionListRequest request)
         {
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
-                .Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
-
-            var instrumentsFromDb = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
+                .Where(x => x.Type == KnownInstrumentTypes.Etf).OrderBy(x => x.Ticker).ToList();
 
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.Type == KnownInstrumentTypes.Etf)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
-            var sharesTickers = instruments.Select(x => x.Ticker).ToList();
-
-            var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
+            var etfTickers = instruments.Select(x => x.Ticker).ToList();            
 
             var lifePortfolioPositions = (await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync())
                 .Where(x => !x.IsDeleted)
-                .Where(x => sharesTickers.Contains(x.Ticker))
+                .Where(x => etfTickers.Contains(x.Ticker))
                 .ToList();
 
             double lifeTotalSum = 0.0;
 
             foreach (var position in lifePortfolioPositions)
             {
-                var price = analyseDataContext.GetPrice(position.Ticker);
+                var price = storageInstruments.Find(x => x.Ticker == position.Ticker)?.LastPrice;
 
                 if (price.HasValue)
                     lifeTotalSum += position.Size * price.Value;
             }
 
-            await parameterRepository.SetParameterValueAsync(KnownParameters.TotalSum, lifeTotalSum.ToString("N0"));
+            await parameterRepository.SetParameterValueAsync(KnownParameters.EtfTotalSum, lifeTotalSum.ToString("N0"));
 
             foreach (var instrument in instruments)
             {
                 if (instrument.ManualCoefficient == 0)
-                    await EditPortfolioPositionAsync(new EditPortfolioPositionRequest { Ticker = instrument.Ticker, DividendCoefficient = 1, ManualCoefficient = 1 });
+                    await EditPortfolioPositionAsync(new EditEtfPortfolioPositionRequest { Ticker = instrument.Ticker, ManualCoefficient = 1 });
             }
 
             instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.Type == KnownInstrumentTypes.Etf)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
-            
-            var candleData = await dataService.GetCandleDataAsync(tickers);
-            var dividendData = await dataService.GetDividendDataAsync(tickers);
 
-            var portfolioPositions = new List<PortfolioPositionListItem>();
+            var portfolioPositions = new List<EtfPortfolioPositionListItem>();
 
             foreach (var instrument in instruments)
             {
-                var portfolioPosition = new PortfolioPositionListItem()
+                var portfolioPosition = new EtfPortfolioPositionListItem()
                 {
                     Ticker = instrument.Ticker,
-                    Name = instrument.Name,
-                    Sector = instrumentsFromDb.Find(x => x.Ticker == instrument.Ticker)?.Sector ?? string.Empty,
+                    Name = instrument.Name,                    
                     ManualCoefficient = instrument.ManualCoefficient,
-                    Price = candleData[instrument.Ticker].Last().Close
+                    Price = storageInstruments.Find(x => x.Ticker == instrument.Ticker)?.LastPrice
                 };
-
-                double dividendCoefficient = 1.0;
-
-                if (dividendData.ContainsKey(instrument.Ticker))
-                {
-                    const double loLimitCoefficient = 1.0;
-                    const double hiLimitCoefficient = 2.0;
-                    const double loLimitYield = 10.0;
-                    const double hiLimitYield = 20.0;
-
-                    double yield = dividendData[instrument.Ticker].Yield!.Value;
-
-                    if (yield >= hiLimitYield) dividendCoefficient = hiLimitCoefficient;
-                    else if (yield <= loLimitYield) dividendCoefficient = loLimitCoefficient;
-                    else dividendCoefficient = (yield - loLimitYield) * (hiLimitCoefficient - loLimitCoefficient) / (hiLimitYield - loLimitYield) + loLimitCoefficient;
-                }
-
-                portfolioPosition.DividendCoefficient = Math.Round(dividendCoefficient, 2);
-
-                portfolioPosition.TrendCoefficient = 1.0;
 
                 portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
 
-                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient, 2);
+                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.ManualCoefficient, 2);
 
                 portfolioPositions.Add(portfolioPosition);
             }
 
-            double totalSum = Convert.ToDouble(((await parameterRepository.GetParameterValueAsync(KnownParameters.TotalSum)) ?? "0").Replace(" ", "").Trim());
+            double totalSum = Convert.ToDouble(((await parameterRepository.GetParameterValueAsync(KnownParameters.EtfTotalSum)) ?? "0").Replace(" ", "").Trim());
 
-            int minTotalNumberSharesInPortfolio = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.MinTotalNumberSharesInPortfolio)) ?? "0");
-
-            double baseUnit = portfolioPositions.Count < minTotalNumberSharesInPortfolio
-                ? totalSum / (portfolioPositions.Sum(x => x.ResultCoefficient) + (minTotalNumberSharesInPortfolio - portfolioPositions.Count))
-                : totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
+            double baseUnit = totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
 
             foreach (var portfolioPosition in portfolioPositions)
             {
-                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.ResultCoefficient * portfolioPosition.TrendCoefficient, 2);
+                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.ResultCoefficient, 2);
                 portfolioPosition.Cost = Math.Round(baseUnit * portfolioPosition.ResultCoefficient, 2);
                 portfolioPosition.Percent = Math.Round(portfolioPosition.Cost / totalSum * 100.0, 2);
 
@@ -170,18 +132,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.DeltaPercent = (Convert.ToDouble(portfolioPosition.Delta) / Convert.ToDouble(portfolioPosition.Size) * 100.0).RoundTo(2);
             }
 
-            var response = new GetPortfolioPositionListResponse()
+            var response = new GetEtfPortfolioPositionListResponse()
             {
                 TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.Sector)]
+                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.Ticker)]
             };
-
-            foreach (var portfolioPosition in response.PortfolioPositions)
-            {
-                double lifeCost = response.PortfolioPositions.Where(x => x.Sector.Contains(portfolioPosition.Sector)).Select(x => x.Cost).Sum();
-                double sectorPercent = (lifeCost / totalSum * 100.0).RoundTo(2);
-                portfolioPosition.Sector += $" ({sectorPercent}) %";
-            }
 
             int number = 1;
 
