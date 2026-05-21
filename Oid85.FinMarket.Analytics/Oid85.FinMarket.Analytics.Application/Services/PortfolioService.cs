@@ -173,7 +173,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var response = new GetPortfolioPositionListResponse()
             {
                 TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.Sector)]
+                PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => Math.Abs(x.DeltaPercent))]
             };
 
             foreach (var portfolioPosition in response.PortfolioPositions)

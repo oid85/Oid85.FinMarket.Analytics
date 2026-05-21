@@ -25,9 +25,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var sectorMetricValues = sectorMetrics.Where(x => x.Pe.HasValue).ToList();
 
                 int totalCount = sectorMetricValues.Count;
-                int predicatCount = sectorMetricValues.Count(x => x.Pe!.Value >= metric.Pe.Value || x.Pe!.Value < 0.0);
+                int badCount = sectorMetricValues.Where(x => x.Pe!.Value <= 0.0).Count();
+                int predicatCount = sectorMetricValues.Where(x => x.Pe!.Value > 0.0).Count(x => x.Pe!.Value >= metric.Pe.Value);
 
-                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+                double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) return (ratio, KnownColors.Green, $"P/E низкое в секторе - меньше, чем у 75% компаний сектора");
                 else if (ratio > 0.5) return (ratio, KnownColors.LightGreen, $"P/E ниже среднего в секторе - меньше, чем у 50% компаний сектора");
@@ -152,9 +153,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var sectorMetricValues = sectorMetrics.Where(x => x.Roa.HasValue).ToList();
 
                 int totalCount = sectorMetricValues.Count;
-                int predicatCount = sectorMetricValues.Count(x => x.Roa!.Value <= metric.Roa.Value || x.Roa!.Value < 0.0);
+                int badCount = sectorMetricValues.Where(x => x.Roa!.Value <= 0.0).Count();
+                int predicatCount = sectorMetricValues.Where(x => x.Roa!.Value > 0.0).Count(x => x.Roa!.Value <= metric.Roa.Value);
 
-                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+                double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) return (KnownColors.Green, $"ROA высокое в секторе - выше, чем у 75% компаний сектора");
                 else if (ratio > 0.5) return (KnownColors.LightGreen, $"ROA выше среднего в секторе - выше, чем у 50% компаний сектора");
@@ -180,9 +182,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var sectorMetricValues = sectorMetrics.Where(x => x.Roe.HasValue).ToList();
 
                 int totalCount = sectorMetricValues.Count;
-                int predicatCount = sectorMetricValues.Count(x => x.Roe!.Value <= metric.Roe.Value || x.Roe!.Value < 0.0);
+                int badCount = sectorMetricValues.Where(x => x.Roe!.Value <= 0.0).Count();
+                int predicatCount = sectorMetricValues.Where(x => x.Roe!.Value > 0.0).Count(x => x.Roe!.Value <= metric.Roe.Value);
 
-                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+                double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) return (KnownColors.Green, $"ROE высокое в секторе - выше, чем у 75% компаний сектора");
                 else if (ratio > 0.5) return (KnownColors.LightGreen, $"ROE выше среднего в секторе - выше, чем у 50% компаний сектора");
@@ -208,9 +211,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var sectorMetricValues = sectorMetrics.Where(x => x.EvEbitda.HasValue).ToList();
 
                 int totalCount = sectorMetricValues.Count;
-                int predicatCount = sectorMetricValues.Count(x => x.EvEbitda!.Value >= metric.EvEbitda.Value || x.EvEbitda!.Value < 0.0);
+                int badCount = sectorMetricValues.Where(x => x.EvEbitda!.Value <= 0.0).Count();
+                int predicatCount = sectorMetricValues.Where(x => x.EvEbitda!.Value > 0.0).Count(x => x.EvEbitda!.Value >= metric.EvEbitda.Value);
 
-                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+                double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) return (ratio, KnownColors.Green, $"EV/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора");
                 else if (ratio > 0.5) return (ratio, KnownColors.LightGreen, $"EV/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора");
@@ -264,9 +268,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var sectorMetricValues = sectorMetrics.Where(x => x.EbitdaRevenue.HasValue).ToList();
 
                 int totalCount = sectorMetricValues.Count;
-                int predicatCount = sectorMetricValues.Count(x => x.EbitdaRevenue!.Value <= metric.EbitdaRevenue.Value || x.EbitdaRevenue!.Value < 0.0);
+                int badCount = sectorMetricValues.Where(x => x.EbitdaRevenue!.Value <= 0.0).Count();
+                int predicatCount = sectorMetricValues.Where(x => x.EbitdaRevenue!.Value > 0.0).Count(x => x.EbitdaRevenue!.Value <= metric.EbitdaRevenue.Value);
 
-                double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
+                double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) return (KnownColors.Green, $"EBITDA Margin высокое в секторе - выше, чем у 75% компаний сектора");
                 else if (ratio > 0.5) return (KnownColors.LightGreen, $"EBITDA Margin выше среднего в секторе - выше, чем у 50% компаний сектора");
