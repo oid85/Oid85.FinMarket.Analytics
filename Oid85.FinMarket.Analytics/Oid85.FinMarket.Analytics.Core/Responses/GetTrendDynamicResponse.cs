@@ -8,6 +8,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<TrendDynamicData> Indexes { get; set; } = [];
         public List<TrendDynamicData> Shares { get; set; } = [];
         public List<TrendDynamicData> Futures { get; set; } = [];
+        public List<TrendDynamicData> Etfs { get; set; } = [];
     }
 
     public class TrendDynamicData
