@@ -69,6 +69,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         Size = x.Size,
                         IsDeleted = x.IsDeleted
                     })
+                .DistinctBy(x => x.Ticker)
                 .ToList();
 
             return models;

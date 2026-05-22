@@ -133,7 +133,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var response = new GetEtfPortfolioPositionListResponse()
             {
                 TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => Math.Abs(x.DeltaPercent))]
+                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.DeltaPercent)]
             };
 
             int number = 1;
