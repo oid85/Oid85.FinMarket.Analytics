@@ -38,7 +38,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     });
 
             else
-                await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
+                await lifePortfolioPositionRepository.EditSizeLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
 
             return new();
         }
@@ -80,7 +80,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var price = analyseDataContext.GetPrice(position.Ticker);
 
                 if (price.HasValue)
-                    lifeTotalSum += position.Size * price.Value;
+                {
+                    double positionCost = position.Size * price.Value;
+                    lifeTotalSum += positionCost;
+                }                                                        
             }
 
             await parameterRepository.SetParameterValueAsync(KnownParameters.TotalSum, lifeTotalSum.ToString("N0"));
@@ -117,14 +120,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 double dividendCoefficient = 1.0;
 
-                if (dividendData.ContainsKey(instrument.Ticker))
+                if (dividendData.TryGetValue(instrument.Ticker, out Core.Models.Dividend? value))
                 {
                     const double loLimitCoefficient = 1.0;
                     const double hiLimitCoefficient = 2.0;
                     const double loLimitYield = 10.0;
                     const double hiLimitYield = 20.0;
 
-                    double yield = dividendData[instrument.Ticker].Yield!.Value;
+                    double yield = value.Yield!.Value;
 
                     if (yield >= hiLimitYield) dividendCoefficient = hiLimitCoefficient;
                     else if (yield <= loLimitYield) dividendCoefficient = loLimitCoefficient;

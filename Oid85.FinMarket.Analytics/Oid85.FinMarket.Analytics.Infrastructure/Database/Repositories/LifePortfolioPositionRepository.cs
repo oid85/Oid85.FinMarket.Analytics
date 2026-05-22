@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities;
+using static Grpc.Core.Metadata;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {
@@ -13,24 +14,17 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
         {
             await using var context = await contextFactory.CreateDbContextAsync();
 
-            var entity = await context.LifePortfolioPositionEntities.FirstOrDefaultAsync(x => x.Ticker == lifePosition.Ticker);
-
-            if (entity is not null)
-                await EditLifePortfolioPositionAsync(lifePosition.Ticker, lifePosition.Size);
-
-            else
+            var entity = new LifePortfolioPositionEntity
             {
-                entity = new LifePortfolioPositionEntity
-                {
-                    Id = Guid.NewGuid(),
-                    Ticker = lifePosition.Ticker,
-                    Name = lifePosition.Name,
-                    Size = lifePosition.Size,
-                    IsDeleted = false
-                };
+                Id = Guid.NewGuid(),
+                Ticker = lifePosition.Ticker,
+                Name = lifePosition.Name,
+                Size = lifePosition.Size,
+                Price = lifePosition.Price,
+                IsDeleted = false
+            };
 
-                await context.AddAsync(entity);
-            }
+            await context.AddAsync(entity);
 
             await context.SaveChangesAsync();
         }
@@ -39,14 +33,11 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
         {
             await using var context = await contextFactory.CreateDbContextAsync();
 
-            await context.LifePortfolioPositionEntities
-                .ExecuteUpdateAsync(x => x
-                        .SetProperty(entity => entity.IsDeleted, true));
-
+            await context.LifePortfolioPositionEntities.ExecuteDeleteAsync();
             await context.SaveChangesAsync();
         }
 
-        public async Task EditLifePortfolioPositionAsync(string ticker, int size)
+        public async Task EditSizeLifePortfolioPositionAsync(string ticker, int size)
         {
             await using var context = await contextFactory.CreateDbContextAsync();
 

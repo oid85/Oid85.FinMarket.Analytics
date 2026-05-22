@@ -37,7 +37,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     });
 
             else
-                await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
+                await lifePortfolioPositionRepository.EditSizeLifePortfolioPositionAsync(request.Ticker, request.LifeSize);
 
             return new();
         }

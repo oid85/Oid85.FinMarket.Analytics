@@ -1,6 +1,7 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
+using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -15,7 +16,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     {
         public async Task<EditLifePortfolioPositionResponse> EditLifePortfolioPositionAsync(EditLifePortfolioPositionRequest request)
         {
-            await lifePortfolioPositionRepository.EditLifePortfolioPositionAsync(request.Ticker, request.Size);
+            await lifePortfolioPositionRepository.EditSizeLifePortfolioPositionAsync(request.Ticker, request.Size);
             return new();
         }
 
@@ -46,6 +47,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Ticker = parts[0].Replace("\"", ""),
                     Name = parts[1].Replace("\"", ""),
                     Size = int.Parse(parts[3].Replace("\"", "")),
+                    Price = StringUtils.ToDouble(parts[7].Replace("\"", "")),
                     IsDeleted = false
                 };
 

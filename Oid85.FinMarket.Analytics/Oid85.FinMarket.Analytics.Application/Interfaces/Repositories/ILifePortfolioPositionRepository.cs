@@ -6,7 +6,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Repositories
     {
         Task AddLifePortfolioPositionAsync(LifePortfolioPosition lifePosition);
         Task DeleteAllLifePortfolioPositionAsync();
-        Task EditLifePortfolioPositionAsync(string ticker, int size);
+        Task EditSizeLifePortfolioPositionAsync(string ticker, int size);
         Task<List<LifePortfolioPosition>> GetLifePortfolioPositionsAsync();
     }
 }
