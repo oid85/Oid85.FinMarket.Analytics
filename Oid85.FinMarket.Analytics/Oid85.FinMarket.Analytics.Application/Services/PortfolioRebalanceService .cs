@@ -100,7 +100,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var msftrCandles = analyseDataContext.GetCandles(KnownIndexTickers.MCFTR);
 
             var msftrPrice = analyseDataContext.GetPrice(KnownIndexTickers.MCFTR, dates[0]);
-            var msftrSize = Math.Truncate(startMoney / msftrPrice.Value);
+            var msftrSize = Math.Truncate(startMoney / msftrPrice!.Value);
 
             for (int i = 0; i < dates.Count; i++)
             {
