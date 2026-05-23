@@ -54,7 +54,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
         {
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
-                .Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .OrderBy(x => x.Ticker)
+                .ToList();
 
             var instrumentsFromDb = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
 

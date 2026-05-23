@@ -10,18 +10,18 @@ using Oid85.FinMarket.Storage.Core.Requests;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class MacroService(
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
+        IStorageApiClient storageApiClient)
         : IMacroService
     {
         public async Task<CreateOrUpdateAnalyticMacroParameterResponse> CreateOrUpdateAnalyticMacroParameterAsync(CreateOrUpdateAnalyticMacroParameterRequest request)
         {
-            await finMarketStorageServiceApiClient.CreateOrUpdateConsumerPriceIndexChangeAsync(
+            await storageApiClient.CreateOrUpdateConsumerPriceIndexChangeAsync(
                 new CreateOrUpdateConsumerPriceIndexChangeRequest { Date = request.Date, Value = request.ConsumerPriceIndexChange });
 
-            await finMarketStorageServiceApiClient.CreateOrUpdateMonetaryAggregateAsync(
+            await storageApiClient.CreateOrUpdateMonetaryAggregateAsync(
                 new CreateOrUpdateMonetaryAggregateRequest { Date = request.Date, M0 = request.M0, M1 = request.M1, M2 = request.M2, M2X = request.M2X });
 
-            await finMarketStorageServiceApiClient.CreateOrUpdateKeyRateAsync(
+            await storageApiClient.CreateOrUpdateKeyRateAsync(
                 new CreateOrUpdateKeyRateRequest { Date = request.Date, Value = request.KeyRate });
 
             return new CreateOrUpdateAnalyticMacroParameterResponse();
@@ -29,13 +29,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<GetAnalyticMacroParameterListResponse> GetAnalyticMacroParameterListAsync(GetAnalyticMacroParameterListRequest request)
         {
-            var consumerPriceIndexChanges = (await finMarketStorageServiceApiClient.GetConsumerPriceIndexChangeListAsync(new())).Result.ConsumerPriceIndexChanges.OrderBy(x => x.Date).ToList();
-            var monetaryAggregates = (await finMarketStorageServiceApiClient.GetMonetaryAggregateListAsync(new())).Result.MonetaryAggregates.OrderBy(x => x.Date).ToList();
-            var keyRates = (await finMarketStorageServiceApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).ToList();
+            var consumerPriceIndexChanges = (await storageApiClient.GetConsumerPriceIndexChangeListAsync(new())).Result.ConsumerPriceIndexChanges.OrderBy(x => x.Date).ToList();
+            var monetaryAggregates = (await storageApiClient.GetMonetaryAggregateListAsync(new())).Result.MonetaryAggregates.OrderBy(x => x.Date).ToList();
+            var keyRates = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).ToList();
             var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-5));
             var to = DateOnly.FromDateTime(DateTime.Today);
-            var moexIndexCandles = (await finMarketStorageServiceApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.IMOEX, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
-            var rgbiIndexCandles = (await finMarketStorageServiceApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.RGBI, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
+            var moexIndexCandles = (await storageApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.IMOEX, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
+            var rgbiIndexCandles = (await storageApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.RGBI, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
             var dates = DateUtils.GetMonthDates(from, to);
 
             var macroParameterItems = new List<GetAnalyticMacroParameterItemListResponse>();

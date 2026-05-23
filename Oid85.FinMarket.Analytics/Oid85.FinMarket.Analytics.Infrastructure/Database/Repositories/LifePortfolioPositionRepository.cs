@@ -2,7 +2,6 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities;
-using static Grpc.Core.Metadata;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {

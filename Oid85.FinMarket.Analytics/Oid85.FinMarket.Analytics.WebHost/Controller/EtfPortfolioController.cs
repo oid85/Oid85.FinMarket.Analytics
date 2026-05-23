@@ -12,7 +12,7 @@ namespace Oid85.FinMarket.Analytics.WebHost.Controller;
 /// </summary>
 [Route("api/etf-portfolio")]
 [ApiController]
-public class EtfController(
+public class EtfPortfolioController(
     IEtfPortfolioService portfolioService)
     : BaseController
 {

@@ -10,14 +10,18 @@ using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
 using Oid85.FinMarket.Storage.Core.Requests;
 using Oid85.FinMarket.Storage.Core.Responses;
 
-namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage
+namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients
 {
     /// <inheritdoc />
-    public class FinMarketStorageServiceApiClient(
+    public class StorageApiClient(
         IMemoryCache memoryCache,
         IHttpClientFactory httpClientFactory)
-        : IFinMarketStorageServiceApiClient
+        : IStorageApiClient
     {
+        /// <inheritdoc />
+        public async Task<GetDividendListResponse> GetDividendListAsync(GetDividendListRequest request) =>
+            await GetCachedDataAsync<GetDividendListRequest, GetDividendListResponse>("/api/dividends/list", request);
+
         /// <inheritdoc />
         public async Task<GetBondCouponListResponse> GetBondCouponListAsync(GetBondCouponListRequest request) =>
             await GetCachedDataAsync<GetBondCouponListRequest, GetBondCouponListResponse>("/api/bond-coupons/list", request);

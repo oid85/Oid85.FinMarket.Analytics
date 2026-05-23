@@ -11,7 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class BondAnalyseService(
         IInstrumentService instrumentService,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
+        IStorageApiClient storageApiClient)
         : IBondAnalyseService
     {
         /// <inheritdoc />
@@ -56,7 +56,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (instrument.MaturityDate.HasValue)
                     bondAnalyseItem.DaysToMaturity = (instrument.MaturityDate.Value.ToDateTime(TimeOnly.MinValue) - DateTime.Today).Days;
 
-                var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
+                var couponsTwoYear = (await storageApiClient.GetBondCouponListAsync(
                     new GetBondCouponListRequest
                     {
                         Ticker = instrument.Ticker,

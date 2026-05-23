@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
-using Oid85.FinMarket.Analytics.Infrastructure.ApiClients.Storage;
+using Oid85.FinMarket.Analytics.Infrastructure.ApiClients;
 using Oid85.FinMarket.Analytics.Infrastructure.Database;
 using Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories;
 
@@ -32,7 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ILifePortfolioPositionRepository, LifePortfolioPositionRepository>();
     }
 
-    public static void ConfigureFinMarketStorageServiceApiClient(
+    public static void ConfigureStorageApiClient(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -42,7 +42,7 @@ public static class ServiceCollectionExtensions
             client.BaseAddress = new Uri(baseUrl);
         });
 
-        services.AddTransient<IFinMarketStorageServiceApiClient, FinMarketStorageServiceApiClient>();
+        services.AddTransient<IStorageApiClient, StorageApiClient>();
     }
 
     public static async Task ApplyMigrations(this IHost host)

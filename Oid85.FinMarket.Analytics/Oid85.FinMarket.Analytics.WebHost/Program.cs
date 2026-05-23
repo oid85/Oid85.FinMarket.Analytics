@@ -27,7 +27,7 @@ namespace Oid85.FinMarket.Analytics.WebHost
             builder.Services.ConfigureHangfire();
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureDatabase(builder.Configuration);
-            builder.Services.ConfigureFinMarketStorageServiceApiClient(builder.Configuration);
+            builder.Services.ConfigureStorageApiClient(builder.Configuration);
 
             builder.Services.AddWindowsService(options =>
             {

@@ -8,8 +8,13 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
     /// <summary>
     /// Клиент сервиса FinMarket.Storage
     /// </summary>
-    public interface IFinMarketStorageServiceApiClient
+    public interface IStorageApiClient
     {
+        /// <summary>
+        /// Получить дивиденды
+        /// </summary>
+        Task<GetDividendListResponse> GetDividendListAsync(GetDividendListRequest request);
+
         /// <summary>
         /// Получить купоны
         /// </summary>

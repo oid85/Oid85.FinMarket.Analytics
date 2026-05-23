@@ -11,7 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class InstrumentService(
         IInstrumentRepository instrumentRepository,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
+        IStorageApiClient storageApiClient)
         : IInstrumentService
     {
         /// <inheritdoc />
@@ -67,7 +67,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<List<Instrument>> GetStorageInstrumentAsync()
         {
-            var response = await finMarketStorageServiceApiClient.GetInstrumentListAsync(new());
+            var response = await storageApiClient.GetInstrumentListAsync(new());
             return response.Result.Instruments
                 .Select(x =>
                 new Instrument

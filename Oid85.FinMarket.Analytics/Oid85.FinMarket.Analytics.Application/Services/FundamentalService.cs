@@ -18,7 +18,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         IInstrumentService instrumentService,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient,
+        IStorageApiClient storageApiClient,
         IDataService dataService,
         IFundamentalScoreService fundamentalScoreService,
         IAnalyseParameterFactory analyseParameterFactory)
@@ -52,7 +52,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             });
                     }
 
-                    await finMarketStorageServiceApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
+                    await storageApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
                     return new CreateOrUpdateAnalyticFundamentalParameterResponse();
                 }
 
@@ -77,7 +77,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             });
                     }
 
-                    await finMarketStorageServiceApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
+                    await storageApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
                     return new CreateOrUpdateAnalyticFundamentalParameterResponse();
                 }
 
@@ -92,7 +92,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             ExtData = request.ExtData ?? string.Empty
                         });
 
-                await finMarketStorageServiceApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
+                await storageApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
                 return new CreateOrUpdateAnalyticFundamentalParameterResponse();
             }
 
@@ -108,7 +108,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         ExtData = request.ExtData ?? string.Empty
                     });
 
-                await finMarketStorageServiceApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
+                await storageApiClient.CreateOrUpdateFundamentalParameterAsync(createOrUpdateFundamentalParameterRequest);
                 return new CreateOrUpdateAnalyticFundamentalParameterResponse();
             }
 
@@ -118,7 +118,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<DeleteAnalyticFundamentalParameterResponse> DeleteAnalyticFundamentalParameterAsync(DeleteAnalyticFundamentalParameterRequest request)
         {
-            await finMarketStorageServiceApiClient.DeleteFundamentalParameterAsync(
+            await storageApiClient.DeleteFundamentalParameterAsync(
                 new()
                 {
                     FundamentalParameters = [new() { Ticker = request.Ticker, Type = request.Type, Period = request.Period }]
@@ -209,7 +209,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
 
-            var fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
+            var fundamentalParameters = (await storageApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
 
             var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).OrderBy(x => x.Ticker).ToList();
 

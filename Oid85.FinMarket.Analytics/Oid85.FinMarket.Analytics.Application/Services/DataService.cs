@@ -13,7 +13,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class DataService(
         IParameterRepository parameterRepository,
         IInstrumentRepository instrumentRepository,
-        IFinMarketStorageServiceApiClient finMarketStorageServiceApiClient)
+        IStorageApiClient storageApiClient)
         : IDataService
     {
         private Dictionary<string, List<Candle>>? _candleData = null;
@@ -28,7 +28,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var ticker in tickers)
             {
-                var couponsTwoYear = (await finMarketStorageServiceApiClient.GetBondCouponListAsync(
+                var couponsTwoYear = (await storageApiClient.GetBondCouponListAsync(
                     new GetBondCouponListRequest
                     {
                         Ticker = ticker,
@@ -580,7 +580,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             if (_analyseDataContext is not null) return _analyseDataContext;
 
-            var instruments = (await instrumentRepository.GetInstrumentsAsync())!.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
+            var instruments = (await instrumentRepository.GetInstrumentsAsync())!
+                .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Index)
+                .OrderBy(x => x.Ticker)
+                .ToList();
+
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
             _analyseDataContext = new AnalyseDataContext
@@ -612,7 +616,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-10));
             var to = DateOnly.FromDateTime(DateTime.Today);
 
-            var response = await finMarketStorageServiceApiClient.GetCandleListAsync(
+            var response = await storageApiClient.GetCandleListAsync(
                 new()
                 {
                     From = from,
@@ -700,7 +704,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';'), string.Empty];
 
-            _fundamentalParameters = (await finMarketStorageServiceApiClient.GetFundamentalParameterListAsync(new() { Periods = periods })).Result.FundamentalParameters;
+            _fundamentalParameters = (await storageApiClient.GetFundamentalParameterListAsync(new() { Periods = periods })).Result.FundamentalParameters;
 
             return _fundamentalParameters;
         }
@@ -709,7 +713,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             if (_forecasts is not null) return _forecasts;
 
-            _forecasts = (await finMarketStorageServiceApiClient.GetForecastListAsync(new())).Result.Forecasts;
+            _forecasts = (await storageApiClient.GetForecastListAsync(new())).Result.Forecasts;
 
             return _forecasts;
         }

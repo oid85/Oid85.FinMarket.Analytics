@@ -13,7 +13,8 @@ namespace Oid85.FinMarket.Analytics.WebHost.Controller;
 [Route("api/portfolio")]
 [ApiController]
 public class PortfolioController(
-    IPortfolioService portfolioService)
+    IPortfolioService portfolioService,
+    IPortfolioRebalanceService portfolioRebalanceService)
     : BaseController
 {
     /// <summary>
@@ -54,4 +55,17 @@ public class PortfolioController(
         GetResponseAsync(
             () => portfolioService.EditPortfolioTotalSumAsync(request),
             result => new BaseResponse<EditPortfolioTotalSumResponse> { Result = result });
+
+    /// <summary>
+    /// Ребалансировка портфеля
+    /// </summary>
+    [HttpPost("rebalance")]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioRebalanceResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioRebalanceResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioRebalanceResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> PortfolioRebalanceAsync(
+        [FromBody] PortfolioRebalanceRequest request) =>
+        GetResponseAsync(
+            () => portfolioRebalanceService.PortfolioRebalanceAsync(request),
+            result => new BaseResponse<PortfolioRebalanceResponse> { Result = result });
 }

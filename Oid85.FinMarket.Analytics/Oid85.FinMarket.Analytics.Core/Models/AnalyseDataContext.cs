@@ -103,6 +103,21 @@
         }
 
         /// <summary>
+        /// Получить последнюю цену инструмента по тикеру и дате
+        /// </summary>
+        public double? GetPrice(string ticker, DateOnly date)
+        {
+            if (!CandleData.TryGetValue(ticker, out List<Candle>? candles)) return null;
+            if (candles is null) return null;
+            if (candles is []) return null;
+
+            var candle = candles.FindLast(x => x.Date <= date);
+            if (candle is null) return null;
+
+            return Math.Round(candle.Close, 4);
+        }
+
+        /// <summary>
         /// Получить последние актуальные фундаментальные данные по тикеру
         /// </summary>
         public FundamentalMetric? GetFundamentalMetric(string ticker)
