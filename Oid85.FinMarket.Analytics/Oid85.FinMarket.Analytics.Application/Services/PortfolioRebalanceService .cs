@@ -38,7 +38,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             List<DateOnly> dates = DateUtils.GetDates(from, to);
-            List<DateOnly> rebalanceDates = [dates[0], ..dates.Where(x => x.Day == 1)];
 
             double startMoney = 5_000_000.0;
             double money = startMoney;
