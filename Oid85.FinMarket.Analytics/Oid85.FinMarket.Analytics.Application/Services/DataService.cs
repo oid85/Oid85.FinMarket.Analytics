@@ -581,8 +581,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (_analyseDataContext is not null) return _analyseDataContext;
 
             var instruments = (await instrumentRepository.GetInstrumentsAsync())!
-                .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Index)
-                .OrderBy(x => x.Ticker)
+                .Where(x => 
+                    x.Type == KnownInstrumentTypes.Share || 
+                    x.Type == KnownInstrumentTypes.Index || 
+                    x.Type == KnownInstrumentTypes.Etf)
                 .ToList();
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
