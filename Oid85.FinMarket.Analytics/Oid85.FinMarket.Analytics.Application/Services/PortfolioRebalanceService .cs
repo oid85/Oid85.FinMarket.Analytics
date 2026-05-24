@@ -50,11 +50,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 $"Индекс полн. дох. MCFTR",
                 KnownColors.Orange);
 
-            var moexSeries = await GetIndexSeriesAsync(
-                KnownIndexTickers.IMOEX, 
-                $"Индекс IMOEX",
-                KnownColors.Orange);
-
             var response = new PortfolioRebalanceResponse 
             { 
                 Series = 
@@ -63,8 +58,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     portfolioEqualPartsSeries,
                     etfPortfolioSeries,
                     etfEqualPartsPortfolioSeries,
-                    msftrSeries, 
-                    moexSeries
+                    msftrSeries
                 ] 
             };
 
