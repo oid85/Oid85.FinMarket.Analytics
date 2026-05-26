@@ -33,11 +33,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var portfolioSeries = await GetPortfolioSeriesAsync(
                 (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient), 
-                "Веса по модели", KnownColors.Green);
-            
-            var portfolioEqualPartsSeries = await GetPortfolioSeriesAsync(
-                (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => 1.0),
-                "Веса равными долями", KnownColors.Green);                   
+                "Портфель", KnownColors.Green);                        
             
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
@@ -45,8 +41,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             { 
                 Series = 
                 [
-                    portfolioSeries,
-                    portfolioEqualPartsSeries,               
+                    portfolioSeries,          
                     msftrSeries
                 ] 
             };
