@@ -44,6 +44,11 @@
         public double ManualCoefficient { get; set; }
 
         /// <summary>
+        /// Коэффициент капитализации
+        /// </summary>
+        public double MarketCapCoefficient { get; set; }
+
+        /// <summary>
         /// Результирующий коэффициент
         /// </summary>
         public double ResultCoefficient { get; set; }
@@ -81,6 +86,6 @@
         /// <summary>
         /// Разница между реальной и расчетной позицией в процентах
         /// </summary>
-        public double DeltaPercent { get; set; }
+        public double DeltaPercent { get; set; }        
     }
 }

@@ -54,25 +54,25 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request)
         {
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync())
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
             var instrumentsFromDb = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
 
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
-            var sharesTickers = instruments.Select(x => x.Ticker).ToList();
+            var instrumentTickers = instruments.Select(x => x.Ticker).ToList();
 
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
             var lifePortfolioPositions = (await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync())
                 .Where(x => !x.IsDeleted)
-                .Where(x => sharesTickers.Contains(x.Ticker))
+                .Where(x => instrumentTickers.Contains(x.Ticker))
                 .ToList();
 
             double lifeTotalSum = 0.0;
@@ -97,7 +97,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
                 .ToList();
@@ -142,7 +142,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
 
-                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.ManualCoefficient, 2);
+                portfolioPosition.MarketCapCoefficient = instrument.MarketCapCoefficient;
+
+                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.MarketCapCoefficient * portfolioPosition.ManualCoefficient, 2);
 
                 portfolioPositions.Add(portfolioPosition);
             }

@@ -11,4 +11,9 @@ public static class KnownParameters
     public const string SnowballHoldingsFilePath = "SnowballHoldingsFilePath";
     public const string DiagramPeriodLongYears = "DiagramPeriodLongYears";
     public const string DiagramPeriodShortYears = "DiagramPeriodShortYears";
+    public const string RebalanceHistoryPeriodInYears = "RebalanceHistoryPeriodInYears";
+    public const string RebalancePeriodInDays = "RebalancePeriodInDays";
+    public const string RebalanceAddMoneyPeriodInDays = "RebalanceAddMoneyPeriodInDays";
+    public const string RebalanceStartMoneySum = "RebalanceStartMoneySum";
+    public const string RebalanceAddMoneySum = "RebalanceAddMoneySum";
 }

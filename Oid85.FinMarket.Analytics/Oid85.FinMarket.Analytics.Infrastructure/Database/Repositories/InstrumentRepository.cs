@@ -27,6 +27,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 IsSelected = instrument.IsSelected,
                 InPortfolio = instrument.InPortfolio,
                 ManualCoefficient = instrument.ManualCoefficient,
+                MarketCapCoefficient = instrument.MarketCapCoefficient,
                 Sector = "-"
             };
 
@@ -57,6 +58,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         .SetProperty(entity => entity.IsSelected, model.IsSelected)
                         .SetProperty(entity => entity.InPortfolio, model.InPortfolio)
                         .SetProperty(entity => entity.ManualCoefficient, model.ManualCoefficient)
+                        .SetProperty(entity => entity.MarketCapCoefficient, model.MarketCapCoefficient)
                         .SetProperty(entity => entity.Sector, model.Sector));
 
             await context.SaveChangesAsync();
@@ -82,6 +84,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 IsSelected = entity.IsSelected,
                 InPortfolio = entity.InPortfolio,
                 ManualCoefficient = entity.ManualCoefficient,
+                MarketCapCoefficient = entity.MarketCapCoefficient,
                 Sector = entity.Sector
             };
 
@@ -106,6 +109,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 IsSelected = entity.IsSelected,
                 InPortfolio = entity.InPortfolio,
                 ManualCoefficient = entity.ManualCoefficient,
+                MarketCapCoefficient = entity.MarketCapCoefficient,
                 Sector = entity.Sector
             };
 
@@ -132,6 +136,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         IsSelected = x.IsSelected,
                         InPortfolio = x.InPortfolio,
                         ManualCoefficient = x.ManualCoefficient,
+                        MarketCapCoefficient = x.MarketCapCoefficient,
                         Sector = x.Sector
                     })
                 .ToList();

@@ -10,54 +10,43 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class PortfolioRebalanceService(
         IInstrumentRepository instrumentRepository,
+        IParameterRepository parameterRepository,
         IPortfolioService portfolioService,
-        IEtfPortfolioService etfPortfolioService,
         IInstrumentService instrumentService,
         IDataService dataService,
         IStorageApiClient storageApiClient)
         : IPortfolioRebalanceService
     {
-        private readonly int _historyPeriod = 5;
-        private readonly int _rebalancePeriod = 15;
-        private readonly int _addMoneyPeriod = 15;
-        private readonly double _startMoney = 5_000_000.0;
-        private readonly double _addMoney = 25_000.0;
+        private int _rebalanceHistoryPeriodInYears;
+        private int _rebalancePeriodInDays;
+        private int _rebalanceAddMoneyPeriodInDays;
+        private double _rebalanceStartMoneySum;
+        private double _rebalanceAddMoneySum;
 
         public async Task<PortfolioRebalanceResponse> PortfolioRebalanceAsync(PortfolioRebalanceRequest request)
         {
+            _rebalanceHistoryPeriodInYears = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.RebalanceHistoryPeriodInYears)) ?? "0");
+            _rebalancePeriodInDays = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.RebalancePeriodInDays)) ?? "0");
+            _rebalanceAddMoneyPeriodInDays = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.RebalanceAddMoneyPeriodInDays)) ?? "0");
+            _rebalanceStartMoneySum = Convert.ToDouble((await parameterRepository.GetParameterValueAsync(KnownParameters.RebalanceStartMoneySum)) ?? "0.0");
+            _rebalanceAddMoneySum = Convert.ToDouble((await parameterRepository.GetParameterValueAsync(KnownParameters.RebalanceAddMoneySum)) ?? "0.0");
+
             var portfolioSeries = await GetPortfolioSeriesAsync(
                 (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient), 
-                "Акции портфеля",
-                KnownColors.Green);
-
+                "Веса по модели", KnownColors.Green);
+            
             var portfolioEqualPartsSeries = await GetPortfolioSeriesAsync(
                 (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => 1.0),
-                "Акции равными долями",
-                KnownColors.Green);
-
-            var etfPortfolioSeries = await GetPortfolioSeriesAsync(
-                (await etfPortfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
-                "ETF портфеля",
-                KnownColors.Blue);
-
-            var etfEqualPartsPortfolioSeries = await GetPortfolioSeriesAsync(
-                (await etfPortfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => 1.0),
-                "ETF равными долями",
-                KnownColors.Blue);
-
-            var msftrSeries = await GetIndexSeriesAsync(
-                KnownIndexTickers.MCFTR, 
-                $"Индекс полн. дох. MCFTR",
-                KnownColors.Orange);
+                "Веса равными долями", KnownColors.Green);                   
+            
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
             var response = new PortfolioRebalanceResponse 
             { 
                 Series = 
                 [
                     portfolioSeries,
-                    portfolioEqualPartsSeries,
-                    etfPortfolioSeries,
-                    etfEqualPartsPortfolioSeries,
+                    portfolioEqualPartsSeries,               
                     msftrSeries
                 ] 
             };
@@ -76,13 +65,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var costs = tickers.ToDictionary(k => k, v => 0.0);
             var prices = tickers.ToDictionary(k => k, v => 0.0);
             var lots = storageInstruments.ToDictionary(k => k.Ticker, v => v.Lot ?? 1);
-            double money = _startMoney;
-            double totalSum = _startMoney;
+            double money = _rebalanceStartMoneySum;
+            double totalSum = _rebalanceStartMoneySum;
 
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
             var dates = DateUtils.GetDates(
-                DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * _historyPeriod)),
+                DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * _rebalanceHistoryPeriodInYears)),
                 DateOnly.FromDateTime(DateTime.Today));
 
             var portfolioSeries = new PortfolioRebalanceSeries()
@@ -154,9 +143,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 void AddMoney()
                 {
-                    if (i % _addMoneyPeriod == 0)
+                    if (i % _rebalanceAddMoneyPeriodInDays == 0)
                     {
-                        money += _addMoney;
+                        money += _rebalanceAddMoneySum;
                     }
                 }
 
@@ -167,7 +156,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 void Rebalance()
                 {
-                    if (i % _rebalancePeriod == 0)
+                    if (i % _rebalancePeriodInDays == 0)
                     {
                         UpdateSizes();
                         UpdateCosts();
@@ -185,11 +174,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
             var dates = DateUtils.GetDates(
-                DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * _historyPeriod)),
+                DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * _rebalanceHistoryPeriodInYears)),
                 DateOnly.FromDateTime(DateTime.Today));
 
-            var price = analyseDataContext.GetPrice(indexTicker, dates[0]);
-            var size = Math.Truncate(_startMoney / price!.Value);
+            var price = analyseDataContext.GetPrice(indexTicker, dates[0])!.Value;
+            var size = Math.Truncate(_rebalanceStartMoneySum / price);
 
             var series = new PortfolioRebalanceSeries
             {

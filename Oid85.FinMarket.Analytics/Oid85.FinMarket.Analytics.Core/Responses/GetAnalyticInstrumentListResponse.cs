@@ -14,5 +14,6 @@
         public bool InPortfolio { get; set; }
         public string Type { get; set; }
         public double ManualCoefficient { get; set; }
+        public double MarketCapCoefficient { get; set; }
     }
 }

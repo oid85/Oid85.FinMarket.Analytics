@@ -30,6 +30,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
                     ManualCoefficient = instrument.ManualCoefficient,
+                    MarketCapCoefficient = instrument.MarketCapCoefficient,
                     Type = instrument.Type
                 });
 
