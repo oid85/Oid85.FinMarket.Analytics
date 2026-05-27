@@ -51,8 +51,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             double GetYield(PortfolioRebalanceSeries portfolioSeries)
             {
-                double first = portfolioSeries.Data.First().Value.Value;
-                double last = portfolioSeries.Data.Last().Value.Value;
+                double first = portfolioSeries.Data.First().Value ?? 0.0;
+                double last = portfolioSeries.Data.Last().Value ?? 0.0;
+
+                if (last == 0.0)
+                    return 0.0;
 
                 return ((last - first) / first * 100.0 / _rebalanceHistoryPeriodInYears).RoundTo(2);
             }
