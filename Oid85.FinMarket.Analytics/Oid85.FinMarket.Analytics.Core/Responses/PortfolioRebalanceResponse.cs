@@ -3,6 +3,7 @@
     public class PortfolioRebalanceResponse
     {
         public List<PortfolioRebalanceSeries> Series { get; set; } = [];
+        public double Yield { get; set; }
     }
 
     public class PortfolioRebalanceSeries

@@ -43,10 +43,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 [
                     portfolioSeries,          
                     msftrSeries
-                ] 
+                ],
+                Yield = GetYield(portfolioSeries)
             };
 
             return response;
+
+            double GetYield(PortfolioRebalanceSeries portfolioSeries)
+            {
+                double first = portfolioSeries.Data.First().Value.Value;
+                double last = portfolioSeries.Data.Last().Value.Value;
+
+                return ((last - first) / first * 100.0 / _rebalanceHistoryPeriodInYears).RoundTo(2);
+            }
         }
 
         private async Task<PortfolioRebalanceSeries> GetPortfolioSeriesAsync(

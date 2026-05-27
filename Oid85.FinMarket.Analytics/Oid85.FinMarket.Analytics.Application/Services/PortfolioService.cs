@@ -58,7 +58,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var position in portfolioPositionResponse.PortfolioPositions)
             {
-                var lifePercent = ((position.LifeSize * position.Price) / portfolioPositionResponse.TotalSum) * 100.0;
+                var lifePercent = position.LifeSize * position.Price / portfolioPositionResponse.TotalSum * 100.0;
                 
                 double manualCoefficient = (lifePercent!.Value / position.MarketCapCoefficient / position.DividendCoefficient).RoundTo(2);
 
@@ -78,15 +78,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
-            var instrumentsFromDb = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
+            var instruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
 
-            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
+            var analyticInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
-            var instrumentTickers = instruments.Select(x => x.Ticker).ToList();
+            var instrumentTickers = analyticInstruments.Select(x => x.Ticker).ToList();
 
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
@@ -110,32 +110,32 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             await parameterRepository.SetParameterValueAsync(KnownParameters.TotalSum, lifeTotalSum.ToString("N0"));
 
-            foreach (var instrument in instruments)
+            foreach (var instrument in analyticInstruments)
             {
                 if (instrument.ManualCoefficient == 0)
                     await EditPortfolioPositionAsync(new EditPortfolioPositionRequest { Ticker = instrument.Ticker, DividendCoefficient = 1, ManualCoefficient = 1 });
             }
 
-            instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
+            analyticInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
-            var tickers = instruments.Select(x => x.Ticker).ToList();
+            var tickers = analyticInstruments.Select(x => x.Ticker).ToList();
             
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var dividendData = await dataService.GetDividendDataAsync(tickers);
 
             var portfolioPositions = new List<PortfolioPositionListItem>();
 
-            foreach (var instrument in instruments)
+            foreach (var instrument in analyticInstruments)
             {
                 var portfolioPosition = new PortfolioPositionListItem()
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
-                    Sector = instrumentsFromDb.Find(x => x.Ticker == instrument.Ticker)?.Sector ?? string.Empty,
+                    Sector = instruments.Find(x => x.Ticker == instrument.Ticker)?.Sector ?? string.Empty,
                     ManualCoefficient = instrument.ManualCoefficient,
                     Price = candleData[instrument.Ticker].Last().Close
                 };
