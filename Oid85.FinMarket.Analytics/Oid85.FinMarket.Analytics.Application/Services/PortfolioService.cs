@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -47,6 +48,25 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<EditPortfolioTotalSumResponse> EditPortfolioTotalSumAsync(EditPortfolioTotalSumRequest request)
         {
             await parameterRepository.SetParameterValueAsync(KnownParameters.TotalSum, request.TotalSum.ToString("N0"));
+            return new();
+        }
+
+        /// <inheritdoc />
+        public async Task<PortfolioApplyWeightResponse> PortfolioApplyWeightAsync(PortfolioApplyWeightRequest request)
+        {
+            var portfolioPositionResponse = (await GetPortfolioPositionListAsync(new()));
+
+            foreach (var position in portfolioPositionResponse.PortfolioPositions)
+            {
+                var lifePercent = ((position.LifeSize * position.Price) / portfolioPositionResponse.TotalSum) * 100.0;
+                
+                double manualCoefficient = (lifePercent!.Value / position.MarketCapCoefficient / position.DividendCoefficient).RoundTo(2);
+
+                var instrument = await instrumentRepository.GetInstrumentByTickerAsync(position.Ticker);
+                instrument!.ManualCoefficient = manualCoefficient;
+                await instrumentRepository.EditInstrumentAsync(instrument);
+            }
+
             return new();
         }
 
@@ -123,16 +143,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 double dividendCoefficient = 1.0;
 
                 if (dividendData.TryGetValue(instrument.Ticker, out Core.Models.Dividend? value))
-                {
-                    const double loLimitCoefficient = 1.0;
-                    const double hiLimitCoefficient = 2.0;
-                    const double loLimitYield = 10.0;
-                    const double hiLimitYield = 20.0;
+                {                    
+                    double hiLimitCoefficient = 3.0;
+                    double loLimitCoefficient = 2.0;
+                    double hiLimitYield = 14.5;
+                    double loLimitYield = hiLimitYield / 2.0;
 
                     double yield = value.Yield!.Value;
 
                     if (yield >= hiLimitYield) dividendCoefficient = hiLimitCoefficient;
-                    else if (yield <= loLimitYield) dividendCoefficient = loLimitCoefficient;
+                    else if (yield <= loLimitYield) dividendCoefficient = 1.0;
                     else dividendCoefficient = (yield - loLimitYield) * (hiLimitCoefficient - loLimitCoefficient) / (hiLimitYield - loLimitYield) + loLimitCoefficient;
                 }
 
@@ -150,12 +170,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             double totalSum = Convert.ToDouble(((await parameterRepository.GetParameterValueAsync(KnownParameters.TotalSum)) ?? "0").Replace(" ", "").Trim());
-
-            int minTotalNumberSharesInPortfolio = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.MinTotalNumberSharesInPortfolio)) ?? "0");
-
-            double baseUnit = portfolioPositions.Count < minTotalNumberSharesInPortfolio
-                ? totalSum / (portfolioPositions.Sum(x => x.ResultCoefficient) + (minTotalNumberSharesInPortfolio - portfolioPositions.Count))
-                : totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
+            
+            double baseUnit = totalSum / portfolioPositions.Sum(x => x.ResultCoefficient);
 
             foreach (var portfolioPosition in portfolioPositions)
             {

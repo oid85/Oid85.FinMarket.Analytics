@@ -22,5 +22,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить список позиций портфеля
         /// </summary>
         Task<GetPortfolioPositionListResponse> GetPortfolioPositionListAsync(GetPortfolioPositionListRequest request);
+
+        /// <summary>
+        /// Применить веса портфеля к модели
+        /// </summary>
+        Task<PortfolioApplyWeightResponse> PortfolioApplyWeightAsync(PortfolioApplyWeightRequest request);
     }
 }

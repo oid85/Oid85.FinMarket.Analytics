@@ -68,4 +68,17 @@ public class PortfolioController(
         GetResponseAsync(
             () => portfolioRebalanceService.PortfolioRebalanceAsync(request),
             result => new BaseResponse<PortfolioRebalanceResponse> { Result = result });
+
+    /// <summary>
+    /// Применить веса портфеля к модели
+    /// </summary>
+    [HttpPost("apply-weight")]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioApplyWeightResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioApplyWeightResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioApplyWeightResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> PortfolioApplyWeightAsync(
+        [FromBody] PortfolioApplyWeightRequest request) =>
+        GetResponseAsync(
+            () => portfolioService.PortfolioApplyWeightAsync(request),
+            result => new BaseResponse<PortfolioApplyWeightResponse> { Result = result });
 }
