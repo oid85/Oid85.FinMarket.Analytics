@@ -3,8 +3,8 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
-    public interface IPortfolioRebalanceService
+    public interface IPortfolioBacktestService
     {
-        Task<PortfolioRebalanceResponse> PortfolioRebalanceAsync(PortfolioRebalanceRequest request);
+        Task<PortfolioBacktestResponse> PortfolioBacktestAsync(PortfolioBacktestRequest request);
     }
 }

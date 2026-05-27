@@ -1,6 +1,6 @@
 ﻿namespace Oid85.FinMarket.Analytics.Core.Responses
 {
-    public class PortfolioRebalanceResponse
+    public class PortfolioBacktestResponse
     {
         public List<PortfolioRebalanceSeries> Series { get; set; } = [];
         public double Yield { get; set; }

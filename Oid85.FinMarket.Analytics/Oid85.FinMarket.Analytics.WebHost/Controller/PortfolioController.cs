@@ -14,7 +14,7 @@ namespace Oid85.FinMarket.Analytics.WebHost.Controller;
 [ApiController]
 public class PortfolioController(
     IPortfolioService portfolioService,
-    IPortfolioRebalanceService portfolioRebalanceService)
+    IPortfolioBacktestService portfolioBacktestService)
     : BaseController
 {
     /// <summary>
@@ -57,17 +57,17 @@ public class PortfolioController(
             result => new BaseResponse<EditPortfolioTotalSumResponse> { Result = result });
 
     /// <summary>
-    /// Ребалансировка портфеля
+    /// Бектест портфеля
     /// </summary>
-    [HttpPost("rebalance")]
-    [ProducesResponseType(typeof(BaseResponse<PortfolioRebalanceResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<PortfolioRebalanceResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<PortfolioRebalanceResponse>), StatusCodes.Status500InternalServerError)]
+    [HttpPost("backtest")]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioBacktestResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioBacktestResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioBacktestResponse>), StatusCodes.Status500InternalServerError)]
     public Task<IActionResult> PortfolioRebalanceAsync(
-        [FromBody] PortfolioRebalanceRequest request) =>
+        [FromBody] PortfolioBacktestRequest request) =>
         GetResponseAsync(
-            () => portfolioRebalanceService.PortfolioRebalanceAsync(request),
-            result => new BaseResponse<PortfolioRebalanceResponse> { Result = result });
+            () => portfolioBacktestService.PortfolioBacktestAsync(request),
+            result => new BaseResponse<PortfolioBacktestResponse> { Result = result });
 
     /// <summary>
     /// Применить веса портфеля к модели
