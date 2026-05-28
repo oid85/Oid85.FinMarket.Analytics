@@ -31,7 +31,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             _startMoneySum = Convert.ToDouble((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestStartMoneySum)) ?? "0.0");
             _addMoneySum = Convert.ToDouble((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestAddMoneySum)) ?? "0.0");
 
-            var portfolioSeries = await GetPortfolioSeriesAsync(
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
                 (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient), 
                 "Портфель", KnownColors.Green);                        
             
@@ -41,15 +41,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             { 
                 Series = 
                 [
-                    portfolioSeries,          
+                    portfolioEquitySeries,          
                     msftrSeries
                 ],
-                Yield = GetYield(portfolioSeries)
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = GetMaxDrawdownPercent(portfolioEquitySeries)
             };
 
             return response;
 
-            double GetYield(PortfolioRebalanceSeries series)
+            double GetAverageYearYieldPercent(PortfolioRebalanceSeries series)
             {
                 double first = series.Data.First().Value ?? 0.0;
                 double last = series.Data.Last().Value ?? 0.0;
@@ -57,6 +58,26 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (last == 0.0) return 0.0;
 
                 return ((last - first) / first * 100.0 / _historyPeriodInYears).RoundTo(2);
+            }
+
+            double GetMaxDrawdownPercent(PortfolioRebalanceSeries series)
+            {
+                List<double> equity = [.. series.Data.Select(x => x.Value ?? 0.0)];
+                List<double> drawdown = [];
+
+                for (int i = 0; i < equity.Count; i++)
+                {
+                    if (i == 0)
+                        drawdown.Add(0.0);
+
+                    else
+                    {
+                        var maxEquity = equity.Take(i).Max();
+                        drawdown.Add(equity[i] >= maxEquity ? 0.0 : ((equity[i] - maxEquity) / maxEquity * 100.0).RoundTo(2));
+                    }                    
+                }
+
+                return drawdown.Min();
             }
         }
 
