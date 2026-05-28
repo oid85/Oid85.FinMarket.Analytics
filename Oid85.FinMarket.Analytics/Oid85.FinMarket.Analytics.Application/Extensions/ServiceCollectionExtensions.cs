@@ -20,13 +20,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFundamentalScoreService, FundamentalScoreService>();
         services.AddScoped<IMacroService, MacroService>();
         services.AddScoped<IPortfolioService, PortfolioService>();
-        services.AddScoped<IBondPortfolioService, BondPortfolioService>();
         services.AddScoped<IPortfolioBacktestService, PortfolioBacktestService>();
         services.AddScoped<ILifePortfolioService, LifePortfolioService>();
         services.AddScoped<IBondAnalyseService, BondAnalyseService>();
         services.AddScoped<IDiagramService, DiagramService>();
         services.AddScoped<IColorPaleteService, ColorPaleteService>();
-
         services.AddScoped<IAnalyseParameterFactory, AnalyseParameterFactory>();
     }
 }
