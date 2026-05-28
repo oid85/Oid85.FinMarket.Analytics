@@ -23,6 +23,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         private double _startMoneySum;
         private double _addMoneySum;
 
+        private double _dividendSum = 0.0;
+        private double _moneySum = 0.0;
+
         public async Task<PortfolioBacktestResponse> PortfolioBacktestAsync(PortfolioBacktestRequest request)
         {
             _historyPeriodInYears = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestHistoryPeriodInYears)) ?? "0");
@@ -45,7 +48,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     msftrSeries
                 ],
                 Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
-                MaxDrawdown = GetMaxDrawdownPercent(portfolioEquitySeries)
+                MaxDrawdown = GetMaxDrawdownPercent(portfolioEquitySeries),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
             };
 
             return response;
@@ -164,7 +169,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         var dividend = dividends.Find(x => x.Ticker == ticker && x.Date == dates[i]);
 
                         if (dividend is not null)
-                            money += sizes[ticker] * dividend.Value;
+                        {
+                            double dividendPay = sizes[ticker] * dividend.Value;
+                            money += dividendPay;
+                            _dividendSum += dividendPay;
+                        }
                     }
                 }
 
@@ -173,6 +182,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     if (i % _addMoneyPeriodInDays == 0)
                     {
                         money += _addMoneySum;
+                        _moneySum += _addMoneySum;
                     }
                 }
 
