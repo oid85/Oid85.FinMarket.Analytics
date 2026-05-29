@@ -36,15 +36,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
                 (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient), 
-                "Портфель", KnownColors.Green);                        
-            
+                "Портфель", KnownColors.Green, false);
+
+            var portfolioEquityBareSeries = await GetPortfolioSeriesAsync(
+                (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
+                "Портфель без ребалансировок и пополнений", KnownColors.Blue, true);
+
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
             var response = new PortfolioBacktestResponse 
             { 
                 Series = 
                 [
-                    portfolioEquitySeries,          
+                    portfolioEquitySeries,
+                    portfolioEquityBareSeries,
                     msftrSeries
                 ],
                 Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
@@ -87,7 +92,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         private async Task<PortfolioRebalanceSeries> GetPortfolioSeriesAsync(
-            Dictionary<string, double> weights, string portfolioName, string color)
+            Dictionary<string, double> weights, string portfolioName, string color, bool isBare)
         {
             var tickers = weights.Keys.ToList();
             var dividends = (await storageApiClient.GetDividendListAsync(new())).Result.Dividends.Where(x => tickers.Contains(x.Ticker)).ToList();
@@ -164,6 +169,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 void AddDividends()
                 {
+                    if (isBare) return;
+
                     foreach (var ticker in tickers)
                     {
                         var dividend = dividends.Find(x => x.Ticker == ticker && x.Date == dates[i]);
@@ -179,6 +186,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 void AddMoney()
                 {
+                    if (isBare) return;
+
                     if (i % _addMoneyPeriodInDays == 0)
                     {
                         money += _addMoneySum;
@@ -193,6 +202,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 void Rebalance()
                 {
+                    if (i != 0 && isBare) return;
+
                     if (i % _periodInDays == 0)
                     {
                         UpdateSizes();
