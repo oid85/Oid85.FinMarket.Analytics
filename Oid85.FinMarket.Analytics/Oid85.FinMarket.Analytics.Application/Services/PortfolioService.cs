@@ -1,8 +1,8 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
-using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -14,7 +14,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IParameterRepository parameterRepository,
         ILifePortfolioPositionRepository lifePortfolioPositionRepository,
         IInstrumentService instrumentService,
-        IDataService dataService)
+        IDataService dataService,
+        IStorageApiClient storageApiClient)
         : IPortfolioService
     {
         /// <inheritdoc />
@@ -127,6 +128,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var dividendData = await dataService.GetDividendDataAsync(tickers);
 
+            var keyRates = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).ToList();
+            double currentKeyRate = keyRates.Last().Value ?? 0.0;
+
             var portfolioPositions = new List<PortfolioPositionListItem>();
 
             foreach (var instrument in analyticInstruments)
@@ -146,7 +150,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {                    
                     double hiLimitCoefficient = 3.0;
                     double loLimitCoefficient = 2.0;
-                    double hiLimitYield = 14.5;
+                    double hiLimitYield = currentKeyRate;
                     double loLimitYield = hiLimitYield / 2.0;
 
                     double yield = value.Yield!.Value;

@@ -60,7 +60,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             return response;
 
-            double GetAverageYearYieldPercent(PortfolioRebalanceSeries series)
+            double GetAverageYearYieldPercent(PortfolioBacktestSeries series)
             {
                 double first = series.Data.First().Value ?? 0.0;
                 double last = series.Data.Last().Value ?? 0.0;
@@ -70,7 +70,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 return ((last - first) / first * 100.0 / _historyPeriodInYears).RoundTo(2);
             }
 
-            double GetMaxDrawdownPercent(PortfolioRebalanceSeries series)
+            double GetMaxDrawdownPercent(PortfolioBacktestSeries series)
             {
                 List<double> equity = [.. series.Data.Select(x => x.Value ?? 0.0)];
                 List<double> drawdown = [];
@@ -91,7 +91,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
         }
 
-        private async Task<PortfolioRebalanceSeries> GetPortfolioSeriesAsync(
+        private async Task<PortfolioBacktestSeries> GetPortfolioSeriesAsync(
             Dictionary<string, double> weights, string portfolioName, string color, bool isBare)
         {
             var tickers = weights.Keys.ToList();
@@ -111,7 +111,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * _historyPeriodInYears)),
                 DateOnly.FromDateTime(DateTime.Today));
 
-            var portfolioSeries = new PortfolioRebalanceSeries()
+            var portfolioSeries = new PortfolioBacktestSeries()
             {
                 Name = $"{portfolioName}",
                 Color = color,
@@ -216,7 +216,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return portfolioSeries;
         }
 
-        private async Task<PortfolioRebalanceSeries> GetIndexSeriesAsync(
+        private async Task<PortfolioBacktestSeries> GetIndexSeriesAsync(
             string indexTicker, string portfolioName, string color)
         {
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
@@ -228,7 +228,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var price = analyseDataContext.GetPrice(indexTicker, dates[0])!.Value;
             var size = Math.Truncate(_startMoneySum / price);
 
-            var series = new PortfolioRebalanceSeries
+            var series = new PortfolioBacktestSeries
             {
                 Name = $"{portfolioName}",
                 Color = color,
