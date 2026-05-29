@@ -11,11 +11,16 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Создание/изменение макроэкономического параметра
         /// </summary>
-        Task<CreateOrUpdateAnalyticMacroParameterResponse> CreateOrUpdateAnalyticMacroParameterAsync(CreateOrUpdateAnalyticMacroParameterRequest request);
+        Task<CreateOrUpdateAnalyticMacroParameterResponse> CreateOrUpdateAnalyticMacroParameterAsync(CreateOrUpdateAnalyticMacroParameterRequest request);        
 
         /// <summary>
         /// Получить список макроэкономических параметров
         /// </summary>
         Task<GetAnalyticMacroParameterListResponse> GetAnalyticMacroParameterListAsync(GetAnalyticMacroParameterListRequest request);
+
+        /// <summary>
+        /// Получить диаграммы макроэкономических параметров
+        /// </summary>
+        Task<GetAnalyticMacroParameterDiagramResponse> GetAnalyticMacroParameterDiagramAsync(GetAnalyticMacroParameterDiagramRequest request);
     }
 }

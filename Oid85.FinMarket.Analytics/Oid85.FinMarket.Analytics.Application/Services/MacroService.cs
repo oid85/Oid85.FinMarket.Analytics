@@ -9,10 +9,12 @@ using Oid85.FinMarket.Storage.Core.Requests;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
+    /// <inheritdoc />
     public class MacroService(
         IStorageApiClient storageApiClient)
         : IMacroService
     {
+        /// <inheritdoc />
         public async Task<CreateOrUpdateAnalyticMacroParameterResponse> CreateOrUpdateAnalyticMacroParameterAsync(CreateOrUpdateAnalyticMacroParameterRequest request)
         {
             await storageApiClient.CreateOrUpdateConsumerPriceIndexChangeAsync(
@@ -27,6 +29,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return new CreateOrUpdateAnalyticMacroParameterResponse();
         }
 
+        /// <inheritdoc />
         public async Task<GetAnalyticMacroParameterListResponse> GetAnalyticMacroParameterListAsync(GetAnalyticMacroParameterListRequest request)
         {
             var consumerPriceIndexChanges = (await storageApiClient.GetConsumerPriceIndexChangeListAsync(new())).Result.ConsumerPriceIndexChanges.OrderBy(x => x.Date).ToList();
@@ -126,6 +129,44 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             };
 
             return response;
+        }
+
+        /// <inheritdoc />
+        public async Task<GetAnalyticMacroParameterDiagramResponse> GetAnalyticMacroParameterDiagramAsync(GetAnalyticMacroParameterDiagramRequest request)
+        {            
+            var dates = DateUtils.GetMonthDates(
+                DateOnly.FromDateTime(DateTime.Today.AddYears(-6)),
+                DateOnly.FromDateTime(DateTime.Today));
+
+            var consumerPriceIndexChanges = (await storageApiClient.GetConsumerPriceIndexChangeListAsync(new())).Result.ConsumerPriceIndexChanges
+                .OrderBy(x => x.Date)
+                .Where(x => x.Value.HasValue)
+                .ToList();
+
+            var keyRates = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates
+                .OrderBy(x => x.Date)
+                .Where(x => x.Value.HasValue)
+                .ToList();
+
+            var keyRateSeries = new AnalyticMacroParameterSeries { Name = "Ставка ЦБ, %", Color = KnownColors.Blue, ColorFill = KnownColors.Blue };
+            var cpiSeries = new AnalyticMacroParameterSeries { Name = "Инфляция, % гг", Color = KnownColors.Orange, ColorFill = KnownColors.Orange };
+            var deltaSeries = new AnalyticMacroParameterSeries { Name = "Разность между ставкой ЦБ и инфляцией, %", Color = KnownColors.Green, ColorFill = KnownColors.Green };
+
+            for (int i = 12; i < dates.Count; i++)
+            {
+                DateOnly date = dates[i];
+
+                var keyRate = keyRates.FindLast(x => x.Date <= date)!.Value;
+                var cpi = (consumerPriceIndexChanges.Where(x => x.Date <= date).TakeLast(12).Select(x => 1.0 + (x.Value - 100.0) / 100.0).Aggregate((x, y) => x * y) - 1.0) * 100.0;                
+                                 
+                var delta = keyRate!.Value - cpi!.Value;
+
+                keyRateSeries.Data.Add(new () { Date = date, Value = keyRate!.Value.RoundTo(2) });
+                cpiSeries.Data.Add(new () { Date = date, Value = cpi!.Value.RoundTo(2) });
+                deltaSeries.Data.Add(new () { Date = date, Value = delta.RoundTo(2) });
+            }
+
+            return new () { Series = [ keyRateSeries, cpiSeries, deltaSeries ] };
         }
 
         private static double GetConsumerPriceIndexYearChange(GetAnalyticMacroParameterItemListResponse macroParameterItem, List<GetAnalyticMacroParameterItemListResponse> macroParameterItems)

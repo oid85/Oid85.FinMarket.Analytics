@@ -17,7 +17,20 @@ public class MacroParameterController(
     : BaseController
 {
     /// <summary>
-    /// Получить фундаментальные параметры
+    /// Создать или изменить макро параметр
+    /// </summary>
+    [HttpPost("create-or-update")]
+    [ProducesResponseType(typeof(BaseResponse<CreateOrUpdateAnalyticMacroParameterResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<CreateOrUpdateAnalyticMacroParameterResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<CreateOrUpdateAnalyticMacroParameterResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> CreateOrUpdateAnalyticMacroParameterAsync(
+        [FromBody] CreateOrUpdateAnalyticMacroParameterRequest request) =>
+        GetResponseAsync(
+            () => macroParameterService.CreateOrUpdateAnalyticMacroParameterAsync(request),
+            result => new BaseResponse<CreateOrUpdateAnalyticMacroParameterResponse> { Result = result });
+
+    /// <summary>
+    /// Получить макро параметры (таблица)
     /// </summary>
     [HttpPost("list")]
     [ProducesResponseType(typeof(BaseResponse<GetAnalyticMacroParameterListResponse>), StatusCodes.Status200OK)]
@@ -30,15 +43,15 @@ public class MacroParameterController(
             result => new BaseResponse<GetAnalyticMacroParameterListResponse> { Result = result });
 
     /// <summary>
-    /// Создать или изменить фундаментальный параметр
+    /// Получить макро параметры (диаграммы)
     /// </summary>
-    [HttpPost("create-or-update")]
-    [ProducesResponseType(typeof(BaseResponse<CreateOrUpdateAnalyticMacroParameterResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<CreateOrUpdateAnalyticMacroParameterResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<CreateOrUpdateAnalyticMacroParameterResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> CreateOrUpdateAnalyticMacroParameterAsync(
-        [FromBody] CreateOrUpdateAnalyticMacroParameterRequest request) =>
+    [HttpPost("diagram")]
+    [ProducesResponseType(typeof(BaseResponse<GetAnalyticMacroParameterDiagramResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetAnalyticMacroParameterDiagramResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetAnalyticMacroParameterDiagramResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetAnalyticMacroParameterDiagramAsync(
+        [FromBody] GetAnalyticMacroParameterDiagramRequest request) =>
         GetResponseAsync(
-            () => macroParameterService.CreateOrUpdateAnalyticMacroParameterAsync(request),
-            result => new BaseResponse<CreateOrUpdateAnalyticMacroParameterResponse> { Result = result });
+            () => macroParameterService.GetAnalyticMacroParameterDiagramAsync(request),
+            result => new BaseResponse<GetAnalyticMacroParameterDiagramResponse> { Result = result });
 }
