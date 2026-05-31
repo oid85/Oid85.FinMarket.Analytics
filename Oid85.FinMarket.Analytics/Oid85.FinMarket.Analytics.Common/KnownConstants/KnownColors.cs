@@ -11,6 +11,7 @@ public static class KnownColors
     public const string Green = "#00CC66";    
     public const string LightGreen = "#C1F5C1";
     public const string Blue = "#191970";
+    public const string LightBlue = "#357EC7";
     public const string DarkBlue = "#00008B";
     public const string DarkSlateGray = "#2F4F4F";
     public const string Orange = "#FFA500";

@@ -156,7 +156,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var keyRateSeries = new AnalyticMacroParameterSeries { Name = "Ставка ЦБ, %", Color = KnownColors.Blue, ColorFill = KnownColors.Blue };
             var cpiSeries = new AnalyticMacroParameterSeries { Name = "Инфляция, % гг", Color = KnownColors.Orange, ColorFill = KnownColors.Orange };
             var deltaSeries = new AnalyticMacroParameterSeries { Name = "Разность между ставкой ЦБ и инфляцией, %", Color = KnownColors.Green, ColorFill = KnownColors.Green };
-            var vvpSeries = new AnalyticMacroParameterSeries { Name = "Прирост ВВП, %", Color = KnownColors.Blue, ColorFill = KnownColors.Blue };
+            var vvpSeries = new AnalyticMacroParameterSeries { Name = "Прирост ВВП, %", Color = KnownColors.Blue, ColorFill = KnownColors.LightBlue };
 
             for (int i = 12; i < dates.Count; i++)
             {
