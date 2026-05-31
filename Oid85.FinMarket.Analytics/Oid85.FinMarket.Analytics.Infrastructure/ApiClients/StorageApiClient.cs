@@ -75,6 +75,10 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients
             await GetResponseAsync<CreateOrUpdateKeyRateRequest, CreateOrUpdateKeyRateResponse>("/api/key-rates/create-or-update", request);
 
         /// <inheritdoc />
+        public async Task<GetVvpListResponse> GetVvpListAsync(GetVvpListRequest request) =>
+            await GetResponseAsync<GetVvpListRequest, GetVvpListResponse>("/api/vvp/list", request);
+
+        /// <inheritdoc />
         public async Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request) =>
             await GetResponseAsync<GetForecastListRequest, GetForecastListResponse>("/api/forecasts/list", request);
 

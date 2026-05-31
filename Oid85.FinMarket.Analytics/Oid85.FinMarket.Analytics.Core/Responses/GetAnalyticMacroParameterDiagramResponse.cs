@@ -3,6 +3,7 @@
     public class GetAnalyticMacroParameterDiagramResponse
     {
         public List<AnalyticMacroParameterSeries> Series { get; set; } = [];
+        public List<AnalyticMacroParameterSeries> VvpSeries { get; set; } = [];
     }
 
     public class AnalyticMacroParameterSeries

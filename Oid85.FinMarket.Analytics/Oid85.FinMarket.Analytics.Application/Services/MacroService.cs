@@ -34,7 +34,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var consumerPriceIndexChanges = (await storageApiClient.GetConsumerPriceIndexChangeListAsync(new())).Result.ConsumerPriceIndexChanges.OrderBy(x => x.Date).ToList();
             var monetaryAggregates = (await storageApiClient.GetMonetaryAggregateListAsync(new())).Result.MonetaryAggregates.OrderBy(x => x.Date).ToList();
-            var keyRates = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).ToList();
+            var keyRates = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).ToList();            
             var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-5));
             var to = DateOnly.FromDateTime(DateTime.Today);
             var moexIndexCandles = (await storageApiClient.GetCandleListAsync(new GetCandleListRequest { Ticker = KnownIndexTickers.IMOEX, From = from, To = to })).Result.Candles.OrderBy(x => x.Date).ToList();
@@ -148,25 +148,37 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .Where(x => x.Value.HasValue)
                 .ToList();
 
+            var vvps = (await storageApiClient.GetVvpListAsync(new())).Result.Vvps
+                .OrderBy(x => x.Date)
+                .Where(x => x.Delta.HasValue)
+                .ToList();
+
             var keyRateSeries = new AnalyticMacroParameterSeries { Name = "Ставка ЦБ, %", Color = KnownColors.Blue, ColorFill = KnownColors.Blue };
             var cpiSeries = new AnalyticMacroParameterSeries { Name = "Инфляция, % гг", Color = KnownColors.Orange, ColorFill = KnownColors.Orange };
             var deltaSeries = new AnalyticMacroParameterSeries { Name = "Разность между ставкой ЦБ и инфляцией, %", Color = KnownColors.Green, ColorFill = KnownColors.Green };
+            var vvpSeries = new AnalyticMacroParameterSeries { Name = "Прирост ВВП, %", Color = KnownColors.Blue, ColorFill = KnownColors.Blue };
 
             for (int i = 12; i < dates.Count; i++)
             {
                 DateOnly date = dates[i];
 
                 var keyRate = keyRates.FindLast(x => x.Date <= date)!.Value;
+                var vvp = vvps.FindLast(x => x.Date <= date)!.Delta;
                 var cpi = (consumerPriceIndexChanges.Where(x => x.Date <= date).TakeLast(12).Select(x => 1.0 + (x.Value - 100.0) / 100.0).Aggregate((x, y) => x * y) - 1.0) * 100.0;                
                                  
                 var delta = keyRate!.Value - cpi!.Value;
 
                 keyRateSeries.Data.Add(new () { Date = date, Value = keyRate!.Value.RoundTo(2) });
                 cpiSeries.Data.Add(new () { Date = date, Value = cpi!.Value.RoundTo(2) });
-                deltaSeries.Data.Add(new () { Date = date, Value = delta.RoundTo(2) });
+                deltaSeries.Data.Add(new() { Date = date, Value = delta.RoundTo(2) });
+                vvpSeries.Data.Add(new() { Date = date, Value = vvp.RoundTo(2) });
             }
 
-            return new () { Series = [ keyRateSeries, cpiSeries, deltaSeries ] };
+            return new () 
+            {
+                Series = [ keyRateSeries, cpiSeries, deltaSeries ],
+                VvpSeries = [ vvpSeries ]
+            };
         }
 
         private static double GetConsumerPriceIndexYearChange(GetAnalyticMacroParameterItemListResponse macroParameterItem, List<GetAnalyticMacroParameterItemListResponse> macroParameterItems)

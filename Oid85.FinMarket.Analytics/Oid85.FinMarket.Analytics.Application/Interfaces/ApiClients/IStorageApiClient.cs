@@ -76,6 +76,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
         Task<GetKeyRateListResponse> GetKeyRateListAsync(GetKeyRateListRequest request);
 
         /// <summary>
+        /// Получить ВВП
+        /// </summary>
+        Task<GetVvpListResponse> GetVvpListAsync(GetVvpListRequest request);
+
+        /// <summary>
         /// Создать или редактировать значение ключевой ставки
         /// </summary>
         Task<CreateOrUpdateKeyRateResponse> CreateOrUpdateKeyRateAsync(CreateOrUpdateKeyRateRequest request);
