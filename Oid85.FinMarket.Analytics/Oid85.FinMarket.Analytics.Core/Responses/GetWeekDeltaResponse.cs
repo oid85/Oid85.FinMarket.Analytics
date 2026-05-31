@@ -6,6 +6,7 @@
         public List<WeekDeltaData> Indexes { get; set; } = [];
         public List<WeekDeltaData> Shares { get; set; } = [];
         public List<WeekDeltaData> Futures { get; set; } = [];
+        public List<WeekDeltaData> Etfs { get; set; } = [];
     }
 
     public class WeekDeltaData

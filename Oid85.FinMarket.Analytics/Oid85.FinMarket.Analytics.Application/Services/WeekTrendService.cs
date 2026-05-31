@@ -25,6 +25,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var indexes = instruments.Where(x => x.Type == KnownInstrumentTypes.Index).ToList();
             var shares = instruments.Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
             var futures = instruments.Where(x => x.Type == KnownInstrumentTypes.Future).ToList();
+            var etfs = instruments.Where(x => x.Type == KnownInstrumentTypes.Etf).ToList();
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
@@ -41,7 +42,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 })],
                 Shares = GetWeekDeltaDataList(shares),
                 Indexes = GetWeekDeltaDataList(indexes),
-                Futures = GetWeekDeltaDataList(futures)
+                Futures = GetWeekDeltaDataList(futures),
+                Etfs = GetWeekDeltaDataList(etfs)
             };
 
             return response;

@@ -28,14 +28,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .ToList();
 
             var instrumentsInPortfolio = allInstruments
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
                 .Where(x => x.IsSelected)
                 .Where(x => x.InPortfolio)
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
             var instrumentsNotInPortfolio = allInstruments
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
                 .Where(x => x.IsSelected)
                 .Where(x => !x.InPortfolio)
                 .OrderBy(x => x.Ticker)
