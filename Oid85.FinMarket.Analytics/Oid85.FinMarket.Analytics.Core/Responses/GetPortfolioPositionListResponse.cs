@@ -86,6 +86,11 @@
         /// <summary>
         /// Разница между реальной и расчетной позицией в процентах
         /// </summary>
-        public double DeltaPercent { get; set; }        
+        public double DeltaPercent { get; set; }
+
+        /// <summary>
+        /// Текущая дивидендная доходность
+        /// </summary>
+        public double? CurrentDividendYield { get; set; }
     }
 }

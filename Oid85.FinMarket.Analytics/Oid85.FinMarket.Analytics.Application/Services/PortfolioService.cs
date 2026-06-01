@@ -195,10 +195,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.DeltaPercent = (Convert.ToDouble(portfolioPosition.Delta) / Convert.ToDouble(portfolioPosition.Size) * 100.0).RoundTo(2);
             }
 
+            foreach (var portfolioPosition in portfolioPositions)
+                portfolioPosition.CurrentDividendYield = analyseDataContext.GetDividend(portfolioPosition.Ticker)?.Yield;
+
             var response = new GetPortfolioPositionListResponse()
             {
                 TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderBy(x => x.DeltaPercent)]
+                PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.CurrentDividendYield)]
             };
 
             foreach (var portfolioPosition in response.PortfolioPositions)
