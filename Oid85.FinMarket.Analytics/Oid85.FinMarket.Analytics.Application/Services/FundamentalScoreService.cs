@@ -46,7 +46,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += roe?.Ratio ?? 0.0;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0;
 
-            int criteriaCount = isBanks ? 6 : 8;
+            int criteriaCount = isBanks ? 8 : 10;
 
             double limitLo = criteriaCount / 3.0;
             double limitHi = limitLo * 2.0;
@@ -66,14 +66,17 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Score = new AnalyseParameter<double>
                 {
                     Value = scoreValue.RoundTo(2),
-                    ColorFill = scoreValue >= limitHi
-                        ? KnownColors.Green
-                        : scoreValue >= limitLo
-                            ? KnownColors.Yellow
-                            : KnownColors.White,
+                    ColorFill = GetColorFill(),
                     Description = string.Empty
                 }
             };
+
+            string GetColorFill()
+            {
+                if (scoreValue >= limitHi) return KnownColors.Green;
+                if (scoreValue >= limitLo) return KnownColors.Yellow;
+                return KnownColors.White;
+            }
 
             return score;
         }

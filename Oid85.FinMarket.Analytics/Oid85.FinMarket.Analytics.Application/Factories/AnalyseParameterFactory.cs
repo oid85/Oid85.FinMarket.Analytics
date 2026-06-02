@@ -294,19 +294,19 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
         {
             string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
 
-            var metric1 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 1).ToString());
-            var metric2 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 2).ToString());
-            var metric3 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 3).ToString());
-            var metric4 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 4).ToString());
-            var metric5 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 5).ToString());
+            var metric01 = await GetMetricAsync(ticker, (int.Parse(predictYear)).ToString());
+            var metric02 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 1).ToString());
+            var metric03 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 2).ToString());
+            var metric04 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 3).ToString());
+            var metric05 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 4).ToString());
 
             int count = 0;
 
-            if (metric1 is not null && metric1.Dividend.HasValue && metric1.Dividend.Value > 0) count++;
-            if (metric2 is not null && metric2.Dividend.HasValue && metric2.Dividend.Value > 0) count++;
-            if (metric3 is not null && metric3.Dividend.HasValue && metric3.Dividend.Value > 0) count++;
-            if (metric4 is not null && metric4.Dividend.HasValue && metric4.Dividend.Value > 0) count++;
-            if (metric5 is not null && metric5.Dividend.HasValue && metric5.Dividend.Value > 0) count++;
+            if (metric01 is not null && metric01.Dividend.HasValue && metric01.Dividend.Value > 0) count++;
+            if (metric02 is not null && metric02.Dividend.HasValue && metric02.Dividend.Value > 0) count++;
+            if (metric03 is not null && metric03.Dividend.HasValue && metric03.Dividend.Value > 0) count++;
+            if (metric04 is not null && metric04.Dividend.HasValue && metric04.Dividend.Value > 0) count++;
+            if (metric05 is not null && metric05.Dividend.HasValue && metric05.Dividend.Value > 0) count++;
 
             bool isDividendAristokrat = count >= 4;
 
