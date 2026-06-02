@@ -150,13 +150,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (color, description) = await colorPaleteService.GetColorRoaAsync(ticker, period);
+            var (ratio, color, description) = await colorPaleteService.GetColorRoaAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Roa,
                 Description = description,
-                ColorFill = color
+                ColorFill = color,
+                Ratio = ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -168,13 +169,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (color, description) = await colorPaleteService.GetColorRoeAsync(ticker, period);
+            var (ratio, color, description) = await colorPaleteService.GetColorRoeAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Roe,
                 Description = description,
-                ColorFill = color
+                ColorFill = color,
+                Ratio = ratio.RoundTo(2)
             };
 
             return displayParameter;

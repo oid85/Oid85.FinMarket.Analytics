@@ -31,6 +31,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var netProfit = await GetNetProfitAsync(ticker);
             var fcf = await GetFcfAsync(ticker);
             var eps = await GetEpsAsync(ticker);
+            var roa = await GetRoaAsync(ticker);
+            var roe = await GetRoeAsync(ticker);
             var dividendAristocrat = await GetDividendAristocratAsync(ticker);
 
             double scoreValue = pe?.Ratio ?? 0.0;
@@ -40,6 +42,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += netProfit?.Ratio ?? 0.0;
             scoreValue += fcf?.Ratio ?? 0.0;
             scoreValue += eps?.Ratio ?? 0.0;
+            scoreValue += roa?.Ratio ?? 0.0;
+            scoreValue += roe?.Ratio ?? 0.0;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0;
 
             int criteriaCount = isBanks ? 6 : 8;
@@ -56,6 +60,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 NetProfit = netProfit,
                 Fcf = fcf,
                 Eps = eps,
+                Roa = roa,
+                Roe = roe,
                 DividendAristocrat = dividendAristocrat,
                 Score = new AnalyseParameter<double>
                 {
@@ -172,6 +178,36 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (result!.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreateEpsAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetRoaAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateRoaAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateRoaAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetRoeAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateRoeAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateRoeAsync(ticker, year);
             if (result is null) return new();
 
             return result;

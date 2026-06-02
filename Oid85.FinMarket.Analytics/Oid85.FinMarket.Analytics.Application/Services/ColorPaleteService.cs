@@ -138,16 +138,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return (KnownColors.White, string.Empty);
         }
 
-        public async Task<(string Color, string Description)> GetColorRoaAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorRoaAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
 
             if (metric.Roa.HasValue)
             {
                 if (metric.Roa.Value <= 0.0)
-                    return (KnownColors.Red, "ROA отрицательный");
+                    return (0.0, KnownColors.Red, "ROA отрицательный");
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.Roa.HasValue).ToList();
@@ -158,25 +158,25 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
-                if (ratio > 0.75) return (KnownColors.Green, $"ROA высокое в секторе - выше, чем у 75% компаний сектора");
-                else if (ratio > 0.5) return (KnownColors.LightGreen, $"ROA выше среднего в секторе - выше, чем у 50% компаний сектора");
-                else if (ratio > 0.25) return (KnownColors.Yellow, $"ROA ниже среднего в секторе - выше, чем у 25% компаний сектора");
-                else return (KnownColors.Red, $"ROA низкое в секторе");
+                if (ratio > 0.75) return (ratio, KnownColors.Green, $"ROA высокое в секторе - выше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (ratio, KnownColors.LightGreen, $"ROA выше среднего в секторе - выше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (ratio, KnownColors.Yellow, $"ROA ниже среднего в секторе - выше, чем у 25% компаний сектора");
+                else return (0.0, KnownColors.Red, $"ROA низкое в секторе");
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
-        public async Task<(string Color, string Description)> GetColorRoeAsync(string ticker, string period)
+        public async Task<(double Ratio, string Color, string Description)> GetColorRoeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
 
-            if (metric is null) return (KnownColors.White, string.Empty);
+            if (metric is null) return (0.0, KnownColors.White, string.Empty);
 
             if (metric.Roe.HasValue)
             {
                 if (metric.Roe.Value <= 0.0)
-                    return (KnownColors.Red, "ROE отрицательный");
+                    return (0.0, KnownColors.Red, "ROE отрицательный");
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.Roe.HasValue).ToList();
@@ -187,13 +187,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
-                if (ratio > 0.75) return (KnownColors.Green, $"ROE высокое в секторе - выше, чем у 75% компаний сектора");
-                else if (ratio > 0.5) return (KnownColors.LightGreen, $"ROE выше среднего в секторе - выше, чем у 50% компаний сектора");
-                else if (ratio > 0.25) return (KnownColors.Yellow, $"ROE ниже среднего в секторе - выше, чем у 25% компаний сектора");
-                else return (KnownColors.Red, $"ROE низкое в секторе");
+                if (ratio > 0.75) return (ratio, KnownColors.Green, $"ROE высокое в секторе - выше, чем у 75% компаний сектора");
+                else if (ratio > 0.5) return (ratio, KnownColors.LightGreen, $"ROE выше среднего в секторе - выше, чем у 50% компаний сектора");
+                else if (ratio > 0.25) return (ratio, KnownColors.Yellow, $"ROE ниже среднего в секторе - выше, чем у 25% компаний сектора");
+                else return (0.0, KnownColors.Red, $"ROE низкое в секторе");
             }
 
-            return (KnownColors.White, string.Empty);
+            return (0.0, KnownColors.White, string.Empty);
         }
 
         public async Task<(double Ratio, string Color, string Description)> GetColorEvEbitdaAsync(string ticker, string period)

@@ -16,6 +16,11 @@
         public string? Description { get; set; } = null;
 
         /// <summary>
+        /// Текст
+        /// </summary>
+        public string? Text { get; set; } = null;
+
+        /// <summary>
         /// Цвет фона
         /// </summary>
         public string ColorFill { get; set; } = "#FFFFFF";
