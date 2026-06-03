@@ -198,23 +198,23 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             foreach (var portfolioPosition in portfolioPositions)
                 portfolioPosition.CurrentDividendYield = analyseDataContext.GetDividend(portfolioPosition.Ticker)?.Yield;
 
-            var response = new GetPortfolioPositionListResponse()
+            foreach (var portfolioPosition in portfolioPositions)
             {
-                TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.CurrentDividendYield)]
-            };
-
-            foreach (var portfolioPosition in response.PortfolioPositions)
-            {
-                double lifeCost = response.PortfolioPositions.Where(x => x.Sector.Contains(portfolioPosition.Sector)).Select(x => x.Cost).Sum();
+                double lifeCost = portfolioPositions.Where(x => x.Sector.Contains(portfolioPosition.Sector)).Select(x => x.Cost).Sum();
                 double sectorPercent = (lifeCost / totalSum * 100.0).RoundTo(2);
                 portfolioPosition.Sector += $" ({sectorPercent}) %";
             }
 
             int number = 1;
 
-            foreach (var portfolioPosition in response.PortfolioPositions)
+            foreach (var portfolioPosition in portfolioPositions)
                 portfolioPosition.Number = number++;
+
+            var response = new GetPortfolioPositionListResponse()
+            {
+                TotalSum = totalSum,
+                PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)]
+            };
 
             return response;
         }
