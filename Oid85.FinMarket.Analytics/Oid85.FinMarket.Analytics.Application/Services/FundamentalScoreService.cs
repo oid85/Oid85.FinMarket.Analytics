@@ -61,6 +61,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Pbv = pbv,
                 EvEbitda = evEbitda,
                 NetDebtEbitda = netDebtEbitda,
+                DebtRatio = debtRatio,
+                DebtEquity = debtEquity,
                 NetProfit = netProfit,
                 Fcf = fcf,
                 Eps = eps,
