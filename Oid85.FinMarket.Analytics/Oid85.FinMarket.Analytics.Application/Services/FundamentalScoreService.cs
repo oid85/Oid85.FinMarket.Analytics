@@ -28,6 +28,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var pbv = await GetPbvAsync(ticker);
             var evEbitda = await GeEvEbitdaAsync(ticker);
             var netDebtEbitda = await GetNetDebtEbitdaAsync(ticker);
+            var debtRatio = await GetDebtRatioAsync(ticker);
+            var debtEquity = await GetDebtEquityAsync(ticker);
             var netProfit = await GetNetProfitAsync(ticker);
             var fcf = await GetFcfAsync(ticker);
             var eps = await GetEpsAsync(ticker);
@@ -39,6 +41,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += pbv?.Ratio ?? 0.0;
             if (!isBanks) scoreValue += evEbitda?.Ratio ?? 0.0;
             if (!isBanks) scoreValue += netDebtEbitda?.Ratio ?? 0.0;
+            scoreValue += debtRatio?.Ratio ?? 0.0;
+            scoreValue += debtEquity?.Ratio ?? 0.0;
             scoreValue += netProfit?.Ratio ?? 0.0;
             scoreValue += fcf?.Ratio ?? 0.0;
             scoreValue += eps?.Ratio ?? 0.0;
@@ -46,7 +50,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += roe?.Ratio ?? 0.0;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0;
 
-            int criteriaCount = isBanks ? 8 : 10;
+            int criteriaCount = isBanks ? 10 : 12;
 
             double limitLo = criteriaCount / 3.0;
             double limitHi = limitLo * 2.0;
@@ -136,6 +140,36 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (result!.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetDebtRatioAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateDebtRatioAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateDebtRatioAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetDebtEquityAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateDebtEquityAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateDebtEquityAsync(ticker, year);
             if (result is null) return new();
 
             return result;

@@ -9,7 +9,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 {
     public class AnalyseParameterFactory(
         IDataService dataService,
-        IColorPaleteService colorPaleteService,
+        IFundamentalParameterRatioService fundamentalParameterRatioService,
         IParameterRepository parameterRepository)
         : IAnalyseParameterFactory
     {
@@ -19,14 +19,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorPeAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioPeAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Pe,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -38,14 +38,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorPbvAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioPbvAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Pbv,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -57,13 +57,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (color, description) = await colorPaleteService.GetColorRevenueAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioRevenueAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Revenue,
-                Description = description,
-                ColorFill = color
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -75,14 +76,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorNetProfitAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioNetProfitAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.NetProfit,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -94,14 +95,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorFcfAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioFcfAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Fcf,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -113,14 +114,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorEpsAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetColorEpsAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Eps,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -132,13 +133,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (color, description) = await colorPaleteService.GetColorNetDebtAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioNetDebtAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.NetDebt,
-                Description = description,
-                ColorFill = color
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -150,14 +152,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorRoaAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioRoaAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Roa,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -169,14 +171,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorRoeAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioRoeAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.Roe,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -188,14 +190,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorEvEbitdaAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioEvEbitdaAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.EvEbitda,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -207,14 +209,52 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (ratio, color, description) = await colorPaleteService.GetColorNetDebtEbitdaAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioNetDebtEbitdaAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.NetDebtEbitda,
-                Description = description,
-                ColorFill = color,
-                Ratio = ratio.RoundTo(2)
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
+            };
+
+            return displayParameter;
+        }
+
+        public async Task<AnalyseRatioParameter<double?>?> CreateDebtRatioAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return new();
+
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioDebtRatioAsync(ticker, period);
+
+            var displayParameter = new AnalyseRatioParameter<double?>
+            {
+                Value = metric.DebtRatio,
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
+            };
+
+            return displayParameter;
+        }
+
+        public async Task<AnalyseRatioParameter<double?>?> CreateDebtEquityAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return new();
+
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioDebtEquityAsync(ticker, period);
+
+            var displayParameter = new AnalyseRatioParameter<double?>
+            {
+                Value = metric.DebtEquity,
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -226,13 +266,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (color, description) = await colorPaleteService.GetColorEbitdaRevenueAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioEbitdaRevenueAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.EbitdaRevenue,
-                Description = description,
-                ColorFill = color
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -260,13 +301,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (color, description) = await colorPaleteService.GetColorDividendYieldAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioDividendYieldAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.DividendYield,
-                Description = description,
-                ColorFill = color
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;
@@ -278,13 +320,14 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var (color, description) = await colorPaleteService.GetColorDeltaMinMaxAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioDeltaMinMaxAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {
                 Value = metric.DeltaMinMax,
-                Description = description,
-                ColorFill = color
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2)
             };
 
             return displayParameter;

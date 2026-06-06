@@ -180,6 +180,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     item.Roe.Add(await analyseParameterFactory.CreateRoeAsync(instrument.Ticker, periods[i]));
                     item.EvEbitda.Add(await analyseParameterFactory.CreateEvEbitdaAsync(instrument.Ticker, periods[i]));
                     item.NetDebtEbitda.Add(await analyseParameterFactory.CreateNetDebtEbitdaAsync(instrument.Ticker, periods[i]));
+                    item.DebtRatio.Add(await analyseParameterFactory.CreateDebtRatioAsync(instrument.Ticker, periods[i]));
+                    item.DebtEquity.Add(await analyseParameterFactory.CreateDebtEquityAsync(instrument.Ticker, periods[i]));
                     item.EbitdaRevenue.Add(await analyseParameterFactory.CreateEbitdaRevenueAsync(instrument.Ticker, periods[i]));
                     item.OwnCapitalNumberShares.Add(await analyseParameterFactory.CreateOwnCapitalNumberSharesAsync(instrument.Ticker, periods[i]));
                     item.DividendYield.Add(await analyseParameterFactory.CreateDividendYieldAsync(instrument.Ticker, periods[i]));

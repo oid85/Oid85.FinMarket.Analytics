@@ -14,6 +14,8 @@
         public double? Roe { get; set; } = null;
         public double? EvEbitda { get; set; } = null;
         public double? NetDebtEbitda { get; set; } = null;
+        public double? DebtRatio { get; set; } = null;
+        public double? DebtEquity { get; set; } = null;
         public double? Dividend { get; set; } = null;
         public double? DividendYield { get; set; } = null;
         public double? NetProfit { get; set; } = null;

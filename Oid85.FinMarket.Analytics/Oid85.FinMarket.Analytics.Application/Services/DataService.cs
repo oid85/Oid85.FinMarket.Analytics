@@ -442,6 +442,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     var evEbitda = ev.Div(ebitda).RoundTo(2);
                     var ebitdaRevenue = ebitda.Div(revenue).RoundTo(2);
                     var ownCapitalnumberShares = ownCapital.Mult(1_000).Div(numberShares).RoundTo(2);
+                    var debtRatio = liabilities.Div(assets).RoundTo(2);
+                    var debtEquity = liabilities.Div(ownCapital).RoundTo(2);
                     var netDebtEbitda = netDebt.Div(ebitda).RoundTo(2);
                     var dividendYield = dividend.Div(price).Mult(100.0).RoundTo(2);
 
@@ -473,6 +475,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                             NetProfit = netProfit,
                             EvEbitda = evEbitda,
                             NetDebtEbitda = netDebtEbitda,
+                            DebtRatio = debtRatio,
+                            DebtEquity = debtEquity,
                             EbitdaRevenue = ebitdaRevenue,
                             OwnCapitalNumberShares = ownCapitalnumberShares,
                             DeltaMinMax = deltaMinMax

@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILifePortfolioService, LifePortfolioService>();
         services.AddScoped<IBondAnalyseService, BondAnalyseService>();
         services.AddScoped<IDiagramService, DiagramService>();
-        services.AddScoped<IColorPaleteService, ColorPaleteService>();
+        services.AddScoped<IFundamentalParameterRatioService, FundamentalParameterRatioService>();
         services.AddScoped<IAnalyseParameterFactory, AnalyseParameterFactory>();
     }
 }

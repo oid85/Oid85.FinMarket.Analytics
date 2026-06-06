@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Oid85.FinMarket.Analytics.Common\Oid85.FinMarket.Analytics.Common.csproj" />
+  </ItemGroup>
+
 </Project>

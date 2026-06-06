@@ -148,6 +148,8 @@
                 OwnCapital = metrics.FindLast(x => x.OwnCapital.HasValue)?.OwnCapital,
                 EvEbitda = metrics.FindLast(x => x.EvEbitda.HasValue)?.EvEbitda,
                 NetDebtEbitda = metrics.FindLast(x => x.NetDebtEbitda.HasValue)?.NetDebtEbitda,
+                DebtRatio = metrics.FindLast(x => x.DebtRatio.HasValue)?.DebtRatio,
+                DebtEquity = metrics.FindLast(x => x.DebtEquity.HasValue)?.DebtEquity,
                 EbitdaRevenue = metrics.FindLast(x => x.EbitdaRevenue.HasValue)?.EbitdaRevenue,
                 Dividend = metrics.FindLast(x => x.Dividend.HasValue)?.Dividend,
                 DividendYield = metrics.FindLast(x => x.DividendYield.HasValue)?.DividendYield,
