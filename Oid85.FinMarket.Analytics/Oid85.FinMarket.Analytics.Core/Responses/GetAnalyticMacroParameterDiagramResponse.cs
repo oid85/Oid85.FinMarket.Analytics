@@ -2,8 +2,10 @@
 {
     public class GetAnalyticMacroParameterDiagramResponse
     {
-        public List<AnalyticMacroParameterSeries> Series { get; set; } = [];
+        public List<AnalyticMacroParameterSeries> KeyRateSeries { get; set; } = [];
         public List<AnalyticMacroParameterSeries> VvpSeries { get; set; } = [];
+        public List<AnalyticMacroParameterSeries> MoneyAggregatesCpiSeries { get; set; } = [];
+        public List<AnalyticMacroParameterSeries> MoexSeries { get; set; } = [];
     }
 
     public class AnalyticMacroParameterSeries
