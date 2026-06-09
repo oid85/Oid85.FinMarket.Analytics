@@ -26,7 +26,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Pe,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -45,7 +46,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Pbv,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -64,7 +66,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Revenue,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -83,7 +86,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.NetProfit,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -102,7 +106,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Fcf,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -121,7 +126,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Eps,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -140,7 +146,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.NetDebt,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -159,7 +166,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Roa,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -178,7 +186,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.Roe,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -197,7 +206,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.EvEbitda,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -216,7 +226,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.NetDebtEbitda,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -235,7 +246,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.DebtRatio,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -254,7 +266,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.DebtEquity,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -273,7 +286,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.EbitdaRevenue,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -308,7 +322,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.DividendYield,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -327,7 +342,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = metric.DeltaMinMax,
                 Description = parameterRatio.Description,
                 ColorFill = parameterRatio.Color,
-                Ratio = parameterRatio.Ratio.RoundTo(2)
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
             };
 
             return displayParameter;
@@ -358,7 +374,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = isDividendAristokrat,
                 Description = isDividendAristokrat ? "Дивидендный аристократ" : string.Empty,
                 ColorFill = isDividendAristokrat ? KnownColors.Green : KnownColors.White,
-                Ratio = isDividendAristokrat ? 1.0 : 0.0
+                Ratio = isDividendAristokrat ? 1.0 : 0.0,
+                Text = "Компания платит дивиденды более 5 лет подряд"
             };
 
             return displayParameter;
