@@ -34,24 +34,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             _startMoneySum = Convert.ToDouble((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestStartMoneySum)) ?? "0.0");
             _addMoneySum = Convert.ToDouble((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestAddMoneySum)) ?? "0.0");
 
-            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
-                (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient), 
-                "Портфель", KnownColors.Green, false);
+            return await LifePortfolioBacktestAsync();
+        }
 
-            var portfolioEquityBareSeries = await GetPortfolioSeriesAsync(
+        private async Task<PortfolioBacktestResponse> LifePortfolioBacktestAsync()
+        {
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
                 (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
-                "Портфель без ребалансировок и пополнений", KnownColors.Blue, true);
+                "Портфель", KnownColors.Green, true);
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
             var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
 
-            var response = new PortfolioBacktestResponse 
-            { 
-                Series = 
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
                 [
                     portfolioEquitySeries,
-                    portfolioEquityBareSeries,
                     msftrSeries
                 ],
                 Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
@@ -62,40 +62,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             };
 
             return response;
-
-            double GetAverageYearYieldPercent(PortfolioBacktestSeries series)
-            {
-                double first = series.Data.First().Value ?? 0.0;
-                double last = series.Data.Last().Value ?? 0.0;
-
-                if (last == 0.0) return 0.0;
-
-                return ((last - first) / first * 100.0 / _historyPeriodInYears).RoundTo(2);
-            }
-
-            List<double> GetDrawdownValues(PortfolioBacktestSeries series)
-            {
-                List<double> equity = [.. series.Data.Select(x => x.Value ?? 0.0)];
-                List<double> drawdown = [];
-
-                for (int i = 0; i < equity.Count; i++)
-                {
-                    if (i == 0)
-                        drawdown.Add(0.0);
-
-                    else
-                    {
-                        var maxEquity = equity.Take(i).Max();
-                        drawdown.Add(equity[i] >= maxEquity ? 0.0 : ((equity[i] - maxEquity) / maxEquity * 100.0).RoundTo(2));
-                    }                    
-                }
-
-                return drawdown;
-            }
         }
 
         private async Task<PortfolioBacktestSeries> GetPortfolioSeriesAsync(
-            Dictionary<string, double> weights, string portfolioName, string color, bool isBare)
+            Dictionary<string, double> weights, string portfolioName, string color, bool withServe)
         {
             var tickers = weights.Keys.ToList();
             var dividends = (await storageApiClient.GetDividendListAsync(new())).Result.Dividends.Where(x => tickers.Contains(x.Ticker)).ToList();
@@ -172,7 +142,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 void AddDividends()
                 {
-                    if (isBare) return;
+                    if (!withServe) return;
 
                     foreach (var ticker in tickers)
                     {
@@ -189,7 +159,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 void AddMoney()
                 {
-                    if (isBare) return;
+                    if (!withServe) return;
 
                     if (i % _addMoneyPeriodInDays == 0)
                     {
@@ -205,7 +175,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 void Rebalance()
                 {
-                    if (i != 0 && isBare) return;
+                    if (i != 0 && !withServe) return;
 
                     if (i % _periodInDays == 0)
                     {
@@ -247,6 +217,36 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     });
 
             return series;
+        }
+
+        private double GetAverageYearYieldPercent(PortfolioBacktestSeries series)
+        {
+            double first = series.Data.First().Value ?? 0.0;
+            double last = series.Data.Last().Value ?? 0.0;
+
+            if (last == 0.0) return 0.0;
+
+            return ((last - first) / first * 100.0 / _historyPeriodInYears).RoundTo(2);
+        }
+
+        private List<double> GetDrawdownValues(PortfolioBacktestSeries series)
+        {
+            List<double> equity = [.. series.Data.Select(x => x.Value ?? 0.0)];
+            List<double> drawdown = [];
+
+            for (int i = 0; i < equity.Count; i++)
+            {
+                if (i == 0)
+                    drawdown.Add(0.0);
+
+                else
+                {
+                    var maxEquity = equity.Take(i).Max();
+                    drawdown.Add(equity[i] >= maxEquity ? 0.0 : ((equity[i] - maxEquity) / maxEquity * 100.0).RoundTo(2));
+                }
+            }
+
+            return drawdown;
         }
     }
 }
