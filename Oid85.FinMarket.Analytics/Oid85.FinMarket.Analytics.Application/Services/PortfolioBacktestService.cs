@@ -44,6 +44,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
             var response = new PortfolioBacktestResponse 
             { 
                 Series = 
@@ -53,7 +55,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     msftrSeries
                 ],
                 Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
-                MaxDrawdown = GetMaxDrawdownPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
                 DividendSum = _dividendSum.RoundTo(2),
                 MoneySum = _moneySum.RoundTo(2)
             };
@@ -70,7 +73,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 return ((last - first) / first * 100.0 / _historyPeriodInYears).RoundTo(2);
             }
 
-            double GetMaxDrawdownPercent(PortfolioBacktestSeries series)
+            List<double> GetDrawdownValues(PortfolioBacktestSeries series)
             {
                 List<double> equity = [.. series.Data.Select(x => x.Value ?? 0.0)];
                 List<double> drawdown = [];
@@ -87,7 +90,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     }                    
                 }
 
-                return drawdown.Min();
+                return drawdown;
             }
         }
 

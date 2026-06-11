@@ -73,7 +73,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     Value = scoreValue.RoundTo(2),
                     ColorFill = GetColorFill(),
-                    Description = string.Empty
+                    Description = string.Empty,
+                    Text = GetText()
                 }
             };
 
@@ -81,6 +82,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 if (scoreValue >= limitHi) return KnownColors.Green;
                 if (scoreValue >= limitLo) return KnownColors.Yellow;
+                return KnownColors.White;
+            }
+
+            string GetText()
+            {
+                if (scoreValue >= limitHi) return $"✅ {scoreValue.RoundTo(2)} из 12";
+                if (scoreValue >= limitLo) return $"⚠️ {scoreValue.RoundTo(2)} из 12";
                 return KnownColors.White;
             }
 

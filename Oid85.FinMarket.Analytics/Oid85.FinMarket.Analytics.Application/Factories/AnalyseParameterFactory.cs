@@ -375,7 +375,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Description = isDividendAristokrat ? "Дивидендный аристократ" : string.Empty,
                 ColorFill = isDividendAristokrat ? KnownColors.Green : KnownColors.White,
                 Ratio = isDividendAristokrat ? 1.0 : 0.0,
-                Text = "Компания платит дивиденды более 5 лет подряд"
+                Text = "✅ Компания платит дивиденды более 5 лет подряд"
             };
 
             return displayParameter;

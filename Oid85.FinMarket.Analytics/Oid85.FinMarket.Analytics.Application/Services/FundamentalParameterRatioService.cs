@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
+using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Models;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
@@ -25,7 +26,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ratio = 0.0,
                         Color = KnownColors.Red,
                         Description = $"P/E отрицательный ({metric.Pe.Value})",
-                        Text = $"P/E отрицательный ({metric.Pe.Value}). Компания понесла убытки в отчетном периоде. Сигнал финансовых трудностей, указывающий, что компания не окупается, а теряет акционерный капитал"
+                        Text = $"❗ P/E отрицательный ({metric.Pe.Value}). Компания понесла убытки в отчетном периоде. Сигнал финансовых трудностей, указывающий, что компания не окупается, а теряет акционерный капитал"
                     };
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
@@ -43,7 +44,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ratio = ratio, 
                         Color = KnownColors.Green, 
                         Description = $"P/E низкое в секторе ({metric.Pe.Value})а",
-                        Text = $"P/E низкое в секторе ({metric.Pe.Value}) - меньше, чем у 75% компаний сектора"
+                        Text = $"✅ P/E низкое в секторе ({metric.Pe.Value}) - меньше, чем у 75% компаний сектора"
                     };
                 
                 else if (ratio > 0.5) 
@@ -52,7 +53,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ratio = ratio, 
                         Color = KnownColors.LightGreen, 
                         Description = $"P/E ниже среднего в секторе ({metric.Pe.Value})",
-                        Text = $"P/E ниже среднего в секторе ({metric.Pe.Value}) - меньше, чем у 50% компаний сектора"
+                        Text = $"✅ P/E ниже среднего в секторе ({metric.Pe.Value}) - меньше, чем у 50% компаний сектора"
                     };
                 
                 else if (ratio > 0.25) 
@@ -61,7 +62,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ratio = ratio, 
                         Color = KnownColors.Yellow, 
                         Description = $"P/E выше среднего в секторе ({metric.Pe.Value})",
-                        Text = $"P/E выше среднего в секторе ({metric.Pe.Value}) - меньше, чем у 25% компаний сектора"
+                        Text = $"⚠️ P/E выше среднего в секторе ({metric.Pe.Value}) - меньше, чем у 25% компаний сектора"
                     };
                 
                 else 
@@ -70,7 +71,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ratio = 0.0,
                         Color = KnownColors.Red, 
                         Description = $"P/E высокое в секторе ({metric.Pe.Value})",
-                        Text = $"P/E высокое в секторе ({metric.Pe.Value})"
+                        Text = $"⚠️ P/E высокое в секторе ({metric.Pe.Value})"
                     };
             }
 
@@ -91,7 +92,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ratio = 0.0, 
                         Color = KnownColors.Red,
                         Description = $"P/BV отрицательный ({metric.Pbv.Value})",
-                        Text = $"P/BV отрицательный ({metric.Pbv.Value}). Собственный капитал компании отрицателен. Обязательства компании превышают стоимость всех её активов. Негативный сигнал, бизнес работает за счет заемных средств и имеет долги, превышающие активы"
+                        Text = $"❗ P/BV отрицательный ({metric.Pbv.Value}). Собственный капитал компании отрицателен. Обязательства компании превышают стоимость всех её активов. Негативный сигнал, бизнес работает за счет заемных средств и имеет долги, превышающие активы"
                     };
 
                 if (metric.Pbv.Value < 1.0)
@@ -99,8 +100,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ratio = 1.0,
                         Color = KnownColors.Green,
-                        Description = $"P/BV меньше 1.0 ({metric.Pbv.Value})",
-                        Text = $"P/BV меньше 1.0 ({metric.Pbv.Value}). Стоимость компании меньше её собственного капитала"
+                        Description = $"P/BV меньше единицы ({metric.Pbv.Value})",
+                        Text = $"✅ P/BV меньше единицы ({metric.Pbv.Value}). Стоимость компании меньше её собственного капитала"
                     };
                
                 if (metric.Pbv.Value >= 1.0) 
@@ -108,8 +109,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     { 
                         Ratio = 0.0, 
                         Color = KnownColors.Red,
-                        Description = $"P/BV больше 1.0 ({metric.Pbv.Value})",
-                        Text = $"P/BV больше 1.0 ({metric.Pbv.Value}). Стоимость компании превышает её балансовую стоимость"
+                        Description = $"P/BV больше единицы ({metric.Pbv.Value})",
+                        Text = $"⚠️ P/BV больше единицы ({metric.Pbv.Value}). Стоимость компании превышает её балансовую стоимость"
                     };
             }
 
@@ -144,14 +145,33 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (prevMetric.NetProfit.HasValue && metric.NetProfit.HasValue)
             {
+                double deltaPrc = Math.Abs((metric.NetProfit.Value - prevMetric.NetProfit.Value) / prevMetric.NetProfit.Value * 100.0).RoundTo(2);
+
                 if (metric.NetProfit.Value <= 0.0) 
-                    return new() { Color = KnownColors.Red, Description = "Отриц. чистая прибыль" };
+                    return new() 
+                    { 
+                        Color = KnownColors.Red, 
+                        Description = "Отриц. чистая прибыль",
+                        Text = "❗ Отрицательная чистая прибыль. Компания получила убыток"
+                    };
                 
                 if (metric.NetProfit.Value > 0.0 && metric.NetProfit.Value > prevMetric.NetProfit.Value) 
-                    return new() { Ratio = 1.0, Color = KnownColors.Green, Description = "Рост чистой прибыли" };
+                    return new() 
+                    { 
+                        Ratio = 1.0, 
+                        Color = KnownColors.Green,
+                        Description = "Рост чистой прибыли",
+                        Text = $"✅ Прибыль выросла на {deltaPrc} % по сравнению с предыдущим периодом"
+                    };
                 
                 if (metric.NetProfit.Value <= prevMetric.NetProfit.Value)
-                    return new() { Ratio = 0.75, Color = KnownColors.Yellow, Description = "Падение чистой прибыли" };
+                    return new() 
+                    { 
+                        Ratio = 0.75, 
+                        Color = KnownColors.Yellow, 
+                        Description = "Падение чистой прибыли",
+                        Text = $"⚠️ Прибыль сократилась на {deltaPrc} % по сравнению с предыдущим периодом"
+                    };
             }
 
             return new();
@@ -167,14 +187,33 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (prevMetric.Fcf.HasValue && metric.Fcf.HasValue)
             {
+                double deltaPrc = Math.Abs((metric.Fcf.Value - prevMetric.Fcf.Value) / prevMetric.Fcf.Value * 100.0).RoundTo(2);
+
                 if (metric.Fcf.Value <= 0.0)
-                    return new() { Color = KnownColors.Red, Description = "Отриц. FCF" };
+                    return new() 
+                    { 
+                        Color = KnownColors.Red, 
+                        Description = "Отриц. FCF",
+                        Text = "❗ Отрицательный свободный денежный поток (FCF)"
+                    };
 
                 if (metric.Fcf.Value > 0.0 && metric.Fcf.Value > prevMetric.Fcf.Value)
-                    return new() { Ratio = 1.0, Color = KnownColors.Green, Description = "Рост FCF" };
+                    return new() 
+                    { 
+                        Ratio = 1.0, 
+                        Color = KnownColors.Green, 
+                        Description = "Рост FCF",
+                        Text = $"✅ Свободный денежный поток (FCF) вырос на {deltaPrc} % по сравнению с предыдущим периодом"
+                    };
 
                 if (metric.Fcf.Value <= prevMetric.Fcf.Value)
-                    return new() { Ratio = 0.75, Color = KnownColors.Yellow, Description = "Падение FCF" };
+                    return new() 
+                    { 
+                        Ratio = 0.75, 
+                        Color = KnownColors.Yellow, 
+                        Description = "Падение FCF",
+                        Text = $"⚠️ Свободный денежный поток (FCF) сократился на {deltaPrc} % по сравнению с предыдущим периодом"
+                    };
             }
 
             return new();
@@ -190,14 +229,33 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (prevMetric.Eps.HasValue && metric.Eps.HasValue)
             {
+                double deltaPrc = Math.Abs((metric.Eps.Value - prevMetric.Eps.Value) / prevMetric.Eps.Value * 100.0).RoundTo(2);
+
                 if (metric.Eps.Value <= 0.0)
-                    return new() { Color = KnownColors.Red, Description = "Отриц. EPS" };
+                    return new() 
+                    { 
+                        Color = KnownColors.Red, 
+                        Description = "Отриц. EPS",
+                        Text = "❗ Отрицательная прибыль на акцию (EPS)"
+                    };
 
                 if (metric.Eps.Value > 0.0 && metric.Eps.Value > prevMetric.Eps.Value)
-                    return new() { Ratio = 1.0, Color = KnownColors.Green, Description = "Рост EPS" };
+                    return new() 
+                    {
+                        Ratio = 1.0, 
+                        Color = KnownColors.Green, 
+                        Description = "Рост EPS",
+                        Text = $"✅ Прибыль на акцию (EPS) выросла на {deltaPrc} % по сравнению с предыдущим периодом"
+                    };
 
                 if (metric.Eps.Value <= prevMetric.Eps.Value)
-                    return new() { Ratio = 0.75, Color = KnownColors.Yellow, Description = "Падение EPS" };
+                    return new() 
+                    { 
+                        Ratio = 0.75, 
+                        Color = KnownColors.Yellow, 
+                        Description = "Падение EPS",
+                        Text = $"⚠️ Прибыль на акцию (EPS) сократилась на {deltaPrc} % по сравнению с предыдущим периодом"
+                    };
             }
 
             return new();
@@ -211,7 +269,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (metric.NetDebt.HasValue)
             {
-                if (metric.NetDebt.Value <= 0.0) return new() { Color = KnownColors.Green, Description = "Отриц. долг" };
+                if (metric.NetDebt.Value <= 0.0) 
+                    return new() 
+                    { 
+                        Color = KnownColors.Green, 
+                        Description = "Отриц. долг",
+                        Text = "✅ У компании отрицательный долг"
+                    };
             }
 
             return new();
@@ -226,7 +290,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.Roa.HasValue)
             {
                 if (metric.Roa.Value <= 0.0)
-                    return new() { Color = KnownColors.Red, Description = "ROA отриц." };
+                    return new() 
+                    { 
+                        Color = KnownColors.Red, 
+                        Description = "ROA отриц.",
+                        Text = "❗ ROA отрицательный"
+                    };
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.Roa.HasValue).ToList();
@@ -238,16 +307,39 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) 
-                    return new() { Ratio = ratio, Color = KnownColors.Green, Description = $"ROA высокое в секторе - выше, чем у 75% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio, 
+                        Color = KnownColors.Green,
+                        Description = $"ROA высокое в секторе - выше, чем у 75% компаний сектора",
+                        Text = $"✅ ROA высокое в секторе ({metric.Roa.Value} %) - выше, чем у 75% компаний сектора"
+                    };
                 
                 else if (ratio > 0.5) 
-                    return new() { Ratio = ratio, Color = KnownColors.LightGreen, Description = $"ROA выше среднего в секторе - выше, чем у 50% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio, 
+                        Color = KnownColors.LightGreen, 
+                        Description = $"ROA выше среднего в секторе - выше, чем у 50% компаний сектора",
+                        Text = $"✅ ROA выше среднего в секторе ({metric.Roa.Value} %) - выше, чем у 50% компаний сектора"
+                    };
                 
                 else if (ratio > 0.25) 
-                    return new() { Ratio = ratio, Color = KnownColors.Yellow, Description = $"ROA ниже среднего в секторе - выше, чем у 25% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio, 
+                        Color = KnownColors.Yellow,
+                        Description = $"ROA ниже среднего в секторе - выше, чем у 25% компаний сектора",
+                        Text = $"⚠️ ROA ниже среднего в секторе ({metric.Roa.Value} %) - выше, чем у 25% компаний сектора"
+                    };
                 
                 else 
-                    return new() { Color = KnownColors.Red, Description = $"ROA низкое в секторе" };
+                    return new() 
+                    { 
+                        Color = KnownColors.Red,
+                        Description = $"ROA низкое в секторе",
+                        Text = $"⚠️ ROA низкое в секторе ({metric.Roa.Value} %)"
+                    };
             }
 
             return new();
@@ -262,7 +354,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.Roe.HasValue)
             {
                 if (metric.Roe.Value <= 0.0)
-                    return new() { Color = KnownColors.Red, Description = "ROE отриц." };
+                    return new() 
+                    { 
+                        Color = KnownColors.Red, 
+                        Description = "ROE отриц.",
+                        Text = "❗ ROE отрицательный"
+                    };
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.Roe.HasValue).ToList();
@@ -274,16 +371,39 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) 
-                    return new() { Ratio = ratio, Color = KnownColors.Green, Description = $"ROE высокое в секторе - выше, чем у 75% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio, 
+                        Color = KnownColors.Green, 
+                        Description = $"ROE высокое в секторе - выше, чем у 75% компаний сектора",
+                        Text = $"✅ ROE высокое в секторе ({metric.Roe.Value} %) - выше, чем у 75% компаний сектора"
+                    };
                 
                 else if (ratio > 0.5) 
-                    return new() { Ratio = ratio, Color = KnownColors.LightGreen, Description = $"ROE выше среднего в секторе - выше, чем у 50% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio,
+                        Color = KnownColors.LightGreen,
+                        Description = $"ROE выше среднего в секторе - выше, чем у 50% компаний сектора",
+                        Text = $"✅ ROE выше среднего в секторе ({metric.Roe.Value} %) - выше, чем у 50% компаний сектора"
+                    };
                 
                 else if (ratio > 0.25) 
-                    return new() { Ratio = ratio, Color = KnownColors.Yellow, Description = $"ROE ниже среднего в секторе - выше, чем у 25% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio, 
+                        Color = KnownColors.Yellow, 
+                        Description = $"ROE ниже среднего в секторе - выше, чем у 25% компаний сектора",
+                        Text = $"⚠️ ROE ниже среднего в секторе ({metric.Roe.Value} %) - выше, чем у 25% компаний сектора"
+                    };
                 
                 else 
-                    return new() { Color = KnownColors.Red, Description = $"ROE низкое в секторе" };
+                    return new() 
+                    {
+                        Color = KnownColors.Red,
+                        Description = $"ROE низкое в секторе",
+                        Text = $"⚠️ ROE низкое в секторе ({metric.Roe.Value} %)"
+                    };
             }
 
             return new();
@@ -298,7 +418,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.EvEbitda.HasValue)
             {
                 if (metric.EvEbitda.Value <= 0.0)
-                    return new() { Color = KnownColors.Red, Description = "EV/EBITDA отриц." };
+                    return new() 
+                    {
+                        Color = KnownColors.Red,
+                        Description = "EV/EBITDA отриц."
+                    };
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.EvEbitda.HasValue).ToList();
@@ -310,16 +434,36 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) 
-                    return new() { Ratio = ratio, Color = KnownColors.Green, Description = $"EV/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio, 
+                        Color = KnownColors.Green, 
+                        Description = $"EV/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора" 
+                    };
                 
                 else if (ratio > 0.5) 
-                    return new() { Ratio = ratio, Color = KnownColors.LightGreen, Description = $"EV/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio,
+                        Color = KnownColors.LightGreen,
+                        Description = $"EV/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора" 
+                    };
                 
                 else if (ratio > 0.25) 
-                    return new() { Ratio = ratio, Color = KnownColors.Yellow, Description = $"EV/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio,
+                        Color = KnownColors.Yellow, 
+                        Description = $"EV/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора" 
+                    };
                 
                 else 
-                    return new() { Ratio = ratio, Color = KnownColors.Red, Description = $"EV/EBITDA высокое в секторе" };
+                    return new() 
+                    { 
+                        Ratio = ratio,
+                        Color = KnownColors.Red, 
+                        Description = $"EV/EBITDA высокое в секторе" 
+                    };
             }
 
             return new();
@@ -334,7 +478,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.NetDebtEbitda.HasValue)
             {
                 if (metric.NetDebtEbitda.Value <= 0.0)
-                    return new() { Ratio = 1.0, Color = KnownColors.Green, Description = "NetDebt/EBITDA отриц." };
+                    return new() 
+                    { 
+                        Ratio = 1.0, 
+                        Color = KnownColors.Green,
+                        Description = "NetDebt/EBITDA отриц." 
+                    };
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.NetDebtEbitda.HasValue).ToList();
@@ -345,16 +494,36 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 double ratio = Convert.ToDouble(predicatCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) 
-                    return new() { Ratio = ratio, Color = KnownColors.Green, Description = $"NetDebt/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio,
+                        Color = KnownColors.Green,
+                        Description = $"NetDebt/EBITDA низкое в секторе - меньше, чем у 75% компаний сектора"
+                    };
 
                 else if (ratio > 0.5) 
-                    return new() { Ratio = ratio, Color = KnownColors.LightGreen, Description = $"NetDebt/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора" };
+                    return new()
+                    { 
+                        Ratio = ratio, 
+                        Color = KnownColors.LightGreen, 
+                        Description = $"NetDebt/EBITDA ниже среднего в секторе - меньше, чем у 50% компаний сектора" 
+                    };
 
                 else if (ratio > 0.25) 
-                    return new() { Ratio = ratio, Color = KnownColors.Yellow, Description = $"NetDebt/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора" };
+                    return new() 
+                    { 
+                        Ratio = ratio, 
+                        Color = KnownColors.Yellow, 
+                        Description = $"NetDebt/EBITDA выше среднего в секторе - меньше, чем у 25% компаний сектора" 
+                    };
 
                 else 
-                    return new() { Ratio = ratio, Color = KnownColors.Red, Description = $"NetDebt/EBITDA высокое в секторе" };
+                    return new() 
+                    {
+                        Ratio = ratio, 
+                        Color = KnownColors.Red, 
+                        Description = $"NetDebt/EBITDA высокое в секторе" 
+                    };
             }
 
             return new();
@@ -369,10 +538,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.DebtRatio.HasValue)
             {
                 if (metric.DebtRatio.Value >= 0.7) 
-                    return new() { Ratio = 0.0, Color = KnownColors.Yellow, Description = $"Высокая долговая нагрузка" };
+                    return new() 
+                    { 
+                        Ratio = 0.0, 
+                        Color = KnownColors.Yellow,
+                        Description = $"Высокая долговая нагрузка" 
+                    };
                 
                 else 
-                    return new() { Ratio = 1.0, Color = KnownColors.Green, Description = $"Нормальная долговая нагрузка" };
+                    return new() 
+                    { 
+                        Ratio = 1.0,
+                        Color = KnownColors.Green, 
+                        Description = $"Нормальная долговая нагрузка"
+                    };
             }
 
             return new();
@@ -387,10 +566,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.DebtEquity.HasValue)
             {
                 if (metric.DebtEquity.Value >= 2.0)
-                    return new() { Ratio = 0.0, Color = KnownColors.Yellow, Description = $"Высокая долговая нагрузка" };
+                    return new() 
+                    { 
+                        Ratio = 0.0,
+                        Color = KnownColors.Yellow, 
+                        Description = $"Высокая долговая нагрузка" 
+                    };
 
                 else
-                    return new() { Ratio = 1.0, Color = KnownColors.Green, Description = $"Нормальная долговая нагрузка" };
+                    return new() 
+                    { 
+                        Ratio = 1.0, 
+                        Color = KnownColors.Green,
+                        Description = $"Нормальная долговая нагрузка"
+                    };
             }
 
             return new();
@@ -405,7 +594,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.EbitdaRevenue.HasValue)
             {
                 if (metric.EbitdaRevenue.Value <= 0.0)
-                    return new() { Color = KnownColors.Red, Description = "EBITDA Margin отриц." };
+                    return new() 
+                    { 
+                        Color = KnownColors.Red, 
+                        Description = "EBITDA Margin отриц." 
+                    };
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
                 var sectorMetricValues = sectorMetrics.Where(x => x.EbitdaRevenue.HasValue).ToList();
@@ -417,16 +610,32 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
 
                 if (ratio > 0.75) 
-                    return new() { Color = KnownColors.Green, Description = $"EBITDA Margin высокое в секторе - выше, чем у 75% компаний сектора" };
+                    return new() 
+                    { 
+                        Color = KnownColors.Green,
+                        Description = $"EBITDA Margin высокое в секторе - выше, чем у 75% компаний сектора" 
+                    };
 
                 else if (ratio > 0.5) 
-                    return new() { Color = KnownColors.LightGreen, Description = $"EBITDA Margin выше среднего в секторе - выше, чем у 50% компаний сектора" };
+                    return new() 
+                    { 
+                        Color = KnownColors.LightGreen, 
+                        Description = $"EBITDA Margin выше среднего в секторе - выше, чем у 50% компаний сектора" 
+                    };
 
                 else if (ratio > 0.25) 
-                    return new() { Color = KnownColors.Yellow, Description = $"EBITDA Margin ниже среднего в секторе - выше, чем у 25% компаний сектора" };
+                    return new() 
+                    { 
+                        Color = KnownColors.Yellow,
+                        Description = $"EBITDA Margin ниже среднего в секторе - выше, чем у 25% компаний сектора"
+                    };
 
                 else 
-                    return new() { Color = KnownColors.Red, Description = $"EBITDA Margin низкое в секторе" };
+                    return new() 
+                    {
+                        Color = KnownColors.Red, 
+                        Description = $"EBITDA Margin низкое в секторе" 
+                    };
             }
 
             return new();
@@ -441,13 +650,25 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.DividendYield.HasValue)
             {
                 if (metric.DividendYield.Value == 0.0) 
-                    return new() { Color = KnownColors.Red, Description = "Дивидендов нет" };
+                    return new()
+                    { 
+                        Color = KnownColors.Red, 
+                        Description = "Дивидендов нет"
+                    };
 
                 if (metric.DividendYield.Value > 10.0) 
-                    return new() { Color = KnownColors.Green, Description = "Дивидендная доходность больше 10 %" };
+                    return new()
+                    { 
+                        Color = KnownColors.Green,
+                        Description = "Дивидендная доходность больше 10 %"
+                    };
 
                 if (metric.DividendYield.Value > 0.0) 
-                    return new() { Color = KnownColors.Yellow, Description = "Дивидендная доходность до 10 %" };
+                    return new()
+                    { 
+                        Color = KnownColors.Yellow, 
+                        Description = "Дивидендная доходность до 10 %" 
+                    };
             }
 
             return new();
@@ -462,10 +683,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (metric.DeltaMinMax.HasValue)
             {
                 if (metric.DeltaMinMax.Value < 0.0) 
-                    return new() { Color = KnownColors.Red, Description = "Падение цены" };
+                    return new() 
+                    { 
+                        Color = KnownColors.Red,
+                        Description = "Падение цены" 
+                    };
 
                 if (metric.DeltaMinMax.Value > 0.0) 
-                    return new() { Color = KnownColors.Green, Description = "Рост цены" };
+                    return new() 
+                    {
+                        Color = KnownColors.Green,
+                        Description = "Рост цены"
+                    };
             }
 
             return new();

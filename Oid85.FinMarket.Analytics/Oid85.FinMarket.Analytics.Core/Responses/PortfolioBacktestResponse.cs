@@ -5,6 +5,7 @@
         public List<PortfolioBacktestSeries> Series { get; set; } = [];
         public double Yield { get; set; }
         public double MaxDrawdown { get; set; }
+        public double CurrentDrawdown { get; set; }
         public double DividendSum { get; set; }
         public double MoneySum { get; set; }
     }

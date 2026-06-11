@@ -2,5 +2,6 @@
 {
     public class GetPortfolioPositionListRequest
     {
+        public string? OrderField { get; set; }
     }
 }

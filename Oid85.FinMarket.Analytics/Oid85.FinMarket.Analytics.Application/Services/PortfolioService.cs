@@ -205,16 +205,31 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.Sector += $" ({sectorPercent}) %";
             }
 
-            int number = 1;
+            List<PortfolioPositionListItem> orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)];
 
-            foreach (var portfolioPosition in portfolioPositions)
-                portfolioPosition.Number = number++;
+            if (request.OrderField is not null)
+            {
+                if (request.OrderField == string.Empty)
+                    orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)];
+
+                else if (request.OrderField == "Percent")
+                    orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)];
+
+                else if (request.OrderField == "CurrentDividendYield")
+                    orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.CurrentDividendYield)];
+
+                else if (request.OrderField == "DeltaPercent")
+                    orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.DeltaPercent)];
+            }
 
             var response = new GetPortfolioPositionListResponse()
             {
                 TotalSum = totalSum,
-                PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)]
+                PortfolioPositions = orderedPortfolioPositions
             };
+
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Number = i + 1;
 
             return response;
         }
