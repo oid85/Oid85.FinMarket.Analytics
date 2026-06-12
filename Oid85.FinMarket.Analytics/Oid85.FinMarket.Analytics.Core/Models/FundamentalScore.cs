@@ -13,6 +13,8 @@
         public AnalyseRatioParameter<double?>? Eps { get; set; } = null;
         public AnalyseRatioParameter<double?>? Roa { get; set; } = null;
         public AnalyseRatioParameter<double?>? Roe { get; set; } = null;
+        public AnalyseRatioParameter<double?>? EbitdaRevenue { get; set; } = null;
+        public AnalyseRatioParameter<double?>? DividendYield { get; set; } = null;
         public AnalyseRatioParameter<bool?>? DividendAristocrat { get; set; } = null;
         public AnalyseParameter<double> Score { get; set; } = new();
     }

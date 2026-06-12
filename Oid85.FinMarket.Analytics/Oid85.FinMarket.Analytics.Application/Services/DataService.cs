@@ -428,7 +428,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     var roe = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Roe)?.Value.RoundTo(2);
                     var fcf = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Fcf)?.Value.RoundTo(2);
                     var eps = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Eps)?.Value.RoundTo(2);
-                    var dividend = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Dividend)?.Value.RoundTo(2);
+                    var dividend = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Dividend)?.Value.RoundTo(4);
                     var netProfit = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value.RoundTo(2);
                     var revenue = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.Revenue)?.Value.RoundTo(2);
                     var marketCap = fundamentalParametersByPeriod.Find(x => x.Type == KnownFundamentalParameterTypes.MarketCap)?.Value.RoundTo(2);

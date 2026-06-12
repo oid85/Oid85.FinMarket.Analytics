@@ -367,16 +367,48 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
             if (metric04 is not null && metric04.Dividend.HasValue && metric04.Dividend.Value > 0) count++;
             if (metric05 is not null && metric05.Dividend.HasValue && metric05.Dividend.Value > 0) count++;
 
-            bool isDividendAristokrat = count >= 4;
+            bool isDividendAristokrat = count == 5;
 
             var displayParameter = new AnalyseRatioParameter<bool?>
             {
                 Value = isDividendAristokrat,
-                Description = isDividendAristokrat ? "Дивидендный аристократ" : string.Empty,
-                ColorFill = isDividendAristokrat ? KnownColors.Green : KnownColors.White,
-                Ratio = isDividendAristokrat ? 1.0 : 0.0,
-                Text = "✅ Компания платит дивиденды более 5 лет подряд"
+                Description = GetDescription(),
+                ColorFill = GetColor(),
+                Ratio = GetRatio(),
+                Text = GetText()
             };
+
+            double GetRatio()
+            {
+                if (count == 5) return 1.0;
+                if (count == 4) return 0.75;
+                if (count == 3 || count == 2 || count == 1) return 0.5;
+                return 0.0;
+            }
+
+            string GetColor()
+            {
+                if (count == 5) return KnownColors.Green;
+                if (count == 4) return KnownColors.Green;
+                if (count == 3 || count == 2 || count == 1) return KnownColors.Yellow;
+                return KnownColors.Red;
+            }
+
+            string GetDescription()
+            {
+                if (count == 5) return "Дивидендный аристократ";
+                if (count == 4) return "Стабильные дивиденды";
+                if (count == 3 || count == 2 || count == 1) return "Дивиденды не стабильны";
+                return "Дивидендов нет";
+            }
+
+            string GetText()
+            {
+                if (count == 5) return "✅ Компания платит дивиденды более 5 лет подряд. 🏆 Дивидендный аристократ";
+                if (count == 4) return "✅ Компания за последние 5 лет пропустила выплату дивидендов только 1 раз";
+                if (count == 3 || count == 2 || count == 1) return "⚠️ Компания за последние 5 лет платит дивиденды не каждый год";
+                return "❗ Компания за последние 5 лет дивиденды не выплачивала";
+            }
 
             return displayParameter;
         }

@@ -35,6 +35,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var eps = await GetEpsAsync(ticker);
             var roa = await GetRoaAsync(ticker);
             var roe = await GetRoeAsync(ticker);
+            var ebitdaRevenue = await GetEbitdaRevenueAsync(ticker);
+            var dividendYield = await GetDividendYieldAsync(ticker);
             var dividendAristocrat = await GetDividendAristocratAsync(ticker);
 
             double scoreValue = pe?.Ratio ?? 0.0;
@@ -48,12 +50,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += eps?.Ratio ?? 0.0;
             scoreValue += roa?.Ratio ?? 0.0;
             scoreValue += roe?.Ratio ?? 0.0;
+            if (!isBanks) scoreValue += ebitdaRevenue?.Ratio ?? 0.0;
+            scoreValue += dividendYield?.Ratio ?? 0.0;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0;
 
-            int criteriaCount = isBanks ? 10 : 12;
+            int criteriaCount = isBanks ? 11 : 14;
 
             double limitLo = criteriaCount / 3.0;
             double limitHi = limitLo * 2.0;
+
+            double scoreValueScale = scoreValue / criteriaCount * 10.0;
 
             var score = new FundamentalScore
             {
@@ -68,10 +74,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Eps = eps,
                 Roa = roa,
                 Roe = roe,
+                EbitdaRevenue = ebitdaRevenue,
+                DividendYield = dividendYield,
                 DividendAristocrat = dividendAristocrat,
                 Score = new AnalyseParameter<double>
                 {
-                    Value = scoreValue.RoundTo(2),
+                    Value = scoreValueScale.RoundTo(2),
                     ColorFill = GetColorFill(),
                     Description = string.Empty,
                     Text = GetText()
@@ -87,9 +95,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             string GetText()
             {
-                if (scoreValue >= limitHi) return $"✅ {scoreValue.RoundTo(2)} из 12";
-                if (scoreValue >= limitLo) return $"⚠️ {scoreValue.RoundTo(2)} из 12";
-                return KnownColors.White;
+                if (scoreValue >= limitHi) return $"✅ {scoreValueScale.RoundTo(2)} из 10";
+                if (scoreValue >= limitLo) return $"⚠️ {scoreValueScale.RoundTo(2)} из 10";
+                return $"❗{scoreValueScale.RoundTo(2)} из 10";
             }
 
             return score;
@@ -255,6 +263,36 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (result!.Value.HasValue) return result;
 
             result = await analyseParameterFactory.CreateRoeAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetEbitdaRevenueAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateEbitdaRevenueAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateEbitdaRevenueAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetDividendYieldAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateDividendYieldAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result!.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateDividendYieldAsync(ticker, year);
             if (result is null) return new();
 
             return result;
