@@ -338,7 +338,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new()
                     {
                         Date = dates[i],
-                        Value = totalSum.RoundTo(2)
+                        Value = (totalSum / 1_000_000.0).RoundTo(2)
                     });
 
                 void UpdatePrices()
@@ -445,7 +445,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new()
                     {
                         Date = dates[i],
-                        Value = (size * analyseDataContext.GetPrice(indexTicker, dates[i])).RoundTo(2)
+                        Value = ((size * analyseDataContext.GetPrice(indexTicker, dates[i])) / 1_000_000.0).RoundTo(2)
                     });
 
             return series;
