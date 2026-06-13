@@ -49,6 +49,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.PortfolioName == "LifePortfolio")
                 return await LifePortfolioBacktestAsync();
 
+            if (request.PortfolioName == "Top5Moex")
+                return await Top5MoexPortfolioBacktestAsync();
+
+            if (request.PortfolioName == "Top10Moex")
+                return await Top10MoexPortfolioBacktestAsync();
+
+            if (request.PortfolioName == "Sber")
+                return await SberPortfolioBacktestAsync();
+
+            if (request.PortfolioName == "SberGold")
+                return await SberGoldPortfolioBacktestAsync();
+
+            if (request.PortfolioName == "GasOil")
+                return await GasOilPortfolioBacktestAsync();
+
+            if (request.PortfolioName == "GasOilGold")
+                return await GasOilGoldPortfolioBacktestAsync();
+
             return await LifePortfolioBacktestAsync();
         }
 
@@ -57,6 +75,209 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
                 (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
                 "Портфель", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
+        }
+
+        private async Task<PortfolioBacktestResponse> Top5MoexPortfolioBacktestAsync()
+        {
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                new Dictionary<string, double>
+                {
+                    { "LKOH", 1.0 },
+                    { "SBER", 1.0 },
+                    { "GAZP", 1.0 },
+                    { "YDEX", 1.0 },
+                    { "TATN", 1.0 }
+                },
+                "ТОП-5 IMOEX", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
+        }
+
+        private async Task<PortfolioBacktestResponse> Top10MoexPortfolioBacktestAsync()
+        {
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                new Dictionary<string, double>
+                {
+                    { "LKOH", 1.0 },
+                    { "SBER", 1.0 },
+                    { "GAZP", 1.0 },
+                    { "YDEX", 1.0 },
+                    { "TATN", 1.0 },
+                    { "T", 1.0 },
+                    { "NVTK", 1.0 },
+                    { "GMKN", 1.0 },
+                    { "PLZL", 1.0 },
+                    { "VTBR", 1.0 }
+                },
+                "ТОП-10 IMOEX", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
+        }
+
+        private async Task<PortfolioBacktestResponse> SberPortfolioBacktestAsync()
+        {
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                new Dictionary<string, double>
+                {
+                    { "SBER", 1.0 }
+                },
+                "SBER", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
+        }
+
+        private async Task<PortfolioBacktestResponse> SberGoldPortfolioBacktestAsync()
+        {
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                new Dictionary<string, double>
+                {
+                    { "SBER", 1.0 },
+                    { "TGLD", 1.0 }
+                },
+                "SBER + TGLD", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
+        }
+
+        private async Task<PortfolioBacktestResponse> GasOilPortfolioBacktestAsync()
+        {
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                new Dictionary<string, double>
+                {
+                    { "LKOH", 1.0 },
+                    { "NVTK", 1.0 },
+                    { "TATNP", 1.0 },
+                    { "SNGSP", 1.0 },
+                    { "BANEP", 1.0 }
+                },
+                "Нефтегаз", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
+        }
+
+        private async Task<PortfolioBacktestResponse> GasOilGoldPortfolioBacktestAsync()
+        {
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                new Dictionary<string, double>
+                {
+                    { "LKOH", 1.0 },
+                    { "NVTK", 1.0 },
+                    { "TATNP", 1.0 },
+                    { "SNGSP", 1.0 },
+                    { "BANEP", 1.0 },
+                    { "TGLD", 2.0 }
+                },
+                "Нефтегаз + Золото", KnownColors.Green, true);
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
