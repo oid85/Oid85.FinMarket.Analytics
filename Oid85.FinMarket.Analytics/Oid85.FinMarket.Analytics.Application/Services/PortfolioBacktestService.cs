@@ -26,6 +26,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         private double _dividendSum = 0.0;
         private double _moneySum = 0.0;
 
+        private DateOnly _startDate;
+        private DateOnly _endDate;
+
         public async Task<PortfolioBacktestResponse> PortfolioBacktestAsync(PortfolioBacktestRequest request)
         {
             _historyPeriodInYears = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestHistoryPeriodInYears)) ?? "0");
@@ -33,6 +36,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             _addMoneyPeriodInDays = Convert.ToInt32((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestAddMoneyPeriodInDays)) ?? "0");
             _startMoneySum = Convert.ToDouble((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestStartMoneySum)) ?? "0.0");
             _addMoneySum = Convert.ToDouble((await parameterRepository.GetParameterValueAsync(KnownParameters.BacktestAddMoneySum)) ?? "0.0");
+
+            _startDate = DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * _historyPeriodInYears));            
+            _endDate = DateOnly.FromDateTime(DateTime.Today);
+
+            if (request.PortfolioName is null)
+                return await LifePortfolioBacktestAsync();
+
+            if (request.PortfolioName == string.Empty)
+                return await LifePortfolioBacktestAsync();
+
+            if (request.PortfolioName == "LifePortfolio")
+                return await LifePortfolioBacktestAsync();
 
             return await LifePortfolioBacktestAsync();
         }
@@ -80,9 +95,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
-            var dates = DateUtils.GetDates(
-                DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * _historyPeriodInYears)),
-                DateOnly.FromDateTime(DateTime.Today));
+            var dates = DateUtils.GetDates(_startDate, _endDate);
 
             var portfolioSeries = new PortfolioBacktestSeries()
             {
@@ -194,9 +207,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
-            var dates = DateUtils.GetDates(
-                DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * _historyPeriodInYears)),
-                DateOnly.FromDateTime(DateTime.Today));
+            var dates = DateUtils.GetDates(_startDate, _endDate);
 
             var price = analyseDataContext.GetPrice(indexTicker, dates[0])!.Value;
             var size = Math.Truncate(_startMoneySum / price);
@@ -226,7 +237,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (last == 0.0) return 0.0;
 
-            return ((last - first) / first * 100.0 / _historyPeriodInYears).RoundTo(2);
+            var years = (_endDate.ToDateTime(TimeOnly.MinValue) - _startDate.ToDateTime(TimeOnly.MaxValue)).TotalDays / 365.0;
+
+            return ((last - first) / first * 100.0 / years).RoundTo(2);
         }
 
         private List<double> GetDrawdownValues(PortfolioBacktestSeries series)

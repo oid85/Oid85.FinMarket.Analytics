@@ -2,5 +2,6 @@
 {
     public class PortfolioBacktestRequest
     {
+        public string? PortfolioName { get; set; }
     }
 }
