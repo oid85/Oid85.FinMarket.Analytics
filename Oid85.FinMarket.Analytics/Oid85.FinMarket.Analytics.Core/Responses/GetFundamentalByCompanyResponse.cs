@@ -150,6 +150,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public double? BenchmarkChange { get; set; } = null;
 
         /// <summary>
+        /// Падение от годового максимума
+        /// </summary>
+        public double FallingFromMax { get; set; }
+
+        /// <summary>
         /// Дивидендная политика
         /// </summary>
         public string? DividendPolyticInfo { get; set; } = null;
@@ -167,7 +172,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         /// <summary>
         /// Идея
         /// </summary>
-        public string? Concept { get; set; } = null;
+        public string? Concept { get; set; } = null;        
     }
 
     public class PriceDiagramDataPoint

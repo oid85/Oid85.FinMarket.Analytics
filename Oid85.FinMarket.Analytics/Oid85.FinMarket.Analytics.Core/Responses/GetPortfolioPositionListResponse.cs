@@ -29,6 +29,11 @@
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// Коэффициент по фундаментальному рейтингу
+        /// </summary>
+        public double FundamentalScoreCoefficient { get; set; }
+
+        /// <summary>
         /// Дивидендный коэффициент
         /// </summary>
         public double DividendCoefficient { get; set; }
@@ -91,6 +96,6 @@
         /// <summary>
         /// Текущая дивидендная доходность
         /// </summary>
-        public double? CurrentDividendYield { get; set; }
+        public double? CurrentDividendYield { get; set; }        
     }
 }

@@ -322,6 +322,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var concept = analyseDataContext.GetExtData(instrument.Ticker)?.Concept;
             var trendState = TrendStateHelper.GetTrendState(ultimateSmoothers);
 
+            var candles = analyseDataContext.GetCandles(instrument.Ticker).Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddYears(-1)));
+            double maxPrice = candles.Select(x => x.Close).Max();
+            double lastCandlePrice = candles.Last().Close;
+            double fallingFromMax = (-1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0).RoundTo(2);
+
             var response = new GetFundamentalByCompanyResponse
             {
                 Ticker = instrument.Ticker,
@@ -330,6 +335,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Sector = instrument.Sector,
                 Price = price,
                 TrendState = trendState.Message,
+                FallingFromMax = fallingFromMax,
                 Dividend = dividend,
                 ConsensusForecast = consensusForecast,
                 NataliaBaffetovnaForecast = nataliaBaffetovnaForecast,

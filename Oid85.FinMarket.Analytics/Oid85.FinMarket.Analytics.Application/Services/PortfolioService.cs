@@ -10,6 +10,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 {
     /// <inheritdoc />
     public class PortfolioService(
+        IFundamentalScoreService fundamentalScoreService,
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         ILifePortfolioPositionRepository lifePortfolioPositionRepository,
@@ -144,6 +145,17 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Price = candleData[instrument.Ticker].Last().Close
                 };
 
+                double fundamentalScoreCoefficient = 10.0;
+
+                var fundamentalScore = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);
+
+                fundamentalScoreCoefficient = fundamentalScore?.Score.Value ?? 0.0;
+
+                if (instrument.Ticker == "TGLD")
+                    fundamentalScoreCoefficient = 10.0;
+
+                portfolioPosition.FundamentalScoreCoefficient = fundamentalScoreCoefficient.RoundTo(2);
+
                 double dividendCoefficient = 1.0;
 
                 if (dividendData.TryGetValue(instrument.Ticker, out Core.Models.Dividend? value))
@@ -151,7 +163,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     double hiLimitCoefficient = 3.0;
                     double loLimitCoefficient = 2.0;
                     double hiLimitYield = currentKeyRate;
-                    double loLimitYield = hiLimitYield / 2.0;
+                    double loLimitYield = hiLimitYield / 3.0 * 2.0;
 
                     double yield = value.Yield!.Value;
 
@@ -160,7 +172,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     else dividendCoefficient = (yield - loLimitYield) * (hiLimitCoefficient - loLimitCoefficient) / (hiLimitYield - loLimitYield) + loLimitCoefficient;
                 }
 
-                portfolioPosition.DividendCoefficient = Math.Round(dividendCoefficient, 2);
+                portfolioPosition.DividendCoefficient = dividendCoefficient.RoundTo(2);
 
                 portfolioPosition.TrendCoefficient = 1.0;
 
@@ -168,7 +180,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 portfolioPosition.MarketCapCoefficient = instrument.MarketCapCoefficient;
 
-                portfolioPosition.ResultCoefficient = Math.Round(portfolioPosition.DividendCoefficient * portfolioPosition.MarketCapCoefficient * portfolioPosition.ManualCoefficient, 2);
+                portfolioPosition.ResultCoefficient = (
+                    portfolioPosition.FundamentalScoreCoefficient *
+                    portfolioPosition.DividendCoefficient *
+                    portfolioPosition.MarketCapCoefficient * 
+                    portfolioPosition.ManualCoefficient).RoundTo(2);
 
                 portfolioPositions.Add(portfolioPosition);
             }
