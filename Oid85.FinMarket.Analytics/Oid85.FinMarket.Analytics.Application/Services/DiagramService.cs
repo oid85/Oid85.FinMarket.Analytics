@@ -1,8 +1,10 @@
-﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+﻿using System.Diagnostics.Metrics;
+using Oid85.FinMarket.Analytics.Application.Helpers;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Enums;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -17,8 +19,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     {
         public async Task<GetClosePriceDiagramResponse> GetClosePriceDiagramAsync(GetClosePriceDiagramRequest request)
         {
-            var allInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
-                .ToList();
+            var allInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.ToList();
 
             List<string> indexTickers = [KnownIndexTickers.IMOEX, KnownIndexTickers.MCFTR, KnownIndexTickers.RGBI, KnownIndexTickers.RVI];
 
@@ -80,6 +81,58 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 ];
 
             return response;
+        }
+
+        public async Task<GetTrendAggregateDiagramResponse> GetTrendAggregateDiagramAsync(GetTrendAggregateDiagramRequest request)
+        {
+            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
+                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .ToList();
+
+            var tickers = instruments.Select(x => x.Ticker).ToList();
+
+            var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
+
+            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
+            var to = DateOnly.FromDateTime(DateTime.Today);
+            var dates = DateUtils.GetDates(from, to);
+
+            var response = new GetTrendAggregateDiagramResponse();
+
+            var data = new List<GetTrendAggregateDiagramDateValueResponse>();
+
+            foreach (var date in dates)
+            {
+                int countTrendUp = 0;
+
+                foreach (var ticker in tickers)
+                {
+                    var trendState = GetTrendStateByDate(date, ticker);
+
+                    if (trendState == TrendState.UpTrend)
+                        countTrendUp++;
+                }
+
+                data.Add(
+                    new ()
+                    {
+                        Date = date,
+                        Value = (double?) countTrendUp
+                    });
+            }
+
+            response.Data = data;
+
+            return response;
+
+            TrendState GetTrendStateByDate(DateOnly date, string ticker)
+            {
+                if (!ultimateSmootherData.TryGetValue(ticker, out var ultimateSmoother)) return TrendState.NoTrend;
+                var ultimateSmootherFiltered = ultimateSmoother.Where(x => x.Date <= date).OrderBy(x => x.Date).TakeLast(5).ToList();
+                if (ultimateSmootherFiltered.Count < 5)  return TrendState.NoTrend;
+                var trendState = TrendStateHelper.GetTrendState(ultimateSmootherFiltered);
+                return trendState.TrendState;
+            }
         }
     }
 }

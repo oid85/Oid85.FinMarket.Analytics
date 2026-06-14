@@ -28,4 +28,17 @@ public class DiagramsController(
         GetResponseAsync(
             () => diagramService.GetClosePriceDiagramAsync(request),
             result => new BaseResponse<GetClosePriceDiagramResponse> { Result = result });
+
+    /// <summary>
+    /// График индикатора TrendAggregate
+    /// </summary>
+    [HttpPost("trend-aggregate")]
+    [ProducesResponseType(typeof(BaseResponse<GetTrendAggregateDiagramResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetTrendAggregateDiagramResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetTrendAggregateDiagramResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetTrendAggregateDiagramAsync(
+        [FromBody] GetTrendAggregateDiagramRequest request) =>
+        GetResponseAsync(
+            () => diagramService.GetTrendAggregateDiagramAsync(request),
+            result => new BaseResponse<GetTrendAggregateDiagramResponse> { Result = result });
 }
