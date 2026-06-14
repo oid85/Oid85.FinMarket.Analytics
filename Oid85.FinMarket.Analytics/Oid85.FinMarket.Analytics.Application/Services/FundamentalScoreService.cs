@@ -39,22 +39,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var dividendYield = await GetDividendYieldAsync(ticker);
             var dividendAristocrat = await GetDividendAristocratAsync(ticker);
 
-            double scoreValue = pe?.Ratio ?? 0.0;
-            scoreValue += pbv?.Ratio ?? 0.0;
-            if (!isBanks) scoreValue += evEbitda?.Ratio ?? 0.0;
-            if (!isBanks) scoreValue += netDebtEbitda?.Ratio ?? 0.0;
-            scoreValue += debtRatio?.Ratio ?? 0.0;
-            scoreValue += debtEquity?.Ratio ?? 0.0;
-            scoreValue += netProfit?.Ratio ?? 0.0;
-            scoreValue += fcf?.Ratio ?? 0.0;
-            scoreValue += eps?.Ratio ?? 0.0;
-            scoreValue += roa?.Ratio ?? 0.0;
-            scoreValue += roe?.Ratio ?? 0.0;
-            if (!isBanks) scoreValue += ebitdaRevenue?.Ratio ?? 0.0;
-            scoreValue += dividendYield?.Ratio ?? 0.0;
-            scoreValue += dividendAristocrat?.Ratio ?? 0.0;
+            int criteriaCount = 0;
 
-            int criteriaCount = isBanks ? 11 : 14;
+            double scoreValue = pe?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += pbv?.Ratio ?? 0.0; criteriaCount++;
+            if (!isBanks) scoreValue += evEbitda?.Ratio ?? 0.0; criteriaCount++;
+            if (!isBanks) scoreValue += netDebtEbitda?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += debtRatio?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += debtEquity?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += netProfit?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += fcf?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += eps?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += roa?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += roe?.Ratio ?? 0.0; criteriaCount++;
+            if (!isBanks) scoreValue += ebitdaRevenue?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += dividendYield?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue += dividendAristocrat?.Ratio ?? 0.0; criteriaCount++;
+
+            if (isBanks) criteriaCount -= 3;
 
             double limitLo = criteriaCount / 3.0;
             double limitHi = limitLo * 2.0;
