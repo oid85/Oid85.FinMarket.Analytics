@@ -125,7 +125,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new ()
                     {
                         Date = date,
-                        Value = (double?) countTrendUp
+                        Value = (Convert.ToDouble(countTrendUp) / Convert.ToDouble(tickers.Count) * 100.0).RoundTo(2)
                     });
             }
 
