@@ -95,7 +95,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
 
-            var from = DateOnly.FromDateTime(DateTime.Today.AddMonths(-6));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddMonths(-3));
             var to = DateOnly.FromDateTime(DateTime.Today);
             var dates = DateUtils.GetDates(from, to);
 
