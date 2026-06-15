@@ -221,6 +221,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.Sector += $" ({sectorPercent}) %";
             }
 
+            foreach (var portfolioPosition in portfolioPositions)
+            {
+                var candles = analyseDataContext.GetCandles(portfolioPosition.Ticker)
+                    .Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddMonths(-1)))
+                    .OrderBy(x => x.Date)
+                    .ToList();
+
+                double first = candles.First().Close;
+                double last = candles.Last().Close;
+
+                portfolioPosition.MonthDeltaPricePercent = ((last - first) / first * 100.0).RoundTo(2);
+            }
+
             List<PortfolioPositionListItem> orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)];
 
             if (request.OrderField is not null)
@@ -236,6 +249,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 else if (request.OrderField == "DeltaPercent")
                     orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.DeltaPercent)];
+
+                else if (request.OrderField == "MonthDeltaPricePercent")
+                    orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.MonthDeltaPricePercent)];
             }
 
             var response = new GetPortfolioPositionListResponse()

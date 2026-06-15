@@ -96,6 +96,11 @@
         /// <summary>
         /// Текущая дивидендная доходность
         /// </summary>
-        public double? CurrentDividendYield { get; set; }        
+        public double? CurrentDividendYield { get; set; }
+        
+        /// <summary>
+        /// Изменение цены за последний месяц в процентах
+        /// </summary>
+        public double MonthDeltaPricePercent { get; set; }
     }
 }
