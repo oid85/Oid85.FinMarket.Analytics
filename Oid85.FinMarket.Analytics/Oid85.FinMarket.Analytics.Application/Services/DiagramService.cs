@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Metrics;
+using System.Drawing;
 using Oid85.FinMarket.Analytics.Application.Helpers;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
@@ -85,21 +86,28 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<GetTrendAggregateDiagramResponse> GetTrendAggregateDiagramAsync(GetTrendAggregateDiagramRequest request)
         {
-            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments
+            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments                
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.InPortfolio)
                 .ToList();
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
 
-            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddMonths(-6));
             var to = DateOnly.FromDateTime(DateTime.Today);
             var dates = DateUtils.GetDates(from, to);
 
             var response = new GetTrendAggregateDiagramResponse();
-
-            var data = new List<GetTrendAggregateDiagramDateValueResponse>();
+            
+            var trendAggregateSeries = new TrendAggregateSeries()
+            {
+                Name = $"Акции с трендом вверх",
+                Color = KnownColors.Black,
+                ColorFill = KnownColors.Green,
+                Data = []
+            };
 
             foreach (var date in dates)
             {
@@ -113,7 +121,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         countTrendUp++;
                 }
 
-                data.Add(
+                trendAggregateSeries.Data.Add(
                     new ()
                     {
                         Date = date,
@@ -121,7 +129,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     });
             }
 
-            response.Data = data;
+            response.Series = [ trendAggregateSeries ];
 
             return response;
 

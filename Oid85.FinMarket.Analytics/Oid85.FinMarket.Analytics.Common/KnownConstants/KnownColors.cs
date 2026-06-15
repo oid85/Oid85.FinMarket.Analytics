@@ -8,7 +8,8 @@ public static class KnownColors
     public const string LightRed = "#FA8072";
     public const string Yellow = "#FFFF99";
     public const string LightYellow = "#FAFFB8";
-    public const string Green = "#00CC66";    
+    public const string DarkGreen = "#006400";
+    public const string Green = "#00CC66";
     public const string LightGreen = "#C1F5C1";
     public const string Blue = "#191970";
     public const string LightBlue = "#357EC7";

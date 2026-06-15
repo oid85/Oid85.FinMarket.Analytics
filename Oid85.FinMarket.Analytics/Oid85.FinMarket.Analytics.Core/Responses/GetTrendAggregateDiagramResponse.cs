@@ -2,12 +2,20 @@
 {
     public class GetTrendAggregateDiagramResponse
     {
-        public List<GetTrendAggregateDiagramDateValueResponse> Data { get; set; } = [];
+        public List<TrendAggregateSeries> Series { get; set; } = [];
     }
 
-    public class GetTrendAggregateDiagramDateValueResponse
+    public class TrendAggregateSeries
     {
-        public DateOnly? Date { get; set; } = null;
-        public double? Value { get; set; } = null;
+        public string Name { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+        public string ColorFill { get; set; } = string.Empty;
+        public List<TrendAggregateSeriesItem> Data { get; set; } = [];
     }
+
+    public class TrendAggregateSeriesItem
+    {
+        public DateOnly Date { get; set; }
+        public double? Value { get; set; } = null;
+    }	
 }
