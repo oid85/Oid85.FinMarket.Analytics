@@ -54,9 +54,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += roe?.Ratio ?? 0.0; criteriaCount++;
             if (!isBanks) scoreValue += ebitdaRevenue?.Ratio ?? 0.0; else scoreValue++; criteriaCount++;
             scoreValue += dividendYield?.Ratio ?? 0.0; criteriaCount++;
-            scoreValue += dividendAristocrat?.Ratio ?? 0.0; criteriaCount++;
-
-            // if (isBanks) criteriaCount -= 3;
+            scoreValue += dividendAristocrat?.Ratio ?? 0.0; criteriaCount++;            
 
             double limitLo = criteriaCount / 3.0;
             double limitHi = limitLo * 2.0;
