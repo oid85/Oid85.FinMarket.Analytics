@@ -234,6 +234,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 portfolioPosition.MonthDeltaPricePercent = ((last - first) / first * 100.0).RoundTo(2);
             }
 
+            var buyRecommendationPositionTickers = portfolioPositions
+                .Where(x => x.DeltaPercent < 0.0)
+                .Where(x => x.MonthDeltaPricePercent < 0.0)
+                .Select(x => x.Ticker)
+                .ToList();
+
+            for (int i = 0; i < portfolioPositions.Count; i++)
+            {
+                if (buyRecommendationPositionTickers.Contains(portfolioPositions[i].Ticker))
+                    portfolioPositions[i].Recommendation = "Докупить";
+            }
+
             List<PortfolioPositionListItem> orderedPortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)];
 
             if (request.OrderField is not null)

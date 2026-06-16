@@ -102,5 +102,10 @@
         /// Изменение цены за последний месяц в процентах
         /// </summary>
         public double MonthDeltaPricePercent { get; set; }
+
+        /// <summary>
+        /// Рекомендация
+        /// </summary>
+        public string Recommendation { get; set; }
     }
 }
