@@ -43,8 +43,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             double scoreValue = pe?.Ratio ?? 0.0; criteriaCount++;
             scoreValue += pbv?.Ratio ?? 0.0; criteriaCount++;
-            if (!isBanks) scoreValue += evEbitda?.Ratio ?? 0.0; criteriaCount++;
-            if (!isBanks) scoreValue += netDebtEbitda?.Ratio ?? 0.0; criteriaCount++;
+            if (!isBanks) scoreValue += evEbitda?.Ratio ?? 0.0; else scoreValue++; criteriaCount++;
+            if (!isBanks) scoreValue += netDebtEbitda?.Ratio ?? 0.0; else scoreValue++; criteriaCount++;
             scoreValue += debtRatio?.Ratio ?? 0.0; criteriaCount++;
             scoreValue += debtEquity?.Ratio ?? 0.0; criteriaCount++;
             scoreValue += netProfit?.Ratio ?? 0.0; criteriaCount++;
@@ -52,11 +52,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             scoreValue += eps?.Ratio ?? 0.0; criteriaCount++;
             scoreValue += roa?.Ratio ?? 0.0; criteriaCount++;
             scoreValue += roe?.Ratio ?? 0.0; criteriaCount++;
-            if (!isBanks) scoreValue += ebitdaRevenue?.Ratio ?? 0.0; criteriaCount++;
+            if (!isBanks) scoreValue += ebitdaRevenue?.Ratio ?? 0.0; else scoreValue++; criteriaCount++;
             scoreValue += dividendYield?.Ratio ?? 0.0; criteriaCount++;
             scoreValue += dividendAristocrat?.Ratio ?? 0.0; criteriaCount++;
 
-            if (isBanks) criteriaCount -= 3;
+            // if (isBanks) criteriaCount -= 3;
 
             double limitLo = criteriaCount / 3.0;
             double limitHi = limitLo * 2.0;
