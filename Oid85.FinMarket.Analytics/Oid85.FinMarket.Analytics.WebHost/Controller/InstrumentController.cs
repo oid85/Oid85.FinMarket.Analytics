@@ -43,19 +43,6 @@ public class InstrumentController(
             result => new BaseResponse<GetSectorListResponse> { Result = result });
 
     /// <summary>
-    /// Выделить инструмент
-    /// </summary>
-    [HttpPost("select")]
-    [ProducesResponseType(typeof(BaseResponse<SelectInstrumentResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<SelectInstrumentResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<SelectInstrumentResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> SelectInstrumentAsync(
-        [FromBody] SelectInstrumentRequest request) =>
-        GetResponseAsync(
-            () => instrumentService.SelectInstrumentAsync(request),
-            result => new BaseResponse<SelectInstrumentResponse> { Result = result });
-
-    /// <summary>
     /// Выделить инструмент в портфеле
     /// </summary>
     [HttpPost("portfolio")]

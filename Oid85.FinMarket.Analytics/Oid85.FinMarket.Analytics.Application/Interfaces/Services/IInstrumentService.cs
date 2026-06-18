@@ -15,11 +15,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<GetAnalyticInstrumentListResponse> GetAnalyticInstrumentListAsync(GetAnalyticInstrumentListRequest request);
 
         /// <summary>
-        /// Выделить инструмент
-        /// </summary>
-        Task<SelectInstrumentResponse> SelectInstrumentAsync(SelectInstrumentRequest request);
-
-        /// <summary>
         /// Выделить инструмент в портфеле
         /// </summary>
         Task<PortfolioInstrumentResponse> PortfolioInstrumentAsync(PortfolioInstrumentRequest request);

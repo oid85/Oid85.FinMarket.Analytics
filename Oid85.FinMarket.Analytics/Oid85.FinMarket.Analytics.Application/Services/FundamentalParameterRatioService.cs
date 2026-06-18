@@ -138,13 +138,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<FundamentalParameterRatio> GetRatioNetProfitAsync(string ticker, string period)
         {
+            var prevPrevMetric = await GetMetricAsync(ticker, (int.Parse(period) - 2).ToString());
             var prevMetric = await GetMetricAsync(ticker, (int.Parse(period) - 1).ToString());
             var metric = await GetMetricAsync(ticker, period);
 
+            if (prevPrevMetric is null) return new();
             if (prevMetric is null) return new();
             if (metric is null) return new();
 
-            if (prevMetric.NetProfit.HasValue && metric.NetProfit.HasValue)
+            if (prevPrevMetric.NetProfit.HasValue && prevMetric.NetProfit.HasValue && metric.NetProfit.HasValue)
             {
                 double deltaPrc = Math.Abs((metric.NetProfit.Value - prevMetric.NetProfit.Value) / prevMetric.NetProfit.Value * 100.0).RoundTo(2);
 
@@ -155,23 +157,48 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Description = "Отриц. чистая прибыль",
                         Text = "❗ Отрицательная чистая прибыль. Компания получила убыток"
                     };
-                
-                if (metric.NetProfit.Value > 0.0 && metric.NetProfit.Value > prevMetric.NetProfit.Value) 
+
+                if (prevPrevMetric.NetProfit.Value > 0.0 &&
+                    prevMetric.NetProfit.Value > 0.0 &&
+                    metric.NetProfit.Value > 0.0 &&
+                    metric.NetProfit.Value > prevMetric.NetProfit.Value &&
+                    prevMetric.NetProfit.Value > prevPrevMetric.NetProfit.Value)
+                    return new()
+                    {
+                        Ratio = 1.0,
+                        Color = KnownColors.Green,
+                        Description = "Рост чистой прибыли 2 года подряд",
+                        Text = $"✅ Прибыль выросла на {deltaPrc} % по сравнению с предыдущим периодом. Рост прибыли 2 года подряд"
+                    };
+
+                if (prevMetric.NetProfit.Value > 0.0 &&
+                    metric.NetProfit.Value > 0.0 &&
+                    metric.NetProfit.Value > prevMetric.NetProfit.Value) 
                     return new() 
                     { 
-                        Ratio = 1.0, 
-                        Color = KnownColors.Green,
+                        Ratio = 0.75,
+                        Color = KnownColors.LightGreen,
                         Description = "Рост чистой прибыли",
                         Text = $"✅ Прибыль выросла на {deltaPrc} % по сравнению с предыдущим периодом"
                     };
                 
-                if (metric.NetProfit.Value <= prevMetric.NetProfit.Value)
+                if (metric.NetProfit.Value < prevMetric.NetProfit.Value)
                     return new() 
                     { 
-                        Ratio = 0.75, 
+                        Ratio = 0.5, 
                         Color = KnownColors.Yellow, 
                         Description = "Падение чистой прибыли",
                         Text = $"⚠️ Прибыль сократилась на {deltaPrc} % по сравнению с предыдущим периодом"
+                    };
+
+                if (metric.NetProfit.Value < prevMetric.NetProfit.Value &&
+                    prevMetric.NetProfit.Value < prevPrevMetric.NetProfit.Value)
+                    return new()
+                    {
+                        Ratio = 0.25,
+                        Color = KnownColors.LightRed,
+                        Description = "Падение чистой прибыли",
+                        Text = $"❗ Прибыль сократилась на {deltaPrc} % по сравнению с предыдущим периодом. Падение прибыли 2 года подряд"
                     };
             }
 
