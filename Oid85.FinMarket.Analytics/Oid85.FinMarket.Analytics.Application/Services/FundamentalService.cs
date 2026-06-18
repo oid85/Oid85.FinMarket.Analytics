@@ -303,12 +303,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
             var dividend = analyseDataContext.GetDividend(instrument.Ticker);
-            var consensusForecast = analyseDataContext.GetConsensusForecast(instrument.Ticker);
-            var nataliaBaffetovnaForecast = analyseDataContext.GetNataliaBaffetovnaForecast(instrument.Ticker);
-            var financeMarkerForecast = analyseDataContext.GetFinanceMarkerForecast(instrument.Ticker);
-            var vladProDengiForecast = analyseDataContext.GetVladProDengiForecast(instrument.Ticker);
-            var mozgovikForecast = analyseDataContext.GetMozgovikForecast(instrument.Ticker);
-            var predictNetProfitForecast = analyseDataContext.GetPredictNetProfitForecast(instrument.Ticker);
             var fundamentalScore = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);
             var benchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker);
             var companyFundamentalMetric = analyseDataContext.GetFundamentalMetric(instrument.Ticker);
@@ -337,12 +331,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 TrendState = trendState.Message,
                 FallingFromMax = fallingFromMax,
                 Dividend = dividend,
-                ConsensusForecast = consensusForecast,
-                NataliaBaffetovnaForecast = nataliaBaffetovnaForecast,
-                FinanceMarkerForecast = financeMarkerForecast,
-                VladProDengiForecast = vladProDengiForecast,
-                MozgovikForecast = mozgovikForecast,
-                PredictNetProfitForecast = predictNetProfitForecast,
                 FundamentalScore = fundamentalScore,
                 BenchmarkChange = benchmarkChange,
                 CompanyFundamentalMetric = companyFundamentalMetric,
@@ -450,12 +438,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         InPortfolio = instrument?.InPortfolio ?? false,
                         Score = score,
                         Metric = analyseDataContext.GetFundamentalMetric(ticker),
-                        Forecast = analyseDataContext.GetConsensusForecast(ticker),
-                        NataliaBaffetovnaForecast = analyseDataContext.GetNataliaBaffetovnaForecast(ticker),
-                        FinanceMarkerForecast = analyseDataContext.GetFinanceMarkerForecast(ticker),
-                        VladProDengiForecast = analyseDataContext.GetVladProDengiForecast(ticker),
-                        MozgovikForecast = analyseDataContext.GetMozgovikForecast(ticker),
-                        PredictNetProfitForecast = analyseDataContext.GetPredictNetProfitForecast(ticker),
                         FallingFromMax = fallingFromMax.RoundTo(2)
                     };
 

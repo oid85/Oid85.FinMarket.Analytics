@@ -25,15 +25,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-            var dividendData = await dataService.GetDividendDataAsync(tickers);
-            var forecastData = await dataService.GetConsensusForecastDataAsync();
-            var nataliaBaffetovnaForecastData = await dataService.GetNataliaBaffetovnaForecastDataAsync(tickers);
-            var financeMarkerForecastData = await dataService.GetFinanceMarkerForecastDataAsync(tickers);
-            var vladProDengiForecastData = await dataService.GetVladProDengiForecastDataAsync(tickers);
-            var mozgovikForecastData = await dataService.GetMozgovikForecastDataAsync(tickers);
-            var predictNetProfitForecastData = await dataService.GetPredictNetProfitForecastDataAsync(tickers);
-            var fillFundamentalData = await dataService.GetFillFundamentalDataAsync(tickers);
-            var extData = await dataService.GetExtDataAsync(tickers);
             var dates = DateUtils.GetDates(from, to);
 
             var response = new GetTrendDynamicResponse
@@ -61,16 +52,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,
                         InPortfolio = instrument.InPortfolio,
-                        DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? Math.Round(value.Yield!.Value, 1) : null,
-                        Score = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker),
-                        Forecast = forecastData.TryGetValue(instrument.Ticker, out Forecast? forecast) ? forecast : null,
-                        NataliaBaffetovnaForecast = nataliaBaffetovnaForecastData.TryGetValue(instrument.Ticker, out Forecast? nataliaBaffetovnaForecast) ? nataliaBaffetovnaForecast : null,
-                        FinanceMarkerForecast = financeMarkerForecastData.TryGetValue(instrument.Ticker, out Forecast? financeMarkerForecast) ? financeMarkerForecast : null,
-                        VladProDengiForecast = vladProDengiForecastData.TryGetValue(instrument.Ticker, out Forecast? vladProDengiForecast) ? vladProDengiForecast : null,
-                        MozgovikForecast = mozgovikForecastData.TryGetValue(instrument.Ticker, out Forecast? mozgovikForecast) ? mozgovikForecast : null,
-                        PredictNetProfitForecast = predictNetProfitForecastData.TryGetValue(instrument.Ticker, out Forecast? predictNetProfitForecast) ? predictNetProfitForecast : null,
-                        FillData = fillFundamentalData.TryGetValue(instrument.Ticker, out bool fillFundamental) ? fillFundamental : false,
-                        Concept = (extData.TryGetValue(instrument.Ticker, out var extDataItem) ? extDataItem.Concept : null) ?? "...",
                         Items = []
                     };
 

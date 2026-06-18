@@ -105,36 +105,6 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public Dividend? Dividend { get; set; } = null;
 
         /// <summary>
-        /// Консенсус прогноз
-        /// </summary>
-        public Forecast? ConsensusForecast { get; set; } = null;
-
-        /// <summary>
-        /// Прогноз от NataliaBaffetovna
-        /// </summary>
-        public Forecast? NataliaBaffetovnaForecast { get; set; } = null;
-
-        /// <summary>
-        /// Прогноз от FinanceMarker
-        /// </summary>
-        public Forecast? FinanceMarkerForecast { get; set; } = null;
-
-        /// <summary>
-        /// Прогноз от VladProDengi
-        /// </summary>
-        public Forecast? VladProDengiForecast { get; set; } = null;
-
-        /// <summary>
-        /// Прогноз от Mozgovik
-        /// </summary>
-        public Forecast? MozgovikForecast { get; set; } = null;
-
-        /// <summary>
-        /// Прогноз методом прогноза чистой прибыли
-        /// </summary>
-        public Forecast? PredictNetProfitForecast { get; set; } = null;
-
-        /// <summary>
         /// Рейтинг на основе фунд. анализа от 0 до 1
         /// </summary>
         public FundamentalScore? FundamentalScore { get; set; } = null;

@@ -16,12 +16,6 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public bool InPortfolio { get; set; }
         public FundamentalScore? Score { get; set; } = null;
         public FundamentalMetric? Metric { get; set; } = null;
-        public Forecast? Forecast { get; set; } = null;
-        public Forecast? NataliaBaffetovnaForecast { get; set; } = null;
-        public Forecast? FinanceMarkerForecast { get; set; } = null;
-        public Forecast? VladProDengiForecast { get; set; } = null;
-        public Forecast? MozgovikForecast { get; set; } = null;
-        public Forecast? PredictNetProfitForecast { get; set; } = null;
         public double? FallingFromMax { get; set; } = null;
     }
 }
