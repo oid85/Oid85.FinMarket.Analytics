@@ -2,7 +2,7 @@
 
 namespace Oid85.FinMarket.Analytics.Core.Responses
 {
-    public class GetAnalyticFundamentalRatingListResponse
+    public class GetFundamentalRatingListResponse
     {
         public List<FundamentalRatingItem> Items { get; set; } = [];
     }

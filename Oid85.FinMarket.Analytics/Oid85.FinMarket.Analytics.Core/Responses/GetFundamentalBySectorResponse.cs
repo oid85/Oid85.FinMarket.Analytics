@@ -2,28 +2,30 @@
 {
     public class GetFundamentalBySectorResponse
     {
-        public List<GetFundamentalBySectorItemResponse> PriceDiagram { get; set; } = [];
-        public List<GetFundamentalBySectorItemResponse> RevenueDiagram { get; set; } = [];
-        public List<GetFundamentalBySectorItemResponse> NetProfitDiagram { get; set; } = [];
-        public List<GetFundamentalBySectorItemResponse> DividendDiagram { get; set; } = [];
-        public List<GetFundamentalBySectorBubbleDiagramPointResponse> BubbleDiagram { get; set; } = [];
+        public string Sector { get; set; } = string.Empty;
+        public List<FundamentalBySectorItem> PriceDiagram { get; set; } = [];
+        public List<FundamentalBySectorItem> NetProfitDiagram { get; set; } = [];
+        public List<FundamentalBySectorItem> NetDebtDiagram { get; set; } = [];
+        public List<FundamentalBySectorItem> DividendDiagram { get; set; } = [];
+        public List<FundamentalBySectorBubbleDiagramPoint> BubbleDiagram { get; set; } = [];
+        public List<FundamentalRatingItem> FundamentalRatingItems { get; set; } = [];
     }
 
-    public class GetFundamentalBySectorItemResponse
+    public class FundamentalBySectorItem
     {
         public string Ticker { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public bool InPortfolio { get; set; }
-        public List<GetFundamentalBySectorDateValueResponse> Data { get; set; } = [];
+        public List<FundamentalBySectorDateValue> Data { get; set; } = [];
     }
 
-    public class GetFundamentalBySectorDateValueResponse
+    public class FundamentalBySectorDateValue
     {
         public string? Date { get; set; } = null;
         public double? Value { get; set; } = null;
     }
 
-    public class GetFundamentalBySectorBubbleDiagramPointResponse
+    public class FundamentalBySectorBubbleDiagramPoint
     {
         public string Ticker { get; set; }
         public double? NetDebtEbitda { get; set; }

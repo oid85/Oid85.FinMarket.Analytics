@@ -33,14 +33,14 @@ public class FundamentalParameterController(
     /// Получить рейтинг по фундаментальным данным
     /// </summary>
     [HttpPost("rating/list")]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalRatingListResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalRatingListResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<GetAnalyticFundamentalRatingListResponse>), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalRatingListResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalRatingListResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalRatingListResponse>), StatusCodes.Status500InternalServerError)]
     public Task<IActionResult> GetAnalyticFundamentalRatingListAsync(
-        [FromBody] GetAnalyticFundamentalRatingListRequest request) =>
+        [FromBody] GetFundamentalRatingListRequest request) =>
         GetResponseAsync(
             () => fundamentalParameterService.GetAnalyticFundamentalRatingListAsync(request),
-            result => new BaseResponse<GetAnalyticFundamentalRatingListResponse> { Result = result });
+            result => new BaseResponse<GetFundamentalRatingListResponse> { Result = result });
 
     /// <summary>
     /// Создать или изменить фундаментальный параметр

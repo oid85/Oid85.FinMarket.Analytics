@@ -219,29 +219,33 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var priceData = await dataService.GetClosePriceDataAsync(tickers);
 
-            var response = new GetFundamentalBySectorResponse();
-
-            foreach (var instrument in instruments)
-                response.PriceDiagram.Add(
-                    new GetFundamentalBySectorItemResponse()
-                    {
-                        Ticker = instrument.Ticker,
-                        Name = instrument.Name,
-                        InPortfolio = instrument.InPortfolio,
-                        Data = [.. priceData[instrument.Ticker].Select(x => new GetFundamentalBySectorDateValueResponse { Date = x.Date.ToString(), Value = x.Value })]
-                    });
+            var response = new GetFundamentalBySectorResponse { Sector = request.Sector };
 
             foreach (var instrument in instruments)
             {
-                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Revenue, periods);
+                var priceDataMonth = priceData[instrument.Ticker].Where(x => x.Date.Day == 1).OrderBy(x => x.Date).ToList();
 
-                response.RevenueDiagram.Add(
-                    new GetFundamentalBySectorItemResponse()
+                response.PriceDiagram.Add(
+                    new()
                     {
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,
                         InPortfolio = instrument.InPortfolio,
-                        Data = [.. fundamentalParameterValues.Select(x => new GetFundamentalBySectorDateValueResponse { Date = x.Period, Value = x.Value })]
+                        Data = [.. priceDataMonth.Select(x => new FundamentalBySectorDateValue { Date = x.Date.ToString(), Value = x.Value })]
+                    });
+            }
+
+            foreach (var instrument in instruments)
+            {
+                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods);
+
+                response.NetDebtDiagram.Add(
+                    new ()
+                    {
+                        Ticker = instrument.Ticker,
+                        Name = instrument.Name,
+                        InPortfolio = instrument.InPortfolio,
+                        Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
 
@@ -250,12 +254,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, periods);
 
                 response.NetProfitDiagram.Add(
-                    new GetFundamentalBySectorItemResponse()
+                    new ()
                     {
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,
                         InPortfolio = instrument.InPortfolio,
-                        Data = [.. fundamentalParameterValues.Select(x => new GetFundamentalBySectorDateValueResponse { Date = x.Period, Value = x.Value })]
+                        Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
 
@@ -264,12 +268,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, periods);
 
                 response.DividendDiagram.Add(
-                    new GetFundamentalBySectorItemResponse()
+                    new ()
                     {
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,
                         InPortfolio = instrument.InPortfolio,
-                        Data = [.. fundamentalParameterValues.Select(x => new GetFundamentalBySectorDateValueResponse { Date = x.Period, Value = x.Value })]
+                        Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
 
@@ -281,7 +285,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).LastOrDefault(x => x.Value != 0.0).Value;
 
                 response.BubbleDiagram.Add(
-                    new GetFundamentalBySectorBubbleDiagramPointResponse
+                    new ()
                     {
                         Ticker = instrument.Ticker,
                         EvEbitda = ev.Div(ebitda).RoundTo(2),
@@ -289,6 +293,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         MarketCap = marketCap
                     });
             }
+
+            response.FundamentalRatingItems = (await GetAnalyticFundamentalRatingListAsync(new () { Sector = request.Sector })).Items;
 
             return response;
         }
@@ -395,11 +401,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<GetAnalyticFundamentalRatingListResponse> GetAnalyticFundamentalRatingListAsync(GetAnalyticFundamentalRatingListRequest request)
+        public async Task<GetFundamentalRatingListResponse> GetAnalyticFundamentalRatingListAsync(GetFundamentalRatingListRequest request)
         {
             var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? [])
-                .Where(x => x.Type == KnownInstrumentTypes.Share)                
+                .Where(x => x.Type == KnownInstrumentTypes.Share)                 
                 .ToList();
+
+            if (request.Sector is not null)
+                instruments = [.. instruments.Where(x => x.Sector == request.Sector)];
 
             var sectors = (await instrumentService.GetSectorListAsync(new ())).Sectors;
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
@@ -445,7 +454,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 }
             }
 
-            var response = new GetAnalyticFundamentalRatingListResponse { Items = [.. items.OrderByDescending(x => x.Score?.Score.Value)] };
+            var response = new GetFundamentalRatingListResponse { Items = [.. items.OrderByDescending(x => x.Score?.Score.Value)] };
 
             int number = 1; foreach (var item in response.Items) item.Number = number++;
 

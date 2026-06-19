@@ -36,6 +36,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Получить рейтинг по фундаментальным данным
         /// </summary>
-        Task<GetAnalyticFundamentalRatingListResponse> GetAnalyticFundamentalRatingListAsync(GetAnalyticFundamentalRatingListRequest request);
+        Task<GetFundamentalRatingListResponse> GetAnalyticFundamentalRatingListAsync(GetFundamentalRatingListRequest request);
     }
 }

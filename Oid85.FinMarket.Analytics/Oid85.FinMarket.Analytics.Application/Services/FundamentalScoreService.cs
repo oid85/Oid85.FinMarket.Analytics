@@ -80,20 +80,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Score = new AnalyseParameter<double>
                 {
                     Value = scoreValueScale.RoundTo(2),
-                    ColorFill = GetColorFill(),
+                    ColorFill = GetScoreColorFill(),
                     Description = string.Empty,
-                    Text = GetText()
+                    Text = GetScoreText()
                 }
             };
 
-            string GetColorFill()
+            string GetScoreColorFill()
             {
                 if (scoreValue >= limitHi) return KnownColors.Green;
                 if (scoreValue >= limitLo) return KnownColors.Yellow;
                 return KnownColors.White;
             }
 
-            string GetText()
+            string GetScoreText()
             {
                 if (scoreValue >= limitHi) return $"✅ {scoreValueScale.RoundTo(2)} из 10";
                 if (scoreValue >= limitLo) return $"⚠️ {scoreValueScale.RoundTo(2)} из 10";

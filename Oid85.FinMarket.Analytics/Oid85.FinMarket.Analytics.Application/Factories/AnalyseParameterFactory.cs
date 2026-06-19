@@ -373,7 +373,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                     Value = true,
                     Ratio = 1.0,
                     ColorFill = KnownColors.Green,
-                    Description = "Дивидендный аристократ",                                        
+                    Description = "✅ 🏆 Дивидендный аристократ",                                        
                     Text = "✅ Компания платит дивиденды более 5 лет подряд. 🏆 Дивидендный аристократ"
                 };
 
@@ -383,7 +383,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                     Value = false,
                     Ratio = 0.75,
                     ColorFill = KnownColors.LightGreen,
-                    Description = "Стабильные дивиденды",
+                    Description = "✅ Стабильные дивиденды",
                     Text = "✅ Компания за последние 5 лет пропустила выплату дивидендов только 1 раз"
                 };
 
@@ -393,7 +393,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                     Value = false,
                     Ratio = 0.5,
                     ColorFill = KnownColors.Yellow,
-                    Description = "Дивиденды не стабильны",
+                    Description = "⚠️ Дивиденды не стабильны",
                     Text = "⚠️ Компания за последние 5 лет платит дивиденды не каждый год"
                 };
 
@@ -402,7 +402,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                 Value = false,
                 Ratio = 0.0,
                 ColorFill = KnownColors.Red,
-                Description = "Дивидендов нет",
+                Description = "❗ Дивидендов нет",
                 Text = "❗ Компания за последние 5 лет дивиденды не выплачивала"
             };
         }

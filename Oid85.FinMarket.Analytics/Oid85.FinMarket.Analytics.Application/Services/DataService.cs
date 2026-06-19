@@ -87,7 +87,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<Dictionary<string, List<DateValue<double>>>> GetClosePriceDataAsync(List<string> tickers)
         {
-            var years = int.Parse((await parameterRepository.GetParameterValueAsync(KnownParameters.DiagramPeriodLongYears)) ?? "3");
+            var years = int.Parse((await parameterRepository.GetParameterValueAsync(KnownParameters.DiagramPeriodLongYears)) ?? "5");
             var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * years));
             var to = DateOnly.FromDateTime(DateTime.Today);
 
