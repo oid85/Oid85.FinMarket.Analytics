@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Metrics;
-using System.Drawing;
-using Oid85.FinMarket.Analytics.Application.Helpers;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;

@@ -25,6 +25,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBondAnalyseService, BondAnalyseService>();
         services.AddScoped<IDiagramService, DiagramService>();
         services.AddScoped<IFundamentalParameterRatioService, FundamentalParameterRatioService>();
+        services.AddScoped<IArbitrageService, ArbitrageService>();
+
         services.AddScoped<IAnalyseParameterFactory, AnalyseParameterFactory>();
     }
 }
