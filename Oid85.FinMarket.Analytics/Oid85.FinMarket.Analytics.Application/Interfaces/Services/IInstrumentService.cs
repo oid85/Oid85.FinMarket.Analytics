@@ -12,6 +12,11 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Получить список инструментов
         /// </summary>
+        Task<List<Instrument>> GetInstrumentListAsync();
+
+        /// <summary>
+        /// Получить список инструментов
+        /// </summary>
         Task<GetAnalyticInstrumentListResponse> GetAnalyticInstrumentListAsync(GetAnalyticInstrumentListRequest request);
 
         /// <summary>
@@ -33,5 +38,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить список секторов
         /// </summary>
         Task<GetSectorListResponse> GetSectorListAsync(GetSectorListRequest request);
+
+        /// <summary>
+        /// Получить цены инструментов по тикеру
+        /// </summary>
+        Task<Dictionary<string, double>> GetInstrumentPricesAsync(List<string> tickers);
     }
 }

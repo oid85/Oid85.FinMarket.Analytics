@@ -39,6 +39,10 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients
             await GetResponseAsync<GetInstrumentListRequest, GetInstrumentListResponse>("/api/instruments/list", request);
 
         /// <inheritdoc />
+        public async Task<GetInstrumentPriceResponse> GetInstrumentPriceAsync(GetInstrumentPriceRequest request) =>
+            await GetResponseAsync<GetInstrumentPriceRequest, GetInstrumentPriceResponse>("/api/instruments/price", request);
+
+        /// <inheritdoc />
         public async Task<GetFundamentalParameterListResponse> GetFundamentalParameterListAsync(GetFundamentalParameterListRequest request) =>
             await GetResponseAsync<GetFundamentalParameterListRequest, GetFundamentalParameterListResponse>("/api/fundamental-parameters/list", request);
 

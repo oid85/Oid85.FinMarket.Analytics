@@ -15,6 +15,30 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         : IInstrumentService
     {
         /// <inheritdoc />
+        public async Task<List<Instrument>> GetInstrumentListAsync()
+        {
+            var instruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
+            var storageInstruments = await GetStorageInstrumentAsync();
+
+            foreach (var instrument in instruments)
+            {
+                var storageInstrument = storageInstruments.Find(x => x.Ticker == instrument.Ticker);
+
+                if (storageInstrument is not null)
+                {
+                    instrument.Currency = storageInstrument.Currency;
+                    instrument.LastPrice = storageInstrument.LastPrice;
+                    instrument.Lot = storageInstrument.Lot;
+                    instrument.MaturityDate = storageInstrument.MaturityDate;
+                    instrument.Nkd = storageInstrument.Nkd;
+                    instrument.Nominal = storageInstrument.Nominal;
+                }
+            }
+
+            return instruments;
+        }
+
+        /// <inheritdoc />
         public async Task<GetAnalyticInstrumentListResponse> GetAnalyticInstrumentListAsync(GetAnalyticInstrumentListRequest request)
         {
             var instruments = (await instrumentRepository.GetInstrumentsAsync()) ?? [];
@@ -55,10 +79,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<List<Instrument>> GetStorageInstrumentAsync()
-        {
-            var response = await storageApiClient.GetInstrumentListAsync(new());
-            return response.Result.Instruments
+        public async Task<List<Instrument>> GetStorageInstrumentAsync() => 
+            (await storageApiClient.GetInstrumentListAsync(new())).Result.Instruments
                 .Select(x =>
                 new Instrument
                 {
@@ -73,7 +95,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Lot = x.Lot
                 })
                 .ToList();
-        }
 
         /// <inheritdoc />
         public async Task SyncInstrumentListAsync()
@@ -115,5 +136,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             return new GetSectorListResponse { Sectors = sectors };
         }
+
+        /// <inheritdoc />
+        public async Task<Dictionary<string, double>> GetInstrumentPricesAsync(List<string> tickers) =>
+            (await storageApiClient.GetInstrumentPriceAsync(new() { Tickers = tickers }))
+            .Result
+            .Items
+            .ToDictionary(k => k.Ticker, v => v.Price);
     }
 }
