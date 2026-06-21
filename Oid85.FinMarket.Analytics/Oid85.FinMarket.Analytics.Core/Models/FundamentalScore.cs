@@ -2,6 +2,7 @@
 {
     public class FundamentalScore
     {
+        public AnalyseRatioParameter<double?>? MarketCap { get; set; } = null;
         public AnalyseRatioParameter<double?>? Pe { get; set; } = null;
         public AnalyseRatioParameter<double?>? Pbv { get; set; } = null;
         public AnalyseRatioParameter<double?>? EvEbitda { get; set; } = null;

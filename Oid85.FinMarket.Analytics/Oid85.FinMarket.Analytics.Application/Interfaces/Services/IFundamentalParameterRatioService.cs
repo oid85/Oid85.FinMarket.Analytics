@@ -5,6 +5,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
     public interface IFundamentalParameterRatioService
     {
+        Task<FundamentalParameterRatio> GetRatioMarketCapAsync(string ticker, string period);
         Task<FundamentalParameterRatio> GetRatioPeAsync(string ticker, string period);
         Task<FundamentalParameterRatio> GetRatioPbvAsync(string ticker, string period);
         Task<FundamentalParameterRatio> GetRatioRevenueAsync(string ticker, string period);

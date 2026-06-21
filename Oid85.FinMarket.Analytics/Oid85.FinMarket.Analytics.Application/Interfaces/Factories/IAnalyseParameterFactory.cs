@@ -4,6 +4,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Factories
 {
     public interface IAnalyseParameterFactory
     {
+        Task<AnalyseRatioParameter<double?>?> CreateMarketCapAsync(string ticker, string period);
         Task<AnalyseRatioParameter<double?>?> CreatePeAsync(string ticker, string period);
         Task<AnalyseRatioParameter<double?>?> CreatePbvAsync(string ticker, string period);
         Task<AnalyseRatioParameter<double?>?> CreateRevenueAsync(string ticker, string period);

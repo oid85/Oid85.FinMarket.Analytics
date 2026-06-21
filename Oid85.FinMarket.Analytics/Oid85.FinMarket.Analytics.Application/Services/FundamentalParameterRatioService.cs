@@ -13,6 +13,44 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IDataService dataService)
         : IFundamentalParameterRatioService
     {
+        public async Task<FundamentalParameterRatio> GetRatioMarketCapAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return new();
+
+            if (metric.MarketCap.HasValue)
+            {
+                if (metric.MarketCap.Value >= 700.0)
+                    return new()
+                    {
+                        Ratio = 1.0,
+                        Color = KnownColors.Green,
+                        Description = "✅ Большая",
+                        Text = $"✅ Компания с большой капитализацией ({metric.MarketCap.Value} млрд. руб)"
+                    };
+
+                if (metric.MarketCap.Value >= 150.0)
+                    return new()
+                    {
+                        Ratio = 0.75,
+                        Color = KnownColors.LightGreen,
+                        Description = "✅ Средняя",
+                        Text = $"✅ Компания со средней капитализацией ({metric.MarketCap.Value} млрд. руб)"
+                    };
+
+                return new()
+                {
+                    Ratio = 0.5,
+                    Color = KnownColors.Yellow,
+                    Description = "✅ Малая",
+                    Text = $"✅ Компания с малой капитализацией ({metric.MarketCap.Value} млрд. руб)"
+                };
+            }
+
+            return new();
+        }
+
         public async Task<FundamentalParameterRatio> GetRatioPeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);

@@ -13,6 +13,26 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
         IParameterRepository parameterRepository)
         : IAnalyseParameterFactory
     {
+        public async Task<AnalyseRatioParameter<double?>?> CreateMarketCapAsync(string ticker, string period)
+        {
+            var metric = await GetMetricAsync(ticker, period);
+
+            if (metric is null) return new();
+
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioMarketCapAsync(ticker, period);
+
+            var displayParameter = new AnalyseRatioParameter<double?>
+            {
+                Value = metric.MarketCap,
+                Description = parameterRatio.Description,
+                ColorFill = parameterRatio.Color,
+                Ratio = parameterRatio.Ratio.RoundTo(2),
+                Text = parameterRatio.Text
+            };
+
+            return displayParameter;
+        }
+
         public async Task<AnalyseRatioParameter<double?>?> CreatePeAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);

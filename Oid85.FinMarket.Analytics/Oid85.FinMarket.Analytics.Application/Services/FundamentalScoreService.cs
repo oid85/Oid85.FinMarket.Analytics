@@ -24,7 +24,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             bool isBanks = sector == "Банки";
 
-            var pe = await GetPeAsync(ticker);
+            var marketCap = await GetMarketCapAsync(ticker);
+            var pe = await GetPeAsync(ticker);            
             var pbv = await GetPbvAsync(ticker);
             var evEbitda = await GeEvEbitdaAsync(ticker);
             var netDebtEbitda = await GetNetDebtEbitdaAsync(ticker);
@@ -41,7 +42,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             int criteriaCount = 0;
 
-            double scoreValue = pe?.Ratio ?? 0.0; criteriaCount++;
+            double scoreValue = marketCap?.Ratio ?? 0.0; criteriaCount++;
+            scoreValue = pe?.Ratio ?? 0.0; criteriaCount++;
             scoreValue += pbv?.Ratio ?? 0.0; criteriaCount++;
             if (isBanks) scoreValue++; else scoreValue += evEbitda?.Ratio ?? 0.0; criteriaCount++;
             if (isBanks) scoreValue++; else scoreValue += netDebtEbitda?.Ratio ?? 0.0; criteriaCount++;
@@ -63,6 +65,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var score = new FundamentalScore
             {
+                MarketCap = marketCap,
                 Pe = pe,
                 Pbv = pbv,
                 EvEbitda = evEbitda,
@@ -101,6 +104,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             return score;
+        }
+
+        private async Task<AnalyseRatioParameter<double?>?> GetMarketCapAsync(string ticker)
+        {
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string year = (int.Parse(predictYear) - 1).ToString();
+
+            var result = await analyseParameterFactory.CreateMarketCapAsync(ticker, predictYear);
+            if (result is null) return new();
+            if (result.Value.HasValue) return result;
+
+            result = await analyseParameterFactory.CreateMarketCapAsync(ticker, year);
+            if (result is null) return new();
+
+            return result;
         }
 
         private async Task<AnalyseRatioParameter<double?>?> GetPeAsync(string ticker)

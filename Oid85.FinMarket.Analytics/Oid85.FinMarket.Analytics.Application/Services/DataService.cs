@@ -417,7 +417,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     var periodCandles = candles?.Where(x => x.Date.Year == int.Parse(period))?.ToList() ?? [];
 
-                    var price = periodCandles?.LastOrDefault()?.Close;
+                    var price = periodCandles?.LastOrDefault()?.Close.RoundTo(4);
 
                     var fundamentalParametersByPeriod = fundamentalParametersByTicker.Where(x => x.Period == period).ToList();
 
