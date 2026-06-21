@@ -338,9 +338,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (metric.NetDebt.Value <= 0.0) 
                     return new() 
                     { 
+                        Ratio = 1.0,
                         Color = KnownColors.Green, 
-                        Description = "✅ Отрицательный долг",
-                        Text = "✅ У компании отрицательный долг"
+                        Description = "✅ Отриц. долг",
+                        Text = $"✅ У компании отрицательный долг ({metric.NetDebt.Value} млрд. руб.)"
                     };
             }
 
