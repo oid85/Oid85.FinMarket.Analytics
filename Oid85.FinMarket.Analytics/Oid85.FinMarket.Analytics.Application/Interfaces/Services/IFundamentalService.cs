@@ -11,17 +11,17 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Создание/изменение фундаментального параметра
         /// </summary>
-        Task<CreateOrUpdateAnalyticFundamentalParameterResponse> CreateOrUpdateAnalyticFundamentalParameterAsync(CreateOrUpdateAnalyticFundamentalParameterRequest request);
+        Task<CreateOrUpdateAnalyticFundamentalParameterResponse> CreateOrUpdateFundamentalParameterAsync(CreateOrUpdateAnalyticFundamentalParameterRequest request);
 
         /// <summary>
         /// Удаление фундаментального параметра
         /// </summary>
-        Task<DeleteAnalyticFundamentalParameterResponse> DeleteAnalyticFundamentalParameterAsync(DeleteAnalyticFundamentalParameterRequest request);
+        Task<DeleteAnalyticFundamentalParameterResponse> DeleteFundamentalParameterAsync(DeleteAnalyticFundamentalParameterRequest request);
 
         /// <summary>
         /// Получить список фундаментальных параметров
         /// </summary>
-        Task<GetAnalyticFundamentalParameterListResponse> GetAnalyticFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request);
+        Task<GetAnalyticFundamentalParameterListResponse> GetFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request);
 
         /// <summary>
         /// Получить фундаментальные параметры по сектору
@@ -36,6 +36,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// <summary>
         /// Получить рейтинг по фундаментальным данным
         /// </summary>
-        Task<GetFundamentalRatingListResponse> GetAnalyticFundamentalRatingListAsync(GetFundamentalRatingListRequest request);
+        Task<GetFundamentalRatingListResponse> GetFundamentalRatingListAsync(GetFundamentalRatingListRequest request);
     }
 }

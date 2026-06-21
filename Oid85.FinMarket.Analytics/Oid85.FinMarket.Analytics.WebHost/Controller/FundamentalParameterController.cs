@@ -26,7 +26,7 @@ public class FundamentalParameterController(
     public Task<IActionResult> GetAnalyticFundamentalParameterListAsync(
         [FromBody] GetAnalyticFundamentalParameterListRequest request) =>
         GetResponseAsync(
-            () => fundamentalParameterService.GetAnalyticFundamentalParameterListAsync(request),
+            () => fundamentalParameterService.GetFundamentalParameterListAsync(request),
             result => new BaseResponse<GetAnalyticFundamentalParameterListResponse> { Result = result });
 
     /// <summary>
@@ -39,7 +39,7 @@ public class FundamentalParameterController(
     public Task<IActionResult> GetAnalyticFundamentalRatingListAsync(
         [FromBody] GetFundamentalRatingListRequest request) =>
         GetResponseAsync(
-            () => fundamentalParameterService.GetAnalyticFundamentalRatingListAsync(request),
+            () => fundamentalParameterService.GetFundamentalRatingListAsync(request),
             result => new BaseResponse<GetFundamentalRatingListResponse> { Result = result });
 
     /// <summary>
@@ -52,7 +52,7 @@ public class FundamentalParameterController(
     public Task<IActionResult> CreateOrUpdateAnalyticFundamentalParameterAsync(
         [FromBody] CreateOrUpdateAnalyticFundamentalParameterRequest request) =>
         GetResponseAsync(
-            () => fundamentalParameterService.CreateOrUpdateAnalyticFundamentalParameterAsync(request),
+            () => fundamentalParameterService.CreateOrUpdateFundamentalParameterAsync(request),
             result => new BaseResponse<CreateOrUpdateAnalyticFundamentalParameterResponse> { Result = result });
 
     /// <summary>
@@ -65,7 +65,7 @@ public class FundamentalParameterController(
     public Task<IActionResult> DeleteAnalyticFundamentalParameterAsync(
         [FromBody] DeleteAnalyticFundamentalParameterRequest request) =>
         GetResponseAsync(
-            () => fundamentalParameterService.DeleteAnalyticFundamentalParameterAsync(request),
+            () => fundamentalParameterService.DeleteFundamentalParameterAsync(request),
             result => new BaseResponse<DeleteAnalyticFundamentalParameterResponse> { Result = result });
 
     /// <summary>

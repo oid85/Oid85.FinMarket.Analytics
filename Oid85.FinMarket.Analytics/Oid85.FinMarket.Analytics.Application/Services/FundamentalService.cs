@@ -25,7 +25,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         : IFundamentalService
     {
         /// <inheritdoc />
-        public async Task<CreateOrUpdateAnalyticFundamentalParameterResponse> CreateOrUpdateAnalyticFundamentalParameterAsync(CreateOrUpdateAnalyticFundamentalParameterRequest request)
+        public async Task<CreateOrUpdateAnalyticFundamentalParameterResponse> CreateOrUpdateFundamentalParameterAsync(CreateOrUpdateAnalyticFundamentalParameterRequest request)
         {
             var createOrUpdateFundamentalParameterRequest = new CreateOrUpdateFundamentalParameterRequest();
 
@@ -116,7 +116,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<DeleteAnalyticFundamentalParameterResponse> DeleteAnalyticFundamentalParameterAsync(DeleteAnalyticFundamentalParameterRequest request)
+        public async Task<DeleteAnalyticFundamentalParameterResponse> DeleteFundamentalParameterAsync(DeleteAnalyticFundamentalParameterRequest request)
         {
             await storageApiClient.DeleteFundamentalParameterAsync(
                 new()
@@ -128,7 +128,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<GetAnalyticFundamentalParameterListResponse> GetAnalyticFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request)
+        public async Task<GetAnalyticFundamentalParameterListResponse> GetFundamentalParameterListAsync(GetAnalyticFundamentalParameterListRequest request)
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
@@ -213,86 +213,87 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
             var fundamentalParameters = (await storageApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
             var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).OrderBy(x => x.Ticker).ToList();
-            var tickers = instruments.Select(x => x.Ticker).ToList();
-            var priceData = await dataService.GetClosePriceDataAsync(tickers);
             bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
+            var fundamentalRatings = (await GetFundamentalRatingListAsync(new() { Sector = request.Sector })).Items;
+            var tickers = fundamentalRatings.Select(x => x.Ticker).ToList();
+            var priceData = await dataService.GetClosePriceDataAsync(tickers);
 
             var response = new GetFundamentalBySectorResponse { Sector = request.Sector };
 
-            foreach (var instrument in instruments)
+            foreach (var ticker in tickers)
             {
-                var priceDataMonth = priceData[instrument.Ticker].Where(x => x.Date.Day == 1).OrderBy(x => x.Date).ToList();
+                var priceDataMonth = priceData[ticker].Where(x => x.Date.Day == 1).OrderBy(x => x.Date).ToList();
 
                 response.PriceDiagram.Add(
                     new()
                     {
-                        Ticker = instrument.Ticker,
-                        Name = instrument.Name,
-                        InPortfolio = instrument.InPortfolio && showInPortfolio,
+                        Ticker = ticker,
+                        Name = instruments.Find(x => x.Ticker == ticker)!.Name,
+                        InPortfolio = instruments.Find(x => x.Ticker == ticker)!.InPortfolio && showInPortfolio,
                         Data = [.. priceDataMonth.Select(x => new FundamentalBySectorDateValue { Date = x.Date.ToString(), Value = x.Value })]
                     });
             }
 
-            foreach (var instrument in instruments)
+            foreach (var ticker in tickers)
             {
-                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods);
+                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, ticker, KnownFundamentalParameterTypes.NetDebt, periods);
 
                 response.NetDebtDiagram.Add(
                     new ()
                     {
-                        Ticker = instrument.Ticker,
-                        Name = instrument.Name,
-                        InPortfolio = instrument.InPortfolio && showInPortfolio,
+                        Ticker = ticker,
+                        Name = instruments.Find(x => x.Ticker == ticker)!.Name,
+                        InPortfolio = instruments.Find(x => x.Ticker == ticker)!.InPortfolio && showInPortfolio,
                         Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
 
-            foreach (var instrument in instruments)
+            foreach (var ticker in tickers)
             {
-                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetProfit, periods);
+                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, ticker, KnownFundamentalParameterTypes.NetProfit, periods);
 
                 response.NetProfitDiagram.Add(
                     new ()
                     {
-                        Ticker = instrument.Ticker,
-                        Name = instrument.Name,
-                        InPortfolio = instrument.InPortfolio && showInPortfolio,
+                        Ticker = ticker,
+                        Name = instruments.Find(x => x.Ticker == ticker)!.Name,
+                        InPortfolio = instruments.Find(x => x.Ticker == ticker)!.InPortfolio && showInPortfolio,
                         Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
 
-            foreach (var instrument in instruments)
+            foreach (var ticker in tickers)
             {
-                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Dividend, periods);
+                var fundamentalParameterValues = GetFundamentalParameterValues(fundamentalParameters, ticker, KnownFundamentalParameterTypes.Dividend, periods);
 
                 response.DividendDiagram.Add(
                     new ()
                     {
-                        Ticker = instrument.Ticker,
-                        Name = instrument.Name,
-                        InPortfolio = instrument.InPortfolio && showInPortfolio,
+                        Ticker = ticker,
+                        Name = instruments.Find(x => x.Ticker == ticker)!.Name,
+                        InPortfolio = instruments.Find(x => x.Ticker == ticker)!.InPortfolio && showInPortfolio,
                         Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
 
-            foreach (var instrument in instruments)
+            foreach (var ticker in tickers)
             {
-                var ebitda = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ebitda, periods).LastOrDefault(x => x.Value != 0.0).Value;
-                var ev = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.Ev, periods).LastOrDefault(x => x.Value != 0.0).Value;
-                var netDebt = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.NetDebt, periods).LastOrDefault(x => x.Value != 0.0).Value;
-                var marketCap = GetFundamentalParameterValues(fundamentalParameters, instrument.Ticker, KnownFundamentalParameterTypes.MarketCap, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var ebitda = GetFundamentalParameterValues(fundamentalParameters, ticker, KnownFundamentalParameterTypes.Ebitda, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var ev = GetFundamentalParameterValues(fundamentalParameters, ticker, KnownFundamentalParameterTypes.Ev, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var netDebt = GetFundamentalParameterValues(fundamentalParameters, ticker, KnownFundamentalParameterTypes.NetDebt, periods).LastOrDefault(x => x.Value != 0.0).Value;
+                var marketCap = GetFundamentalParameterValues(fundamentalParameters, ticker, KnownFundamentalParameterTypes.MarketCap, periods).LastOrDefault(x => x.Value != 0.0).Value;
 
                 response.BubbleDiagram.Add(
                     new ()
                     {
-                        Ticker = instrument.Ticker,
+                        Ticker = ticker,
                         EvEbitda = ev.Div(ebitda).RoundTo(2),
                         NetDebtEbitda = netDebt.Div(ebitda).RoundTo(2),
                         MarketCap = marketCap
                     });
             }
 
-            response.FundamentalRatingItems = (await GetAnalyticFundamentalRatingListAsync(new () { Sector = request.Sector })).Items;
+            response.FundamentalRatingItems = fundamentalRatings;
 
             return response;
         }
@@ -401,7 +402,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<GetFundamentalRatingListResponse> GetAnalyticFundamentalRatingListAsync(GetFundamentalRatingListRequest request)
+        public async Task<GetFundamentalRatingListResponse> GetFundamentalRatingListAsync(GetFundamentalRatingListRequest request)
         {
             bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
 
