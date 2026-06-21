@@ -12,7 +12,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class TrendDynamicService(
         IInstrumentRepository instrumentRepository,
         IDataService dataService,
-        IFundamentalScoreService fundamentalScoreService)
+        IParameterRepository parameterRepository)
         : ITrendDynamicService
     {
         /// <inheritdoc />
@@ -26,6 +26,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dates = DateUtils.GetDates(from, to);
+            bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
 
             var response = new GetTrendDynamicResponse
             {
@@ -51,7 +52,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,
-                        InPortfolio = instrument.InPortfolio,
+                        InPortfolio = instrument.InPortfolio && showInPortfolio,
                         Items = []
                     };
 

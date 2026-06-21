@@ -12,6 +12,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class WeekTrendService(
         IInstrumentRepository instrumentRepository,
+        IParameterRepository parameterRepository,
         IDataService dataService)
         : IWeekTrendService
     {
@@ -30,6 +31,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var weeks = DateUtils.GetWeeks(startDate, today);
+            bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
 
             var response = new GetWeekDeltaResponse
             {
@@ -70,7 +72,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         {
                             Ticker = instrument.Ticker,
                             Name = instrument.Name,
-                            InPortfolio = instrument.InPortfolio,
+                            InPortfolio = instrument.InPortfolio && showInPortfolio,
                             Items = weekDeltaData,
                             TrendState = TrendStateHelper.GetTrendState(ultimateSmoothers).Message,
                             FallingFromMax = fallingFromMax.RoundTo(2)

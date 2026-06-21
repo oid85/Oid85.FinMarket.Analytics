@@ -515,8 +515,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     { 
                         Ratio = 1.0, 
                         Color = KnownColors.Green,
-                        Description = "✅ NetDebt/EBITDA отрицательное",
-                        Text = "✅ NetDebt/EBITDA отрицательное"
+                        Description = "✅ ND/EBITDA отрицательное",
+                        Text = "✅ ND/EBITDA отрицательное"
                     };
 
                 var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
@@ -532,8 +532,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     { 
                         Ratio = ratio,
                         Color = KnownColors.Green,
-                        Description = $"✅ NetDebt/EBITDA низкое в секторе",
-                        Text = $"✅ NetDebt/EBITDA низкое в секторе ({metric.NetDebtEbitda.Value}) - ниже, чем у 75% компаний сектора"
+                        Description = $"✅ ND/EBITDA низкое в секторе",
+                        Text = $"✅ ND/EBITDA низкое в секторе ({metric.NetDebtEbitda.Value}) - ниже, чем у 75% компаний сектора"
                     };
 
                 else if (ratio > 0.5) 
@@ -541,8 +541,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     { 
                         Ratio = ratio, 
                         Color = KnownColors.LightGreen,
-                        Description = $"✅ NetDebt/EBITDA ниже среднего в секторе",
-                        Text = $"✅ NetDebt/EBITDA ниже среднего в секторе ({metric.NetDebtEbitda.Value}) - ниже, чем у 50% компаний сектора"
+                        Description = $"✅ ND/EBITDA ниже среднего в секторе",
+                        Text = $"✅ ND/EBITDA ниже среднего в секторе ({metric.NetDebtEbitda.Value}) - ниже, чем у 50% компаний сектора"
                     };
 
                 else if (ratio > 0.25) 
@@ -550,8 +550,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     { 
                         Ratio = ratio, 
                         Color = KnownColors.Yellow,
-                        Description = $"⚠️ NetDebt/EBITDA выше среднего в секторе",
-                        Text = $"⚠️ NetDebt/EBITDA выше среднего в секторе ({metric.NetDebtEbitda.Value}) - выше, чем у 75% компаний сектора"
+                        Description = $"⚠️ ND/EBITDA выше среднего в секторе",
+                        Text = $"⚠️ ND/EBITDA выше среднего в секторе ({metric.NetDebtEbitda.Value}) - выше, чем у 75% компаний сектора"
                     };
 
                 else 
@@ -559,8 +559,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ratio = ratio, 
                         Color = KnownColors.Red,
-                        Description = $"⚠️ NetDebt/EBITDA высокое в секторе",
-                        Text = $"⚠️ NetDebt/EBITDA высокое в секторе ({metric.NetDebtEbitda.Value})"
+                        Description = $"⚠️ ND/EBITDA высокое в секторе",
+                        Text = $"⚠️ ND/EBITDA высокое в секторе ({metric.NetDebtEbitda.Value})"
                     };
             }
 

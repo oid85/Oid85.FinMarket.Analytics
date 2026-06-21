@@ -90,7 +90,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 if (scoreValue >= limitHi) return KnownColors.Green;
                 if (scoreValue >= limitLo) return KnownColors.Yellow;
-                return KnownColors.White;
+                return KnownColors.Red;
             }
 
             string GetScoreText()
