@@ -357,6 +357,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 response.PbvDiagramData.Add(new() { X = metric.Period, Y = metric.Pbv });
                 response.EvEbitdaDiagramData.Add(new() { X = metric.Period, Y = metric.EvEbitda });
                 response.NetDebtEbitdaDiagramData.Add(new() { X = metric.Period, Y = metric.NetDebtEbitda });
+                response.NetDebtDiagramData.Add(new() { X = metric.Period, Y = metric.NetDebt });
                 response.FcfDiagramData.Add(new() { X = metric.Period, Y = metric.Fcf });
                 response.EpsDiagramData.Add(new() { X = metric.Period, Y = metric.Eps });
             }

@@ -330,6 +330,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<FundamentalParameterRatio> GetRatioNetDebtAsync(string ticker, string period)
         {
             var metric = await GetMetricAsync(ticker, period);
+            var metricPrev = await GetMetricAsync(ticker, (Convert.ToInt32(period) - 1).ToString());
+            var metricPrevPrev = await GetMetricAsync(ticker, (Convert.ToInt32(period) - 2).ToString());
 
             if (metric is null) return new();
 
@@ -344,6 +346,43 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Text = $"✅ У компании отрицательный долг ({metric.NetDebt.Value} млрд. руб.)"
                     };
             }
+
+            if (metricPrev is null) return new();
+            if (metricPrevPrev is null) return new();
+
+            if (metric.NetDebt.HasValue && 
+                metricPrev.NetDebt.HasValue && 
+                metricPrevPrev.NetDebt.HasValue)
+            {
+                if (metric.NetDebt.Value < metricPrev.NetDebt.Value &&
+                    metricPrev.NetDebt.Value < metricPrevPrev.NetDebt.Value)
+                    return new()
+                    {
+                        Ratio = 0.75,
+                        Color = KnownColors.Yellow,
+                        Description = "⚠️ Долг сокращается 2 года подряд",
+                        Text = $"⚠️ Долг сокращается 2 года подряд. Текущее значение {metric.NetDebt.Value} млрд. руб."
+                    };
+
+                if (metric.NetDebt.Value > metricPrev.NetDebt.Value &&
+                    metricPrev.NetDebt.Value > metricPrevPrev.NetDebt.Value)
+                    return new()
+                    {
+                        Ratio = 0.25,
+                        Color = KnownColors.Red,
+                        Description = "❗Долг растет 2 года подряд",
+                        Text = $"❗ Долг растет 2 года подряд. Текущее значение {metric.NetDebt.Value} млрд. руб."
+                    };
+            }
+
+            if (metric.NetDebt.HasValue)
+                return new()
+                {
+                    Ratio = 0.5,
+                    Color = KnownColors.Yellow,
+                    Description = "⚠️ Долг без динамики",
+                    Text = $"⚠️ Долг без динамики. Текущее значение {metric.NetDebt.Value} млрд. руб."
+                };
 
             return new();
         }

@@ -80,6 +80,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public List<BarDiagramDataPoint> NetDebtEbitdaDiagramData { get; set; } = [];
 
         /// <summary>
+        /// Динамика NetDebt по периодам
+        /// </summary>
+        public List<BarDiagramDataPoint> NetDebtDiagramData { get; set; } = [];
+
+        /// <summary>
         /// Сравнение P/E с другими компаниями из сектора
         /// </summary>
         public List<BarDiagramDataPoint> PeSectorDiagramData { get; set; } = [];
