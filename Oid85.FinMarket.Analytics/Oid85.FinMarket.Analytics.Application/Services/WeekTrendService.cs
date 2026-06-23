@@ -81,12 +81,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 return
                 [
-                    .. weekDeltaDataList.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
-                    .. weekDeltaDataList.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
-                    .. weekDeltaDataList.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend),
-                    .. weekDeltaDataList.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
-                    .. weekDeltaDataList.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
-                    .. weekDeltaDataList.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend)
+                    .. weekDeltaDataList.Where(x => x.InPortfolio).OrderByDescending(x => x.Items[^1].Delta != 0.0 ? x.Items[^1].Delta : x.Items[^2].Delta),
+                    .. weekDeltaDataList.Where(x => !x.InPortfolio).OrderByDescending(x => x.Items[^1].Delta != 0.0 ? x.Items[^1].Delta : x.Items[^2].Delta)
                 ];
             }
 

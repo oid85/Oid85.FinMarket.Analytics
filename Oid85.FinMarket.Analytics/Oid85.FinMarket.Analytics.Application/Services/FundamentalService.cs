@@ -458,11 +458,58 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 }
             }
 
-            var response = new GetFundamentalRatingListResponse { Items = [.. items.OrderByDescending(x => x.Score?.Score.Value)] };
+            List<FundamentalRatingItem> filteredItems = items;
+
+            if (request.FilterType is not null)
+            {
+                if (string.IsNullOrEmpty(request.FilterType))
+                    filteredItems = items;
+
+                if (request.FilterType == "HighDividend")
+                    filteredItems = [.. items.Where(x => IsHighDividend(x.Score))];
+
+                if (request.FilterType == "LowDebt")
+                    filteredItems = [.. items.Where(x => IsLowDebt(x.Score))];
+            }
+
+            var response = new GetFundamentalRatingListResponse { Items = [.. filteredItems.OrderByDescending(x => x.Score?.Score.Value)] };
 
             int number = 1; foreach (var item in response.Items) item.Number = number++;
 
             return response;
+
+            bool IsHighDividend(FundamentalScore? score)
+            {
+                if (score is null) return false;
+
+                bool dividendYieldCriteriaIsGood = score.DividendYield?.ColorFill == KnownColors.Green;
+                dividendYieldCriteriaIsGood |= score.DividendYield?.ColorFill == KnownColors.LightGreen;
+
+                bool dividendAristocratCriteriaIsGood = score.DividendAristocrat?.ColorFill == KnownColors.Green;
+                dividendAristocratCriteriaIsGood |= score.DividendAristocrat?.ColorFill == KnownColors.LightGreen;
+
+                return dividendYieldCriteriaIsGood && dividendAristocratCriteriaIsGood;
+            }
+
+            bool IsLowDebt(FundamentalScore? score)
+            {
+                if (score is null) return false;
+
+                bool netDebtCriteriaIsGood = score.NetDebt?.ColorFill == KnownColors.Green;
+                netDebtCriteriaIsGood |= score.NetDebt?.ColorFill == KnownColors.LightGreen;
+                netDebtCriteriaIsGood |= score.NetDebt?.ColorFill == KnownColors.Yellow;
+
+                bool netDebtEbitdaCriteriaIsGood = score.NetDebtEbitda?.ColorFill == KnownColors.Green;
+                netDebtEbitdaCriteriaIsGood |= score.NetDebtEbitda?.ColorFill == KnownColors.LightGreen;
+
+                bool debtRatioCriteriaIsGood = score.DebtRatio?.ColorFill == KnownColors.Green;
+                debtRatioCriteriaIsGood |= score.DebtRatio?.ColorFill == KnownColors.LightGreen;
+
+                bool debtEquityCriteriaIsGood = score.DebtEquity?.ColorFill == KnownColors.Green;
+                debtEquityCriteriaIsGood |= score.DebtEquity?.ColorFill == KnownColors.LightGreen;
+
+                return netDebtCriteriaIsGood && netDebtEbitdaCriteriaIsGood && debtRatioCriteriaIsGood && debtEquityCriteriaIsGood;
+            }
         }
 
         private static List<(string Period, double Value)> GetFundamentalParameterValues(List<FundamentalParameterListItem> fundamentalParameters, string ticker, string type, List<string> periods)
