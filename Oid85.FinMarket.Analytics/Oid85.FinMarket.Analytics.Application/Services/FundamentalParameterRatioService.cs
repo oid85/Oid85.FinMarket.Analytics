@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using Hangfire.Dashboard;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -176,19 +177,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<FundamentalParameterRatio> GetRatioNetProfitAsync(string ticker, string period)
         {
-            var prevPrevMetric = await GetMetricAsync(ticker, (int.Parse(period) - 2).ToString());
-            var prevMetric = await GetMetricAsync(ticker, (int.Parse(period) - 1).ToString());
-            var metric = await GetMetricAsync(ticker, period);
+            var metric_3 = await GetMetricAsync(ticker, (int.Parse(period) - 2).ToString());
+            var metric_2 = await GetMetricAsync(ticker, (int.Parse(period) - 3).ToString());
+            var metric_1 = await GetMetricAsync(ticker, (int.Parse(period) - 1).ToString());
+            var metric_0 = await GetMetricAsync(ticker, period);
 
-            if (prevPrevMetric is null) return new();
-            if (prevMetric is null) return new();
-            if (metric is null) return new();
+            if (metric_3 is null) return new();
+            if (metric_2 is null) return new();
+            if (metric_1 is null) return new();
+            if (metric_0 is null) return new();
 
-            if (prevPrevMetric.NetProfit.HasValue && prevMetric.NetProfit.HasValue && metric.NetProfit.HasValue)
+            if (metric_3.NetProfit.HasValue &&
+                metric_2.NetProfit.HasValue &&
+                metric_1.NetProfit.HasValue &&
+                metric_0.NetProfit.HasValue)
             {
-                double deltaPrc = Math.Abs((metric.NetProfit.Value - prevMetric.NetProfit.Value) / prevMetric.NetProfit.Value * 100.0).RoundTo(2);
+                double deltaPrc = Math.Abs((metric_0.NetProfit.Value - metric_1.NetProfit.Value) / metric_1.NetProfit.Value * 100.0).RoundTo(2);
 
-                if (metric.NetProfit.Value <= 0.0) 
+                if (metric_0.NetProfit.Value <= 0.0) 
                     return new() 
                     { 
                         Color = KnownColors.Red, 
@@ -196,22 +202,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Text = "❗ Отрицательная чистая прибыль. Компания получила убыток"
                     };
 
-                if (prevPrevMetric.NetProfit.Value > 0.0 &&
-                    prevMetric.NetProfit.Value > 0.0 &&
-                    metric.NetProfit.Value > 0.0 &&
-                    metric.NetProfit.Value > prevMetric.NetProfit.Value &&
-                    prevMetric.NetProfit.Value > prevPrevMetric.NetProfit.Value)
+                if (metric_3.NetProfit.Value > 0.0 &&
+                    metric_2.NetProfit.Value > 0.0 &&
+                    metric_1.NetProfit.Value > 0.0 &&
+                    metric_0.NetProfit.Value > 0.0 &&
+                    metric_0.NetProfit.Value > metric_1.NetProfit.Value &&
+                    metric_1.NetProfit.Value > metric_2.NetProfit.Value &&
+                    metric_2.NetProfit.Value > metric_3.NetProfit.Value)
                     return new()
                     {
                         Ratio = 1.0,
                         Color = KnownColors.Green,
-                        Description = "✅ Рост чистой прибыли 2 года подряд",
-                        Text = $"✅ Прибыль выросла на {deltaPrc} % по сравнению с предыдущим периодом. Рост прибыли 2 года подряд"
+                        Description = "✅ Рост чистой прибыли 3 года подряд",
+                        Text = $"✅ Прибыль выросла на {deltaPrc} % по сравнению с предыдущим периодом. Рост прибыли 3 года подряд"
                     };
 
-                if (prevMetric.NetProfit.Value > 0.0 &&
-                    metric.NetProfit.Value > 0.0 &&
-                    metric.NetProfit.Value > prevMetric.NetProfit.Value) 
+                if (metric_1.NetProfit.Value > 0.0 &&
+                    metric_0.NetProfit.Value > 0.0 &&
+                    metric_0.NetProfit.Value > metric_1.NetProfit.Value) 
                     return new() 
                     { 
                         Ratio = 0.75,
@@ -220,8 +228,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Text = $"✅ Прибыль выросла на {deltaPrc} % по сравнению с предыдущим периодом"
                     };
 
-                if (metric.NetProfit.Value < prevMetric.NetProfit.Value &&
-                    prevMetric.NetProfit.Value < prevPrevMetric.NetProfit.Value)
+                if (metric_0.NetProfit.Value < metric_1.NetProfit.Value &&
+                    metric_1.NetProfit.Value < metric_2.NetProfit.Value)
                     return new()
                     {
                         Ratio = 0.25,
@@ -230,7 +238,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Text = $"❗ Прибыль сократилась на {deltaPrc} % по сравнению с предыдущим периодом. Падение прибыли 2 года подряд"
                     };
 
-                if (metric.NetProfit.Value < prevMetric.NetProfit.Value)
+                if (metric_0.NetProfit.Value < metric_1.NetProfit.Value)
                     return new() 
                     { 
                         Ratio = 0.5, 
@@ -239,6 +247,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Text = $"⚠️ Прибыль сократилась на {deltaPrc} % по сравнению с предыдущим периодом"
                     };
             }
+
+            if (metric_0.NetProfit.HasValue)
+                return new()
+                {
+                    Ratio = 0.5,
+                    Color = KnownColors.Yellow,
+                    Description = "⚠️ Чистая прибыль без динамики",
+                    Text = $"⚠️ Чистая прибыль без динамики. Текущее значение {metric_0.NetProfit.Value} млрд. руб."
+                };
 
             return new();
         }
