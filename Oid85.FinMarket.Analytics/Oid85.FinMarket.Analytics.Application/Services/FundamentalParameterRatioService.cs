@@ -346,59 +346,59 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<FundamentalParameterRatio> GetRatioNetDebtAsync(string ticker, string period)
         {
-            var metric = await GetMetricAsync(ticker, period);
-            var metricPrev = await GetMetricAsync(ticker, (Convert.ToInt32(period) - 1).ToString());
-            var metricPrevPrev = await GetMetricAsync(ticker, (Convert.ToInt32(period) - 2).ToString());
+            var metric_0 = await GetMetricAsync(ticker, period);
+            var metric_1 = await GetMetricAsync(ticker, (Convert.ToInt32(period) - 1).ToString());
+            var metric_2 = await GetMetricAsync(ticker, (Convert.ToInt32(period) - 2).ToString());
 
-            if (metric is null) return new();
+            if (metric_0 is null) return new();
 
-            if (metric.NetDebt.HasValue)
+            if (metric_0.NetDebt.HasValue)
             {
-                if (metric.NetDebt.Value <= 0.0) 
+                if (metric_0.NetDebt.Value <= 0.0) 
                     return new() 
                     { 
                         Ratio = 1.0,
                         Color = KnownColors.Green, 
                         Description = "✅ Отриц. долг",
-                        Text = $"✅ У компании отрицательный долг ({metric.NetDebt.Value} млрд. руб.)"
+                        Text = $"✅ У компании отрицательный долг ({metric_0.NetDebt.Value} млрд. руб.)"
                     };
             }
 
-            if (metricPrev is null) return new();
-            if (metricPrevPrev is null) return new();
+            if (metric_1 is null) return new();
+            if (metric_2 is null) return new();
 
-            if (metric.NetDebt.HasValue && 
-                metricPrev.NetDebt.HasValue && 
-                metricPrevPrev.NetDebt.HasValue)
+            if (metric_0.NetDebt.HasValue && 
+                metric_1.NetDebt.HasValue && 
+                metric_2.NetDebt.HasValue)
             {
-                if (metric.NetDebt.Value < metricPrev.NetDebt.Value &&
-                    metricPrev.NetDebt.Value < metricPrevPrev.NetDebt.Value)
+                if (metric_0.NetDebt.Value < metric_1.NetDebt.Value &&
+                    metric_1.NetDebt.Value < metric_2.NetDebt.Value)
                     return new()
                     {
                         Ratio = 0.75,
                         Color = KnownColors.Yellow,
                         Description = "⚠️ Долг сокращается 2 года подряд",
-                        Text = $"⚠️ Долг сокращается 2 года подряд. Текущее значение {metric.NetDebt.Value} млрд. руб."
+                        Text = $"⚠️ Долг сокращается 2 года подряд. Текущее значение {metric_0.NetDebt.Value} млрд. руб."
                     };
 
-                if (metric.NetDebt.Value > metricPrev.NetDebt.Value &&
-                    metricPrev.NetDebt.Value > metricPrevPrev.NetDebt.Value)
+                if (metric_0.NetDebt.Value > metric_1.NetDebt.Value &&
+                    metric_1.NetDebt.Value > metric_2.NetDebt.Value)
                     return new()
                     {
                         Ratio = 0.25,
                         Color = KnownColors.Red,
                         Description = "❗Долг растет 2 года подряд",
-                        Text = $"❗ Долг растет 2 года подряд. Текущее значение {metric.NetDebt.Value} млрд. руб."
+                        Text = $"❗ Долг растет 2 года подряд. Текущее значение {metric_0.NetDebt.Value} млрд. руб."
                     };
             }
 
-            if (metric.NetDebt.HasValue)
+            if (metric_0.NetDebt.HasValue)
                 return new()
                 {
                     Ratio = 0.5,
                     Color = KnownColors.Yellow,
                     Description = "⚠️ Долг без динамики",
-                    Text = $"⚠️ Долг без динамики. Текущее значение {metric.NetDebt.Value} млрд. руб."
+                    Text = $"⚠️ Долг без динамики. Текущее значение {metric_0.NetDebt.Value} млрд. руб."
                 };
 
             return new();
