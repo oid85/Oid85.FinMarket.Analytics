@@ -393,8 +393,8 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
                     Value = true,
                     Ratio = 1.0,
                     ColorFill = KnownColors.Green,
-                    Description = "✅ 🏆 Дивидендный аристократ",                                        
-                    Text = "✅ Компания платит дивиденды более 5 лет подряд. 🏆 Дивидендный аристократ"
+                    Description = "✅ 🏆 Выплаты каждый год без отмены",                                        
+                    Text = "✅ Компания платит дивиденды более 5 лет подряд. 🏆 Выплаты каждый год без отмены"
                 };
 
             if (count == 4)
