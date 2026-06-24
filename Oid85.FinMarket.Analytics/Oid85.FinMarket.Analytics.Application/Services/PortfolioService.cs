@@ -176,9 +176,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 portfolioPosition.TrendCoefficient = 1.0;
 
-                portfolioPosition.ManualCoefficient = instrument.ManualCoefficient;
-
-                portfolioPosition.MarketCapCoefficient = instrument.MarketCapCoefficient;
+                if (fundamentalScore?.MarketCap?.Ratio == 0.5) portfolioPosition.MarketCapCoefficient = 1.0;
+                if (fundamentalScore?.MarketCap?.Ratio == 0.75) portfolioPosition.MarketCapCoefficient = 2.0;
+                if (fundamentalScore?.MarketCap?.Ratio == 1.0) portfolioPosition.MarketCapCoefficient = 3.0;
+                if (instrument.Ticker == "TGLD") portfolioPosition.MarketCapCoefficient = 1.0;
 
                 portfolioPosition.ResultCoefficient = (
                     portfolioPosition.FundamentalScoreCoefficient *

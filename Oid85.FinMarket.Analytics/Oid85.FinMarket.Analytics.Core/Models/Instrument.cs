@@ -41,11 +41,6 @@
         public double ManualCoefficient { get; set; }
 
         /// <summary>
-        /// Коэффициент капитализации
-        /// </summary>
-        public double MarketCapCoefficient { get; set; } = 1.0;
-
-        /// <summary>
         /// НКД
         /// </summary>
         public double? Nkd { get; set; }
