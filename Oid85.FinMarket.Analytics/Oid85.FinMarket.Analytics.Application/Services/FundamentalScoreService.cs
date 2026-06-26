@@ -111,10 +111,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetMarketCapAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateMarketCapAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateMarketCapAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result.Value.HasValue) return result;
 
@@ -126,10 +126,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetPeAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreatePeAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreatePeAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result.Value.HasValue) return result;
 
@@ -141,10 +141,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetPbvAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreatePbvAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreatePbvAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -156,10 +156,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GeEvEbitdaAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateEvEbitdaAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateEvEbitdaAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -171,10 +171,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetNetDebtEbitdaAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateNetDebtEbitdaAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -186,7 +186,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetNetDebtAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
             string year = (int.Parse(predictYear) - 1).ToString();
 
             var result = await analyseParameterFactory.CreateNetDebtAsync(ticker, predictYear);
@@ -201,10 +201,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetDebtRatioAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateDebtRatioAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateDebtRatioAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -216,10 +216,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetDebtEquityAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateDebtEquityAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateDebtEquityAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -231,10 +231,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetNetProfitAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateNetProfitAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateNetProfitAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -246,10 +246,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetFcfAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateFcfAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateFcfAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -261,10 +261,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetEpsAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateEpsAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateEpsAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -276,10 +276,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetRoaAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateRoaAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateRoaAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -291,10 +291,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetRoeAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateRoeAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateRoeAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -306,10 +306,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetEbitdaRevenueAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateEbitdaRevenueAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateEbitdaRevenueAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 
@@ -321,10 +321,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<AnalyseRatioParameter<double?>?> GetDividendYieldAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
-            string year = (int.Parse(predictYear) - 1).ToString();
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
+            string year = (int.Parse(ttmYear) - 1).ToString();
 
-            var result = await analyseParameterFactory.CreateDividendYieldAsync(ticker, predictYear);
+            var result = await analyseParameterFactory.CreateDividendYieldAsync(ticker, ttmYear);
             if (result is null) return new();
             if (result!.Value.HasValue) return result;
 

@@ -154,9 +154,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Report = analyseDataContext.GetReport(instrument.Ticker)
                 };
 
-                var metrics = analyseDataContext.GetFundamentalMetrics(instrument.Ticker);
-
-                string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+                var metrics = analyseDataContext.GetFundamentalMetrics(instrument.Ticker);                
 
                 for (int i = 0; i < metrics.Count; i++)
                 {
@@ -482,18 +480,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 if (score is null) return false;
 
+                bool highScore = score.Score?.ColorFill == KnownColors.Green;
+                highScore |= score.Score?.ColorFill == KnownColors.Yellow;
+
                 bool dividendYieldCriteriaIsGood = score.DividendYield?.ColorFill == KnownColors.Green;
                 dividendYieldCriteriaIsGood |= score.DividendYield?.ColorFill == KnownColors.LightGreen;
 
                 bool dividendAristocratCriteriaIsGood = score.DividendAristocrat?.ColorFill == KnownColors.Green;
                 dividendAristocratCriteriaIsGood |= score.DividendAristocrat?.ColorFill == KnownColors.LightGreen;
 
-                return dividendYieldCriteriaIsGood && dividendAristocratCriteriaIsGood;
+                return dividendYieldCriteriaIsGood && dividendAristocratCriteriaIsGood && highScore;
             }
 
             bool IsLowDebt(FundamentalScore? score)
             {
                 if (score is null) return false;
+
+                bool highScore = score.Score?.ColorFill == KnownColors.Green;
+                highScore |= score.Score?.ColorFill == KnownColors.Yellow;
 
                 bool netDebtCriteriaIsGood = score.NetDebt?.ColorFill == KnownColors.Green;
                 netDebtCriteriaIsGood |= score.NetDebt?.ColorFill == KnownColors.LightGreen;
@@ -508,7 +512,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 bool debtEquityCriteriaIsGood = score.DebtEquity?.ColorFill == KnownColors.Green;
                 debtEquityCriteriaIsGood |= score.DebtEquity?.ColorFill == KnownColors.LightGreen;
 
-                return netDebtCriteriaIsGood && netDebtEbitdaCriteriaIsGood && debtRatioCriteriaIsGood && debtEquityCriteriaIsGood;
+                return netDebtCriteriaIsGood && netDebtEbitdaCriteriaIsGood && debtRatioCriteriaIsGood && debtEquityCriteriaIsGood && highScore;
             }
         }
 

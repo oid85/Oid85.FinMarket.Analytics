@@ -371,13 +371,13 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
         public async Task<AnalyseRatioParameter<bool?>?> CreateDividendAristocratAsync(string ticker)
         {
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
 
-            var metric_0 = await GetMetricAsync(ticker, (int.Parse(predictYear)).ToString());
-            var metric_1 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 1).ToString());
-            var metric_2 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 2).ToString());
-            var metric_3 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 3).ToString());
-            var metric_4 = await GetMetricAsync(ticker, (int.Parse(predictYear) - 4).ToString());
+            var metric_0 = await GetMetricAsync(ticker, (int.Parse(ttmYear)).ToString());
+            var metric_1 = await GetMetricAsync(ticker, (int.Parse(ttmYear) - 1).ToString());
+            var metric_2 = await GetMetricAsync(ticker, (int.Parse(ttmYear) - 2).ToString());
+            var metric_3 = await GetMetricAsync(ticker, (int.Parse(ttmYear) - 3).ToString());
+            var metric_4 = await GetMetricAsync(ticker, (int.Parse(ttmYear) - 4).ToString());
 
             int count = 0;
 

@@ -61,21 +61,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                     List<WeekDeltaDataItem> weekDeltaData = [.. weeks.Select(x => GetWeekDeltaDataItem(instrument.Ticker, x.WeekStartDay, x.WeekEndDay))];
 
-                    var candles = candleData[instrument.Ticker].Where(x => x.Date >= startDate).ToList();
-                    var ultimateSmoothers = ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= startDate).ToList();
-                    double maxPrice = candles.Select(x => x.Close).Max();
-                    double lastCandlePrice = candles.Last().Close;
-                    double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
-
                     weekDeltaDataList.Add(
                         new()
                         {
                             Ticker = instrument.Ticker,
                             Name = instrument.Name,
                             InPortfolio = instrument.InPortfolio && showInPortfolio,
-                            Items = weekDeltaData,
-                            TrendState = TrendStateHelper.GetTrendState(ultimateSmoothers).Message,
-                            FallingFromMax = fallingFromMax.RoundTo(2)
+                            Items = weekDeltaData
                         });
                 }
 

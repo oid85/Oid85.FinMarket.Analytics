@@ -354,7 +354,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<Dictionary<string, Forecast>> GetPredictNetProfitForecastDataAsync(List<string> tickers)
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
-            string predictYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.PredictYear))!;
+            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
 
             var fundamentalParameterList = await GetFundamentalParameterListAsync();
             var candleData = await GetCandleDataAsync(tickers);
@@ -369,9 +369,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
 
-                double? predictPe = fundamentalParameterListByTicker.Find(x => x.Period == predictYear && x.Type == KnownFundamentalParameterTypes.Pe)?.Value;
-                double? predictNetProfit = fundamentalParameterListByTicker.Find(x => x.Period == predictYear && x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value;
-                double? predictNumberShares = fundamentalParameterListByTicker.Find(x => x.Period == predictYear && x.Type == KnownFundamentalParameterTypes.NumberShares)?.Value;
+                double? predictPe = fundamentalParameterListByTicker.Find(x => x.Period == ttmYear && x.Type == KnownFundamentalParameterTypes.Pe)?.Value;
+                double? predictNetProfit = fundamentalParameterListByTicker.Find(x => x.Period == ttmYear && x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value;
+                double? predictNumberShares = fundamentalParameterListByTicker.Find(x => x.Period == ttmYear && x.Type == KnownFundamentalParameterTypes.NumberShares)?.Value;
 
                 predictNetProfit = predictNetProfit.Mult(1_000_000_000);
                 predictNumberShares = predictNumberShares.Mult(1_000_000);
