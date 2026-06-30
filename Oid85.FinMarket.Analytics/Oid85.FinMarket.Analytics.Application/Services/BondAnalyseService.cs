@@ -17,7 +17,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetBondAnalyseResponse> GetBondAnalyseAsync(GetBondAnalyseRequest request)
         {
-            var instruments = (await instrumentService.GetStorageInstrumentAsync() ?? [])
+            var instruments = (await instrumentService.GetInstrumentListAsync() ?? [])
                 .Where(x => x.Type == KnownInstrumentTypes.Bond)
                 .Where(x => x.MaturityDate >= DateOnly.FromDateTime(DateTime.Today))
                 .Where(x => x.LastPrice is not null)
@@ -28,8 +28,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .Where(x => string.Equals(x.Currency, KnownCurrencies.Rub, StringComparison.InvariantCultureIgnoreCase))
                 .OrderBy(x => x.Ticker)
                 .ToList();
-
-            var analyticInstruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments;
 
             var from = DateOnly.FromDateTime(DateTime.Today);
             var to = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
@@ -42,15 +40,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             foreach (var instrument in instruments)
             {
-                var analyticInstrument = analyticInstruments.Find(x => x.Ticker == instrument.Ticker);
-
                 var bondAnalyseItem = new GetBondAnalyseItemResponse
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     Price = instrument.LastPrice.HasValue ? Math.Round(instrument.LastPrice.Value, 2) : 0.0,
                     Nkd = instrument.Nkd.HasValue ? Math.Round(instrument.Nkd.Value, 2) : 0.0,
-                    InPortfolio = analyticInstrument is not null && analyticInstrument.InPortfolio
+                    InPortfolio = instrument.InPortfolio,
+                    Rating = instrument.Rating
                 };
 
                 if (instrument.MaturityDate.HasValue)
@@ -93,7 +90,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 bondAnalyseItems.Add(bondAnalyseItem);
             }
 
-            response.Items = [
+            response.Items = 
+                [
                 .. bondAnalyseItems.Where(x => x.InPortfolio).OrderByDescending(x => x.Yield),
                 .. bondAnalyseItems.Where(x => !x.InPortfolio).OrderByDescending(x => x.Yield)
                 ];

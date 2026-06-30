@@ -16,6 +16,7 @@
         public int DaysToMaturity { get; set; }
         public List<GetBondAnalyseCouponData> Coupons { get; set; } = [];
         public bool InPortfolio { get; set; }
+        public string? Rating { get; set; }
     }
 
     public class GetBondAnalyseCouponData

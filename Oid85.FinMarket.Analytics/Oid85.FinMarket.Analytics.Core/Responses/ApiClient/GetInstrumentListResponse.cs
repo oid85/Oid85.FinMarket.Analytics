@@ -61,5 +61,10 @@
         /// Лот
         /// </summary>
         public int? Lot { get; set; } = null;
+
+        /// <summary>
+        /// Кредитный рейтинг
+        /// </summary>
+        public string? Rating { get; set; } = null;
     }
 }

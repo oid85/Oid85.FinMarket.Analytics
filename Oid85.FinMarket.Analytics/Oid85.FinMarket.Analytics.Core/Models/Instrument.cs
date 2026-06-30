@@ -74,5 +74,10 @@
         /// Сектор
         /// </summary>
         public string Sector { get; set; }
+
+        /// <summary>
+        /// Кредитный рейтинг
+        /// </summary>
+        public string? Rating { get; set; } = null;
     }
 }

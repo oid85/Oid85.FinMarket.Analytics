@@ -32,6 +32,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     instrument.MaturityDate = storageInstrument.MaturityDate;
                     instrument.Nkd = storageInstrument.Nkd;
                     instrument.Nominal = storageInstrument.Nominal;
+                    instrument.Rating = storageInstrument.Rating;
                 }
             }
 
@@ -91,7 +92,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     MaturityDate = x.MaturityDate,
                     Nominal = x.Nominal,
                     Currency = x.Currency,
-                    Lot = x.Lot
+                    Lot = x.Lot,
+                    Rating = x.Rating
                 })
                 .ToList();
 
