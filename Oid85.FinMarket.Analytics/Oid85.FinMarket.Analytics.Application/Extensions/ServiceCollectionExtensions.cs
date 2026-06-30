@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDiagramService, DiagramService>();
         services.AddScoped<IFundamentalParameterRatioService, FundamentalParameterRatioService>();
         services.AddScoped<IArbitrageService, ArbitrageService>();
+        services.AddScoped<IBulletinService, BulletinService>();
 
         services.AddScoped<IAnalyseParameterFactory, AnalyseParameterFactory>();
     }

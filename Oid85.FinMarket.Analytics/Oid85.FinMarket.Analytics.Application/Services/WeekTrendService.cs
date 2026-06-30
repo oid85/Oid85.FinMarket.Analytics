@@ -71,11 +71,27 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         });
                 }
 
-                return
-                [
-                    .. weekDeltaDataList.Where(x => x.InPortfolio).OrderByDescending(x => x.Items[^1].Delta != 0.0 ? x.Items[^1].Delta : x.Items[^2].Delta),
-                    .. weekDeltaDataList.Where(x => !x.InPortfolio).OrderByDescending(x => x.Items[^1].Delta != 0.0 ? x.Items[^1].Delta : x.Items[^2].Delta)
-                ];
+                var inPortfolioItems = weekDeltaDataList
+                    .Where(x => x.InPortfolio)
+                    .OrderByDescending(x =>
+                    {
+                        var reverse = x.Items.Select(x => x.Delta).Where(x => x != null && x != 0.0).AsEnumerable().Reverse();
+                        var count = reverse.TakeWhile(x => x > 0).Count();
+                        return count;
+                    })
+                    .ToList();
+
+                var notInPortfolioItems = weekDeltaDataList
+                    .Where(x => !x.InPortfolio)
+                    .OrderByDescending(x =>
+                    {
+                        var reverse = x.Items.Select(x => x.Delta).Where(x => x != null && x != 0.0).AsEnumerable().Reverse();
+                        var count = reverse.TakeWhile(x => x > 0).Count();
+                        return count;
+                    })
+                    .ToList();
+
+                return [.. inPortfolioItems, .. notInPortfolioItems];
             }
 
             WeekDeltaDataItem GetWeekDeltaDataItem(string ticker, DateOnly weekStartDay, DateOnly weekEndDay)
