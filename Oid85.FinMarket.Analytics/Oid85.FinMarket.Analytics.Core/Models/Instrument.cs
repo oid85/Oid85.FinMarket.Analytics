@@ -79,5 +79,10 @@
         /// Кредитный рейтинг
         /// </summary>
         public string? Rating { get; set; } = null;
+
+        /// <summary>
+        /// Признак плавающего купона
+        /// </summary>
+        public bool? FloatingCouponFlag { get; set; } = null;
     }
 }

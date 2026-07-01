@@ -33,6 +33,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     instrument.Nkd = storageInstrument.Nkd;
                     instrument.Nominal = storageInstrument.Nominal;
                     instrument.Rating = storageInstrument.Rating;
+                    instrument.FloatingCouponFlag = storageInstrument.FloatingCouponFlag;
                 }
             }
 
@@ -93,7 +94,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Nominal = x.Nominal,
                     Currency = x.Currency,
                     Lot = x.Lot,
-                    Rating = x.Rating
+                    Rating = x.Rating,
+                    FloatingCouponFlag = x.FloatingCouponFlag
                 })
                 .ToList();
 

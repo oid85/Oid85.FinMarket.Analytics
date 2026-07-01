@@ -47,7 +47,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Price = instrument.LastPrice.HasValue ? Math.Round(instrument.LastPrice.Value, 2) : 0.0,
                     Nkd = instrument.Nkd.HasValue ? Math.Round(instrument.Nkd.Value, 2) : 0.0,
                     InPortfolio = instrument.InPortfolio,
-                    Rating = instrument.Rating
+                    Rating = instrument.Rating,
+                    IsFloatingCoupon = instrument.FloatingCouponFlag.HasValue
+                    ? (instrument.FloatingCouponFlag.Value ? "да" : string.Empty)
+                    : string.Empty
                 };
 
                 if (instrument.MaturityDate.HasValue)
