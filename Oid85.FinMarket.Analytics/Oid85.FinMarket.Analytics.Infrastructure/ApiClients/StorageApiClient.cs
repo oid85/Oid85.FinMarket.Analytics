@@ -7,8 +7,6 @@ using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Exceptions;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses.ApiClient;
-using Oid85.FinMarket.Storage.Core.Requests;
-using Oid85.FinMarket.Storage.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients
 {
