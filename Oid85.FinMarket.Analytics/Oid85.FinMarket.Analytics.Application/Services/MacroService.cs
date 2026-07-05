@@ -5,7 +5,6 @@ using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
-using Oid85.FinMarket.Storage.Core.Requests;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {

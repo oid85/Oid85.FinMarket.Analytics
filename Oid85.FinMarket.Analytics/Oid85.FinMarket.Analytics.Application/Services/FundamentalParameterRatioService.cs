@@ -1,5 +1,4 @@
-﻿using Hangfire.Dashboard;
-using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -126,31 +125,58 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (metric.Pbv.HasValue)
             {
-                if (metric.Pbv.Value <= 0.0) 
-                    return new() 
-                    { 
-                        Ratio = 0.0, 
-                        Color = KnownColors.Red,
-                        Description = $"❗ P/BV отрицательный",
-                        Text = $"❗ P/BV отрицательный ({metric.Pbv.Value}). Собственный капитал компании отрицателен. Обязательства компании превышают стоимость всех её активов. Негативный сигнал, бизнес работает за счет заемных средств и имеет долги, превышающие активы"
-                    };
-
-                if (metric.Pbv.Value < 1.0)
+                if (metric.Pbv.Value <= 0.0)
                     return new()
                     {
-                        Ratio = 1.0,
-                        Color = KnownColors.Green,
-                        Description = $"✅ P/BV меньше единицы",
-                        Text = $"✅ P/BV меньше единицы ({metric.Pbv.Value}). Стоимость компании меньше её собственного капитала"
-                    };
-               
-                if (metric.Pbv.Value >= 1.0) 
-                    return new() 
-                    { 
-                        Ratio = 0.0, 
+                        Ratio = 0.0,
                         Color = KnownColors.Red,
-                        Description = $"⚠️ P/BV больше единицы",
-                        Text = $"⚠️ P/BV больше единицы ({metric.Pbv.Value}). Стоимость компании превышает её балансовую стоимость"
+                        Description = $"❗ P/BV отрицательный",
+                        Text = $"❗ P/BV отрицательный ({metric.Pbv.Value})"
+                    };
+
+                var sectorMetrics = await GetSectorMetricsAsync(ticker, period);
+                var sectorMetricValues = sectorMetrics.Where(x => x.Pbv.HasValue).ToList();
+
+                int totalCount = sectorMetricValues.Count;
+                int badCount = sectorMetricValues.Where(x => x.Pbv!.Value <= 0.0).Count();
+                int predicatCount = sectorMetricValues.Where(x => x.Pbv!.Value > 0.0).Count(x => x.Pbv!.Value >= metric.Pbv.Value);
+
+                double ratio = Convert.ToDouble(predicatCount + badCount) / Convert.ToDouble(totalCount);
+
+                if (ratio > 0.75)
+                    return new()
+                    {
+                        Ratio = ratio,
+                        Color = KnownColors.Green,
+                        Description = $"✅ P/BV низкое в секторе",
+                        Text = $"✅ P/BV низкое в секторе ({metric.Pbv.Value}) - ниже, чем у 75% компаний сектора"
+                    };
+
+                else if (ratio > 0.5)
+                    return new()
+                    {
+                        Ratio = ratio,
+                        Color = KnownColors.LightGreen,
+                        Description = $"✅ P/BV ниже среднего в секторе",
+                        Text = $"✅ P/BV ниже среднего в секторе ({metric.Pbv.Value}) - ниже, чем у 50% компаний сектора"
+                    };
+
+                else if (ratio > 0.25)
+                    return new()
+                    {
+                        Ratio = ratio,
+                        Color = KnownColors.Yellow,
+                        Description = $"⚠️ P/BV выше среднего в секторе",
+                        Text = $"⚠️ P/BV выше среднего в секторе ({metric.Pbv.Value}) - выше, чем у 75% компаний сектора"
+                    };
+
+                else
+                    return new()
+                    {
+                        Ratio = 0.0,
+                        Color = KnownColors.Red,
+                        Description = $"⚠️ P/BV высокое в секторе",
+                        Text = $"⚠️ P/BV высокое в секторе ({metric.Pbv.Value})"
                     };
             }
 

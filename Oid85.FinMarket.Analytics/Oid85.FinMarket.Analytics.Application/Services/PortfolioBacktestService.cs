@@ -50,8 +50,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.PortfolioName == "LifePortfolio")
                 return await LifePortfolioBacktestAsync();
 
-            if (request.PortfolioName == "Top10DividendFundamentalScore")
-                return await Top10DividendFundamentalScorePortfolioBacktestAsync();
+            if (request.PortfolioName == "HighDividend")
+                return await HighDividendFundamentalScorePortfolioBacktestAsync();
+
+            if (request.PortfolioName == "LowDebt")
+                return await LowDebtFundamentalScorePortfolioBacktestAsync();
 
             return await LifePortfolioBacktestAsync();
         }
@@ -83,7 +86,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return response;
         }
         
-        private async Task<PortfolioBacktestResponse> Top10DividendFundamentalScorePortfolioBacktestAsync()
+        private async Task<PortfolioBacktestResponse> HighDividendFundamentalScorePortfolioBacktestAsync()
         {
             var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "HighDividend" }))
                 .Items
@@ -91,10 +94,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .Take(10)
                 .ToDictionary(k => k.Ticker, v => 1.0);
 
-
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
                 weight,
-                "ТОП-10 дивидендных фунд. рейтинга", KnownColors.Green, true);
+                "ТОП дивидендных фунд. рейт.", KnownColors.Green, true);
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
@@ -116,6 +118,40 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             return response;
         }
+
+        private async Task<PortfolioBacktestResponse> LowDebtFundamentalScorePortfolioBacktestAsync()
+        {
+            var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "LowDebt" }))
+                .Items
+                .OrderByDescending(x => x.Score!.Score.Value)
+                .Take(10)
+                .ToDictionary(k => k.Ticker, v => 1.0);
+
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                weight,
+                "ТОП с низким долгом фунд. рейт.", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
+        }
+
 
         private async Task<PortfolioBacktestSeries> GetPortfolioSeriesAsync(
             Dictionary<string, double> weights, string portfolioName, string color, bool withServe)
