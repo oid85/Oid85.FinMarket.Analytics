@@ -95,6 +95,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var lifePortfolioPositions = (await lifePortfolioPositionRepository.GetLifePortfolioPositionsAsync())
                 .Where(x => !x.IsDeleted)
                 .Where(x => instrumentTickers.Contains(x.Ticker))
+                .Where(x => x.Ticker != "TGLD")
+                .Where(x => x.Ticker != "TMON")
                 .ToList();
 
             double lifeTotalSum = 0.0;
@@ -150,9 +152,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 var fundamentalScore = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);
 
                 fundamentalScoreCoefficient = fundamentalScore?.Score.Value ?? 0.0;
-
-                if (instrument.Ticker == "TGLD")
-                    fundamentalScoreCoefficient = 10.0;
 
                 portfolioPosition.FundamentalScoreCoefficient = fundamentalScoreCoefficient.RoundTo(2);
 

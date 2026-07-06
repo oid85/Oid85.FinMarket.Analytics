@@ -77,6 +77,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (buyShareTickers.Count > 0)
             {
                 lines.Add("💼 Акции");
+                lines.Add("");
 
                 foreach (var ticker in buyShareTickers)
                 {
