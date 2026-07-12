@@ -24,15 +24,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var positionListResponse = (await portfolioService.GetPortfolioPositionListAsync(new()));
 
             // Тикеры, по которым были получены дивиденды
-            List<string> receivedDividendTickers = ["MOEX", "MTSS"];
+            List<string> receivedDividendTickers = [];
 
             // Тикеры купленных облигаций
-            List<string> buyBondTickers = ["RU000A107050", "RU000A10E7W8"];
+            List<string> buyBondTickers = ["RU000A10C5F9", "RU000A10EC63", "RU000A108RP9", "RU000A10EC22", "RU000A10E7W8"];
 
             // Тикеры купленных акций
-            List<string> buyShareTickers = ["MOEX", "MTSS", "IRAO", "NLMK"];
+            List<string> buyShareTickers = [];
 
-            string filePath = @"c:\Users\79131\Downloads\week-trades.txt";
+            string filePath = @"c:\Users\79131\Downloads\пост.txt";
 
             var lines = new List<string>();
 

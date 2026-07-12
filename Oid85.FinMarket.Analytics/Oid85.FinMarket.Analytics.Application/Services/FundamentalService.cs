@@ -468,6 +468,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 if (request.FilterType == "LowDebt")
                     filteredItems = [.. items.Where(x => IsLowDebt(x.Score))];
+
+                if (request.FilterType == "GrowingNetProfit")
+                    filteredItems = [.. items.Where(x => IsGrowingNetProfit(x.Score))];
             }
 
             var response = new GetFundamentalRatingListResponse { Items = [.. filteredItems.OrderByDescending(x => x.Score?.Score.Value)] };
@@ -513,6 +516,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 debtEquityCriteriaIsGood |= score.DebtEquity?.ColorFill == KnownColors.LightGreen;
 
                 return netDebtCriteriaIsGood && netDebtEbitdaCriteriaIsGood && debtRatioCriteriaIsGood && debtEquityCriteriaIsGood && highScore;
+            }
+
+            bool IsGrowingNetProfit(FundamentalScore? score)
+            {
+                if (score is null) return false;
+
+                bool highScore = score.Score?.ColorFill == KnownColors.Green;
+                highScore |= score.Score?.ColorFill == KnownColors.Yellow;
+
+                bool netProfitCriteriaIsGood = score.NetProfit?.ColorFill == KnownColors.Green;
+                netProfitCriteriaIsGood |= score.NetProfit?.ColorFill == KnownColors.LightGreen;
+
+                return netProfitCriteriaIsGood && highScore;
             }
         }
 

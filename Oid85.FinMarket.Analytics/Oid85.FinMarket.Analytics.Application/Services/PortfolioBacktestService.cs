@@ -56,6 +56,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.PortfolioName == "LowDebt")
                 return await LowDebtFundamentalScorePortfolioBacktestAsync();
 
+            if (request.PortfolioName == "GrowingNetProfit")
+                return await GrowingNetProfitFundamentalScorePortfolioBacktestAsync();
+
             return await LifePortfolioBacktestAsync();
         }
 
@@ -152,6 +155,38 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return response;
         }
 
+        private async Task<PortfolioBacktestResponse> GrowingNetProfitFundamentalScorePortfolioBacktestAsync()
+        {
+            var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "GrowingNetProfit" }))
+                .Items
+                .OrderByDescending(x => x.Score!.Score.Value)
+                .Take(10)
+                .ToDictionary(k => k.Ticker, v => 1.0);
+
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                weight,
+                "ТОП с растущей ЧП фунд. рейт.", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
+        }
 
         private async Task<PortfolioBacktestSeries> GetPortfolioSeriesAsync(
             Dictionary<string, double> weights, string portfolioName, string color, bool withServe)

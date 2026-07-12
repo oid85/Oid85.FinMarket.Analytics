@@ -99,6 +99,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .. bondAnalyseItems.Where(x => !x.InPortfolio).OrderByDescending(x => x.Yield)
                 ];
 
+            int number = 1; foreach (var item in response.Items) item.Number = number++;
+
             return response;
         }
     }

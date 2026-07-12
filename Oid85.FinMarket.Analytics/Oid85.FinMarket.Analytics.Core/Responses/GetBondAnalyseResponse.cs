@@ -8,6 +8,7 @@
 
     public class GetBondAnalyseItemResponse
     {
+        public int Number { get; set; }
         public string Ticker { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
@@ -17,7 +18,7 @@
         public List<GetBondAnalyseCouponData> Coupons { get; set; } = [];
         public bool InPortfolio { get; set; }
         public string? Rating { get; set; }
-        public string? IsFloatingCoupon { get; set; }
+        public string? IsFloatingCoupon { get; set; }        
     }
 
     public class GetBondAnalyseCouponData
