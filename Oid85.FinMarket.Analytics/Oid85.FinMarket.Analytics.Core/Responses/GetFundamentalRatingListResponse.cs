@@ -5,6 +5,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
     public class GetFundamentalRatingListResponse
     {
         public List<FundamentalRatingItem> Items { get; set; } = [];
+        public string TickerList { get; set; } = string.Empty;
     }
 
     public class FundamentalRatingItem

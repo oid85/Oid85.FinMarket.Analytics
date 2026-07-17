@@ -477,6 +477,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             int number = 1; foreach (var item in response.Items) item.Number = number++;
 
+            response.TickerList = string.Join(", ", response.Items.Select(x => $"\"{x.Ticker}\"").ToList());
+
             return response;
 
             bool IsHighDividend(FundamentalScore? score)

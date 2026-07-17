@@ -24,13 +24,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var positionListResponse = (await portfolioService.GetPortfolioPositionListAsync(new()));
 
             // Тикеры, по которым были получены дивиденды
-            List<string> receivedDividendTickers = [];
+            List<string> receivedDividendTickers = ["MRKP", "MRKC", "SVCB", "OZPH", "BELU"];
 
             // Тикеры купленных облигаций
-            List<string> buyBondTickers = ["RU000A10C5F9", "RU000A10EC63", "RU000A108RP9", "RU000A10EC22", "RU000A10E7W8"];
+            List<string> buyBondTickers = [];
 
             // Тикеры купленных акций
-            List<string> buyShareTickers = [];
+            List<string> buyShareTickers = ["TRNFP", "MRKP", "IRAO"];
 
             string filePath = @"c:\Users\79131\Downloads\пост.txt";
 
@@ -55,7 +55,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (buyBondTickers.Count > 0)
             {
-                lines.Add("💼 Облигации");
+                lines.Add("💼 Из облигаций купил в портфель:");
                 lines.Add("");
                 lines.Add("Облигации в портфель приобретаю с рейтингом АКРА не ниже A (AAA, AA и A)");
                 lines.Add("и доходностью больше ключевой ставки (текущее значение 14.25 %)");
@@ -76,7 +76,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (buyShareTickers.Count > 0)
             {
-                lines.Add("💼 Акции");
+                lines.Add("💼 Из акций купил в портфель:");
                 lines.Add("");
 
                 foreach (var ticker in buyShareTickers)
