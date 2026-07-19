@@ -9,7 +9,6 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class BlogService(
-        IParameterRepository parameterRepository,
         IBondAnalyseService bondAnalyseService,
         IFundamentalService fundamentalService,
         IInstrumentService instrumentService,
