@@ -210,7 +210,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
             var fundamentalParameters = (await storageApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
-            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).OrderBy(x => x.Ticker).ToList();
+            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).Where(x => x.IsSelected).OrderBy(x => x.Ticker).ToList();
             bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
             var fundamentalRatings = (await GetFundamentalRatingListAsync(new() { Sector = request.Sector })).Items;
             var tickers = fundamentalRatings.Select(x => x.Ticker).ToList();
@@ -406,7 +406,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
 
             var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? [])
-                .Where(x => x.Type == KnownInstrumentTypes.Share)                 
+                .Where(x => x.Type == KnownInstrumentTypes.Share)
+                .Where(x => x.IsSelected)
                 .ToList();
 
             if (request.Sector is not null)
