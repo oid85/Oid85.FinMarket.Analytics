@@ -1,10 +1,8 @@
-﻿using System.Drawing;
-using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
-using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -79,9 +77,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new()))
                 .Items
                 .Where(x => x.IsFloatingCoupon != "да")
-                .Where(x => x.Yield >= keyRate)
+                .Where(x => x.Yield >= keyRate * 1.2)
                 .OrderByDescending(x => x.Yield)
-                .Take(50)
                 .ToList();
 
             var instruments = await instrumentService.GetInstrumentListAsync();
@@ -245,7 +242,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "HighDividend" }))
                 .Items
                 .OrderByDescending(x => x.Score!.Score.Value)
-                .Take(10)
                 .ToDictionary(k => k.Ticker, v => 1.0);
 
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
@@ -278,7 +274,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "LowDebt" }))
                 .Items
                 .OrderByDescending(x => x.Score!.Score.Value)
-                .Take(10)
                 .ToDictionary(k => k.Ticker, v => 1.0);
 
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
@@ -311,7 +306,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "GrowingNetProfit" }))
                 .Items
                 .OrderByDescending(x => x.Score!.Score.Value)
-                .Take(10)
                 .ToDictionary(k => k.Ticker, v => 1.0);
 
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
