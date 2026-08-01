@@ -104,6 +104,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 ColorFill = KnownColors.Green
             };
 
+            var monthCouponSeries = new PortfolioBacktestSeries()
+            {
+                Name = "Месячный купон (x100)",
+                Color = KnownColors.DarkGreen,
+                ColorFill = KnownColors.DarkGreen
+            };
+
             for (int i = 0; i < dates.Count; i++)
             {
                 AddCoupons();
@@ -116,7 +123,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new()
                     {
                         Date = dates[i],
-                        Value = (totalSum / 1_000_000.0).RoundTo(2)
+                        Value = (totalSum / 1_000.0).RoundTo(2)
+                    });
+
+                monthCouponSeries.Data.Add(
+                    new()
+                    {
+                        Date = dates[i],
+                        Value = (_couponSum / 1_00.0 / ((i + 1) / 30.0)).RoundTo(2)
                     });
 
                 void UpdateCosts()
@@ -188,7 +202,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 Series =
                 [
-                    bondSeries
+                    bondSeries,
+                    monthCouponSeries
                 ],
                 Yield = GetAverageYearYieldPercent(bondSeries),
                 CouponSum = _couponSum.RoundTo(2),
@@ -362,7 +377,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new()
                     {
                         Date = dates[i],
-                        Value = (totalSum / 1_000_000.0).RoundTo(2)
+                        Value = (totalSum / 1_000.0).RoundTo(2)
                     });
 
                 void UpdatePrices()
@@ -469,7 +484,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new()
                     {
                         Date = dates[i],
-                        Value = ((size * analyseDataContext.GetPrice(indexTicker, dates[i])) / 1_000_000.0).RoundTo(2)
+                        Value = ((size * analyseDataContext.GetPrice(indexTicker, dates[i])) / 1_000.0).RoundTo(2)
                     });
 
             return series;
