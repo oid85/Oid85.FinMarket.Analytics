@@ -4,9 +4,10 @@
     {
         public List<PortfolioBacktestSeries> Series { get; set; } = [];
         public double Yield { get; set; }
-        public double MaxDrawdown { get; set; }
-        public double CurrentDrawdown { get; set; }
-        public double DividendSum { get; set; }
+        public double? MaxDrawdown { get; set; } = null;
+        public double? CurrentDrawdown { get; set; } = null;
+        public double? DividendSum { get; set; } = null;
+        public double? CouponSum { get; set; } = null;
         public double MoneySum { get; set; }
     }
 

@@ -1,8 +1,10 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using System.Drawing;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -12,6 +14,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         IPortfolioService portfolioService,
+        IBondAnalyseService bondAnalyseService,
         IFundamentalService fundamentalService,
         IInstrumentService instrumentService,
         IDataService dataService,
@@ -25,6 +28,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         private double _addMoneySum;
 
         private double _dividendSum = 0.0;
+        private double _couponSum = 0.0;
         private double _moneySum = 0.0;
 
         private DateOnly _startDate;
@@ -59,7 +63,139 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.PortfolioName == "GrowingNetProfit")
                 return await GrowingNetProfitFundamentalScorePortfolioBacktestAsync();
 
+            if (request.PortfolioName == "Bond")
+                return await BondPortfolioForwardtestAsync();
+
             return await LifePortfolioBacktestAsync();
+        }
+
+        private async Task<PortfolioBacktestResponse> BondPortfolioForwardtestAsync()
+        {
+            _startDate = DateOnly.FromDateTime(DateTime.Today);
+            _endDate = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
+
+            var keyRate = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).Last().Value;
+
+            var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new()))
+                .Items
+                .Where(x => x.IsFloatingCoupon != "да")
+                .Where(x => x.Yield >= keyRate)
+                .OrderByDescending(x => x.Yield)
+                .Take(50)
+                .ToList();
+
+            var instruments = await instrumentService.GetInstrumentListAsync();
+            var tickers = bondAnalyseItems.Select(x => x.Ticker).ToList();            
+            var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
+            var dates = DateUtils.GetDates(_startDate, _endDate);
+            var sizes = tickers.ToDictionary(k => k, v => 0);
+            var costs = tickers.ToDictionary(k => k, v => 0.0);
+            var prices = bondAnalyseItems.ToDictionary(k => k.Ticker, v => v.Price);
+            var weights = tickers.ToDictionary(k => k, v => 1.0);
+            var lots = tickers.ToDictionary(k => k, v => 1);
+            double money = _startMoneySum;
+            double totalSum = _startMoneySum;
+            var bondCoupons = await dataService.GetBondCouponsAsync(tickers);
+
+            var bondSeries = new PortfolioBacktestSeries()
+            {
+                Name = "Облигации",
+                Color = KnownColors.Green,
+                ColorFill = KnownColors.Green
+            };
+
+            for (int i = 0; i < dates.Count; i++)
+            {
+                AddCoupons();
+                AddMoney();
+                UpdateCosts();
+                UpdateTotalSum();
+                Rebalance();
+
+                bondSeries.Data.Add(
+                    new()
+                    {
+                        Date = dates[i],
+                        Value = (totalSum / 1_000_000.0).RoundTo(2)
+                    });
+
+                void UpdateCosts()
+                {
+                    foreach (var ticker in tickers)
+                        costs[ticker] = prices[ticker] * sizes[ticker];
+                }
+
+                void UpdateSizes()
+                {
+                    double baseUnit = totalSum / weights.Values.Sum();
+
+                    foreach (var ticker in tickers)
+                    {
+                        if (prices[ticker] == 0.0)
+                        {
+                            costs[ticker] = 0.0;
+                            continue;
+                        }
+
+                        double tickerCost = baseUnit * weights[ticker];
+                        double tickerSize = tickerCost / prices[ticker];
+                        tickerSize /= lots[ticker];
+                        tickerSize = Math.Truncate(tickerSize);
+                        tickerSize *= lots[ticker];
+                        sizes[ticker] = Convert.ToInt32(tickerSize);
+                    }
+                }
+
+                void AddCoupons()
+                {
+                    foreach (var ticker in tickers)
+                    {
+                        var coupons = bondCoupons[ticker];
+                        var coupon = coupons.Find(x => x.Ticker == ticker && x.CouponDate == dates[i]);
+
+                        if (coupon is not null)
+                        {
+                            double couponPay = sizes[ticker] * coupon.PayOneBond;
+                            money += couponPay;
+                            _couponSum += couponPay;
+                        }
+                    }
+                }
+
+                void AddMoney()
+                {
+                    if (i % _addMoneyPeriodInDays == 0)
+                    {
+                        money += _addMoneySum;
+                        _moneySum += _addMoneySum;
+                    }
+                }
+
+                void UpdateTotalSum()
+                {
+                    totalSum = costs.Values.Sum() + money;
+                }
+
+                void Rebalance()
+                {
+                    UpdateSizes();
+                    UpdateCosts();
+                    money = totalSum - costs.Values.Sum();
+                }
+            }
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    bondSeries
+                ],
+                Yield = GetAverageYearYieldPercent(bondSeries),
+                CouponSum = _couponSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            return response;
         }
 
         private async Task<PortfolioBacktestResponse> LifePortfolioBacktestAsync()

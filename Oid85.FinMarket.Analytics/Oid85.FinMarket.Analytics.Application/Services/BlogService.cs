@@ -1,4 +1,5 @@
 ﻿using System.Net.WebSockets;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -12,11 +13,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IBondAnalyseService bondAnalyseService,
         IFundamentalService fundamentalService,
         IInstrumentService instrumentService,
-        IPortfolioService portfolioService) 
+        IPortfolioService portfolioService,
+        IStorageApiClient storageApiClient) 
         : IBlogService
     {
         public async Task<CreateWeekTradesPostResponse> CreateWeekTradesPostAsync(CreateWeekTradesPostRequest request)
         {
+            var keyRate = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).Last().Value;
             var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new())).Items;
             var fundamentalRatingListItems = (await fundamentalService.GetFundamentalRatingListAsync(new())).Items;
             var instruments = await instrumentService.GetInstrumentListAsync();
@@ -57,7 +60,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 lines.Add("💼 Из облигаций купил в портфель:");
                 lines.Add("");
                 lines.Add("Облигации в портфель приобретаю с рейтингом АКРА не ниже A (AAA, AA и A)");
-                lines.Add("и доходностью больше ключевой ставки (текущее значение 14.25 %)");
+                lines.Add($"и доходностью больше ключевой ставки (текущее значение {keyRate.Value:N2} %)");
                 lines.Add("");
                 lines.Add("Приобрел выпуски:");
 
