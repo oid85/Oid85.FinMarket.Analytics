@@ -402,7 +402,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ratio = 0.75,
                         Color = KnownColors.Yellow,
-                        Description = "⚠️ Долг сокращается 2 года подряд",
+                        Description = "⚠️ Долг сокр. 2 года подряд",
                         Text = $"⚠️ Долг сокращается 2 года подряд. Текущее значение {metric_0.NetDebt.Value} млрд. руб."
                     };
 
