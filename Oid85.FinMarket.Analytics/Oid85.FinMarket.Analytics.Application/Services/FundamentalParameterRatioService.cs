@@ -243,8 +243,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Text = $"✅ Прибыль выросла на {deltaPrc} % по сравнению с предыдущим периодом. Рост прибыли 3 года подряд"
                     };
 
-                if (metric_1.NetProfit.Value > 0.0 &&
-                    metric_0.NetProfit.Value > 0.0 &&
+                if (metric_0.NetProfit.Value > 0.0 &&
                     metric_0.NetProfit.Value > metric_1.NetProfit.Value) 
                     return new() 
                     { 

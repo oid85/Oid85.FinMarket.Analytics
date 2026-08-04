@@ -41,10 +41,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     WeekStartDay = x.WeekStartDay,
                     WeekEndDay = x.WeekEndDay
                 })],
-                Shares = GetWeekDeltaDataList(shares),
-                Indexes = GetWeekDeltaDataList(indexes),
-                Futures = GetWeekDeltaDataList(futures),
-                Etfs = GetWeekDeltaDataList(etfs)
+                Shares = GetWeekDeltaDataList(shares)
             };
 
             return response;

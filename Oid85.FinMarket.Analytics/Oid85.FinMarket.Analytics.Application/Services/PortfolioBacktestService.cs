@@ -3,6 +3,7 @@ using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -207,13 +208,32 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 MoneySum = _moneySum.RoundTo(2)
             };
 
+            response.PortfolioPositions = bondAnalyseItems
+                .Select(x =>
+                new PortfolioPositionItem
+                {
+                    Ticker = x.Ticker,
+                    Sector = instruments.Find(xx => xx.Ticker == x.Ticker)?.Sector ?? string.Empty,
+                    Name = x.Name,
+                    CurrentDividendYield = x.Yield
+                })
+                .ToList();
+
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Percent = (100.0 / (response.PortfolioPositions.Sum(x => x.ResultCoefficient))).RoundTo(2);
+
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Number = i + 1;
+
             return response;
         }
 
         private async Task<PortfolioBacktestResponse> LifePortfolioBacktestAsync()
         {
+            var positions = (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions;
+
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
-                (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
+                positions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
                 "Портфель", KnownColors.Green, true);
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
@@ -234,101 +254,189 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 MoneySum = _moneySum.RoundTo(2)
             };
 
+            response.PortfolioPositions = positions
+                .Select(x =>
+                new PortfolioPositionItem
+                {
+                    Ticker = x.Ticker,
+                    Sector = x.Sector,
+                    Name = x.Name,
+                    FundamentalScoreCoefficient = x.FundamentalScoreCoefficient,
+                    DividendCoefficient = x.DividendCoefficient,
+                    MarketCapCoefficient = x.MarketCapCoefficient,
+                    ResultCoefficient = x.ResultCoefficient,
+                    Percent = x.Percent,
+                    CurrentDividendYield = x.CurrentDividendYield
+                })
+                .ToList();
+
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Number = i + 1;
+
             return response;
         }
         
         private async Task<PortfolioBacktestResponse> HighDividendFundamentalScorePortfolioBacktestAsync()
         {
-            var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "HighDividend" }))
-                .Items
-                .OrderByDescending(x => x.Score!.Score.Value)
-                .ToDictionary(k => k.Ticker, v => 1.0);
+            var response = new PortfolioBacktestResponse();
+
+            var fundamentalRatingListItems = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "HighDividend" })).Items;
+
+            var portfolioPositions = new List<PortfolioPositionItem>();
+
+            foreach (var fundamentalRatingListItem in fundamentalRatingListItems)
+            {
+                var fundamentalScoreCoefficient = fundamentalRatingListItem.Score?.Score.Value.RoundTo(2) ?? 1.0;
+                var dividendCoefficient = await GetDividendCoefficient(fundamentalRatingListItem.Metric?.DividendYield);
+                var marketCapCoefficient = fundamentalRatingListItem.Score?.MarketCap?.Ratio ?? 1.0;
+
+                portfolioPositions.Add(
+                    new PortfolioPositionItem
+                    {
+                        Ticker = fundamentalRatingListItem.Ticker,
+                        Sector = fundamentalRatingListItem.Sector,
+                        Name = fundamentalRatingListItem.Name,
+                        FundamentalScoreCoefficient = fundamentalScoreCoefficient,
+                        DividendCoefficient = dividendCoefficient,
+                        MarketCapCoefficient = marketCapCoefficient,
+                        ResultCoefficient = fundamentalScoreCoefficient * dividendCoefficient * marketCapCoefficient,
+                        CurrentDividendYield = fundamentalRatingListItem.Metric?.DividendYield ?? 0.0
+                    });
+            }
+
+            double sumResultCoefficient = portfolioPositions.Sum(x => x.ResultCoefficient);
+            for (int i = 0; i < portfolioPositions.Count; i++)
+                portfolioPositions[i].Percent = (portfolioPositions[i].ResultCoefficient / sumResultCoefficient * 100.0).RoundTo(2);
+
+            response.PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)];
+
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Number = i + 1;
 
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
-                weight,
+                response.PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
                 "ТОП дивидендных фунд. рейт.", KnownColors.Green, true);
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
             var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
 
-            var response = new PortfolioBacktestResponse
-            {
-                Series =
-                [
-                    portfolioEquitySeries,
-                    msftrSeries
-                ],
-                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
-                MaxDrawdown = drawdownValues.Min(),
-                CurrentDrawdown = drawdownValues.Last(),
-                DividendSum = _dividendSum.RoundTo(2),
-                MoneySum = _moneySum.RoundTo(2)
-            };
+            response.Series = [portfolioEquitySeries, msftrSeries];
+            response.Yield = GetAverageYearYieldPercent(portfolioEquitySeries);
+            response.MaxDrawdown = drawdownValues.Min();
+            response.CurrentDrawdown = drawdownValues.Last();
+            response.DividendSum = _dividendSum.RoundTo(2);
+            response.MoneySum = _moneySum.RoundTo(2);
 
             return response;
         }
 
         private async Task<PortfolioBacktestResponse> LowDebtFundamentalScorePortfolioBacktestAsync()
         {
-            var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "LowDebt" }))
-                .Items
-                .OrderByDescending(x => x.Score!.Score.Value)
-                .ToDictionary(k => k.Ticker, v => 1.0);
+            var response = new PortfolioBacktestResponse();
+
+            var fundamentalRatingListItems = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "LowDebt" })).Items;
+
+            var portfolioPositions = new List<PortfolioPositionItem>();
+
+            foreach (var fundamentalRatingListItem in fundamentalRatingListItems)
+            {
+                var fundamentalScoreCoefficient = fundamentalRatingListItem.Score?.Score.Value.RoundTo(2) ?? 1.0;
+                var dividendCoefficient = await GetDividendCoefficient(fundamentalRatingListItem.Metric?.DividendYield);
+                var marketCapCoefficient = fundamentalRatingListItem.Score?.MarketCap?.Ratio ?? 1.0;
+
+                portfolioPositions.Add(
+                    new PortfolioPositionItem
+                    {
+                        Ticker = fundamentalRatingListItem.Ticker,
+                        Sector = fundamentalRatingListItem.Sector,
+                        Name = fundamentalRatingListItem.Name,
+                        FundamentalScoreCoefficient = fundamentalScoreCoefficient,
+                        DividendCoefficient = dividendCoefficient,
+                        MarketCapCoefficient = marketCapCoefficient,
+                        ResultCoefficient = fundamentalScoreCoefficient * dividendCoefficient * marketCapCoefficient,
+                        CurrentDividendYield = fundamentalRatingListItem.Metric?.DividendYield ?? 0.0
+                    });
+            }
+
+            double sumResultCoefficient = portfolioPositions.Sum(x => x.ResultCoefficient);
+            for (int i = 0; i < portfolioPositions.Count; i++)
+                portfolioPositions[i].Percent = (portfolioPositions[i].ResultCoefficient / sumResultCoefficient * 100.0).RoundTo(2);
+
+            response.PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)];
+
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Number = i + 1;
 
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
-                weight,
+                response.PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
                 "ТОП с низким долгом фунд. рейт.", KnownColors.Green, true);
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
             var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
 
-            var response = new PortfolioBacktestResponse
-            {
-                Series =
-                [
-                    portfolioEquitySeries,
-                    msftrSeries
-                ],
-                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
-                MaxDrawdown = drawdownValues.Min(),
-                CurrentDrawdown = drawdownValues.Last(),
-                DividendSum = _dividendSum.RoundTo(2),
-                MoneySum = _moneySum.RoundTo(2)
-            };
+            response.Series = [portfolioEquitySeries, msftrSeries];
+            response.Yield = GetAverageYearYieldPercent(portfolioEquitySeries);
+            response.MaxDrawdown = drawdownValues.Min();
+            response.CurrentDrawdown = drawdownValues.Last();
+            response.DividendSum = _dividendSum.RoundTo(2);
+            response.MoneySum = _moneySum.RoundTo(2);
 
             return response;
         }
 
         private async Task<PortfolioBacktestResponse> GrowingNetProfitFundamentalScorePortfolioBacktestAsync()
         {
-            var weight = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "GrowingNetProfit" }))
-                .Items
-                .OrderByDescending(x => x.Score!.Score.Value)
-                .ToDictionary(k => k.Ticker, v => 1.0);
+            var response = new PortfolioBacktestResponse();
+
+            var fundamentalRatingListItems = (await fundamentalService.GetFundamentalRatingListAsync(new() { FilterType = "GrowingNetProfit" })).Items;
+
+            var portfolioPositions = new List<PortfolioPositionItem>();
+
+            foreach (var fundamentalRatingListItem in fundamentalRatingListItems)
+            {
+                var fundamentalScoreCoefficient = fundamentalRatingListItem.Score?.Score.Value.RoundTo(2) ?? 1.0;
+                var dividendCoefficient = await GetDividendCoefficient(fundamentalRatingListItem.Metric?.DividendYield);
+                var marketCapCoefficient = fundamentalRatingListItem.Score?.MarketCap?.Ratio ?? 1.0;
+
+                portfolioPositions.Add(
+                    new PortfolioPositionItem
+                    {
+                        Ticker = fundamentalRatingListItem.Ticker,
+                        Sector = fundamentalRatingListItem.Sector,
+                        Name = fundamentalRatingListItem.Name,
+                        FundamentalScoreCoefficient = fundamentalScoreCoefficient,
+                        DividendCoefficient = dividendCoefficient,
+                        MarketCapCoefficient = marketCapCoefficient,
+                        ResultCoefficient = fundamentalScoreCoefficient * dividendCoefficient * marketCapCoefficient,
+                        CurrentDividendYield = fundamentalRatingListItem.Metric?.DividendYield ?? 0.0
+                    });
+            }
+
+            double sumResultCoefficient = portfolioPositions.Sum(x => x.ResultCoefficient);
+            for (int i = 0; i < portfolioPositions.Count; i++)
+                portfolioPositions[i].Percent = (portfolioPositions[i].ResultCoefficient / sumResultCoefficient * 100.0).RoundTo(2);
+
+            response.PortfolioPositions = [.. portfolioPositions.OrderByDescending(x => x.Percent)];
+
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Number = i + 1;
 
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
-                weight,
+                response.PortfolioPositions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
                 "ТОП с растущей ЧП фунд. рейт.", KnownColors.Green, true);
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
             var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
 
-            var response = new PortfolioBacktestResponse
-            {
-                Series =
-                [
-                    portfolioEquitySeries,
-                    msftrSeries
-                ],
-                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
-                MaxDrawdown = drawdownValues.Min(),
-                CurrentDrawdown = drawdownValues.Last(),
-                DividendSum = _dividendSum.RoundTo(2),
-                MoneySum = _moneySum.RoundTo(2)
-            };
+            response.Series = [ portfolioEquitySeries, msftrSeries ];
+            response.Yield = GetAverageYearYieldPercent(portfolioEquitySeries);
+            response.MaxDrawdown = drawdownValues.Min();
+            response.CurrentDrawdown = drawdownValues.Last();
+            response.DividendSum = _dividendSum.RoundTo(2);
+            response.MoneySum = _moneySum.RoundTo(2);
 
             return response;
         }
@@ -496,7 +604,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return ((last - first) / first * 100.0 / years).RoundTo(2);
         }
 
-        private List<double> GetDrawdownValues(PortfolioBacktestSeries series)
+        private static List<double> GetDrawdownValues(PortfolioBacktestSeries series)
         {
             List<double> equity = [.. series.Data.Select(x => x.Value ?? 0.0)];
             List<double> drawdown = [];
@@ -514,6 +622,28 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
 
             return drawdown;
+        }
+
+        private async Task<double> GetDividendCoefficient(double? dividendYield)
+        {
+            if (!dividendYield.HasValue)
+                return 1.0;
+
+            var keyRates = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).ToList();
+            double currentKeyRate = keyRates.Last().Value ?? 0.0;
+            
+            double hiLimitCoefficient = 3.0;
+            double loLimitCoefficient = 2.0;
+            double hiLimitYield = currentKeyRate;
+            double loLimitYield = hiLimitYield / 3.0 * 2.0;
+
+            double dividendCoefficient = 1.0;
+
+            if (dividendYield.Value >= hiLimitYield) dividendCoefficient = hiLimitCoefficient;
+            else if (dividendYield.Value <= loLimitYield) dividendCoefficient = 1.0;
+            else dividendCoefficient = (dividendYield.Value - loLimitYield) * (hiLimitCoefficient - loLimitCoefficient) / (hiLimitYield - loLimitYield) + loLimitCoefficient;
+
+            return dividendCoefficient;
         }
     }
 }

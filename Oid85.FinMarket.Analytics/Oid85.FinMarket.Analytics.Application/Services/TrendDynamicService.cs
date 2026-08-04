@@ -31,10 +31,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var response = new GetTrendDynamicResponse
             {
                 Dates = dates,
-                Indexes = await GetTrendDynamicDataAsync([.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Index)]),
-                Shares = await GetTrendDynamicDataAsync([.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)]),
-                Futures = await GetTrendDynamicDataAsync([.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Future)]),
-                Etfs = await GetTrendDynamicDataAsync([.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Etf)])
+                Shares = await GetTrendDynamicDataAsync([.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)])
             };
 
             return response;
