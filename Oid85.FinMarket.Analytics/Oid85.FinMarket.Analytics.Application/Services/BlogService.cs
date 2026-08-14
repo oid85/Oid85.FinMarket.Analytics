@@ -23,13 +23,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var positionListResponse = (await portfolioService.GetPortfolioPositionListAsync(new()));
 
             // Тикеры, по которым были получены дивиденды
-            List<string> receivedDividendTickers = ["SBER", "TRNFP"];
+            List<string> receivedDividendTickers = [];
 
             // Тикеры купленных облигаций
-            List<string> buyBondTickers = ["RU000A108Y86", "RU000A107050", "RU000A109PF2", "RU000A10F8N4", "RU000A107CG2"];
+            List<string> buyBondTickers = ["RU000A10B495", "RU000A103KJ8", "RU000A108777", "RU000A10BNF8", "RU000A10EC22"];
 
             // Тикеры купленных акций
-            List<string> buyShareTickers = ["TRNFP", "NMTP"];
+            List<string> buyShareTickers = [];
 
             string filePath = @"c:\Users\79131\Downloads\пост.txt";
 
