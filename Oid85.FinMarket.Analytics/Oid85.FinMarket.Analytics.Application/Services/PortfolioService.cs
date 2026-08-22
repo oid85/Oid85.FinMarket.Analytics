@@ -147,11 +147,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Price = candleData[instrument.Ticker].Last().Close
                 };
 
-                double fundamentalScoreCoefficient = 10.0;
-
                 var fundamentalScore = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);
 
-                fundamentalScoreCoefficient = fundamentalScore?.Score.Value ?? 0.0;
+                double fundamentalScoreCoefficient = fundamentalScore?.Score.Value ?? 0.0;
 
                 portfolioPosition.FundamentalScoreCoefficient = fundamentalScoreCoefficient.RoundTo(2);
 
@@ -159,8 +157,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
                 if (dividendData.TryGetValue(instrument.Ticker, out Core.Models.Dividend? value))
                 {                    
-                    double hiLimitCoefficient = 3.0;
-                    double loLimitCoefficient = 2.0;
+                    double hiLimitCoefficient = 5.0;
+                    double loLimitCoefficient = 3.0;
                     double hiLimitYield = currentKeyRate;
                     double loLimitYield = hiLimitYield / 3.0 * 2.0;
 
