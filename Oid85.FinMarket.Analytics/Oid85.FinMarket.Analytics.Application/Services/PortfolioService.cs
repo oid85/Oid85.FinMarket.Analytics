@@ -179,9 +179,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (instrument.Ticker == "TGLD") portfolioPosition.MarketCapCoefficient = 1.0;
 
                 portfolioPosition.ResultCoefficient = (
-                    portfolioPosition.FundamentalScoreCoefficient *
-                    portfolioPosition.DividendCoefficient *
-                    portfolioPosition.MarketCapCoefficient * 
+                    (portfolioPosition.FundamentalScoreCoefficient + portfolioPosition.DividendCoefficient + portfolioPosition.MarketCapCoefficient) * 
                     portfolioPosition.ManualCoefficient).RoundTo(2);
 
                 portfolioPositions.Add(portfolioPosition);
