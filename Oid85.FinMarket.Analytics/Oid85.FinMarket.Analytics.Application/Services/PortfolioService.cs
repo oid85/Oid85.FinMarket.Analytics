@@ -236,6 +236,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .Select(x => x.Ticker)
                 .ToList();
 
+            if (buyRecommendationPositionTickers is [])
+                buyRecommendationPositionTickers = portfolioPositions
+                .Where(x => x.DeltaPercent < 0.0)
+                .Select(x => x.Ticker)
+                .ToList();
+
             for (int i = 0; i < portfolioPositions.Count; i++)
             {
                 if (buyRecommendationPositionTickers.Contains(portfolioPositions[i].Ticker))
