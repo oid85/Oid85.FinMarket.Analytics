@@ -23,13 +23,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var positionListResponse = (await portfolioService.GetPortfolioPositionListAsync(new()));
 
             // Тикеры, по которым были получены дивиденды
-            List<string> receivedDividendTickers = ["T"];
+            List<string> receivedDividendTickers = [];
 
             // Тикеры купленных облигаций
-            List<string> buyBondTickers = ["RU000A10D3S6", "RU000A10C5L7", "RU000A10BP79", "RU000A10EC63"];
+            List<string> buyBondTickers = ["RU000A10AZ60", "RU000A10B933"];
 
             // Тикеры купленных акций
-            List<string> buyShareTickers = ["SBER"];
+            List<string> buyShareTickers = ["CHMF", "MSRS", "NVTK", "MRKP", "IRAO"];
 
             string filePath = @"c:\Users\79131\Downloads\пост.txt";
 
@@ -99,7 +99,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             lines.Add("Регулярные покупки являются основой долгосрочной стратегии");
             lines.Add("");
             lines.Add("👉 Подписывайтесь на мои каналы");
-            lines.Add("🔗 [ТГ] 🔗 [MAX] 🔗 [Дзен]");
+            lines.Add("🔗 [ТГ] https://t.me/oid85");
+            lines.Add("🔗 [MAX] https://max.ru/channel_oid85_invest");
+            lines.Add("🔗 [Дзен] https://dzen.ru/oid85_invest");
             lines.Add("");
             lines.Add("👉 Если понравилось, ставьте 👍");
             lines.Add("");
