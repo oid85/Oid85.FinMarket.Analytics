@@ -426,7 +426,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     scores.Add((instrument.Ticker, score));
             };
 
-            var items = new List<FundamentalRatingItem>();
+            var items = new List<FundamentalRating>();
 
             foreach (var sector in sectors)
             {
@@ -442,7 +442,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     double lastCandlePrice = candles.Last().Close;
                     double fallingFromMax = -1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0;
 
-                    var ratingItem = new FundamentalRatingItem
+                    var ratingItem = new FundamentalRating
                     {
                         Ticker = ticker,
                         Name = instrument?.Name ?? string.Empty,
@@ -457,7 +457,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 }
             }
 
-            List<FundamentalRatingItem> filteredItems = items;
+            List<FundamentalRating> filteredItems = items;
 
             if (request.FilterType is not null)
             {

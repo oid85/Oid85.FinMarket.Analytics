@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿using Oid85.FinMarket.Analytics.Core.Models;
+
+namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class GetFundamentalBySectorResponse
     {
@@ -8,7 +10,7 @@
         public List<FundamentalBySectorItem> NetDebtDiagram { get; set; } = [];
         public List<FundamentalBySectorItem> DividendDiagram { get; set; } = [];
         public List<FundamentalBySectorBubbleDiagramPoint> BubbleDiagram { get; set; } = [];
-        public List<FundamentalRatingItem> FundamentalRatingItems { get; set; } = [];
+        public List<FundamentalRating> FundamentalRatingItems { get; set; } = [];
     }
 
     public class FundamentalBySectorItem
