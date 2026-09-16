@@ -43,6 +43,19 @@ public class FundamentalParameterController(
             result => new BaseResponse<GetFundamentalRatingListResponse> { Result = result });
 
     /// <summary>
+    /// Получить рейтинг по фундаментальным данным
+    /// </summary>
+    [HttpPost("rating-short/list")]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalRatingShortListResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalRatingShortListResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetFundamentalRatingShortListResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetAnalyticFundamentalRatingShortListAsync(
+        [FromBody] GetFundamentalRatingShortListRequest request) =>
+        GetResponseAsync(
+            () => fundamentalParameterService.GetFundamentalRatingShortListAsync(request),
+            result => new BaseResponse<GetFundamentalRatingShortListResponse> { Result = result });
+
+    /// <summary>
     /// Создать или изменить фундаментальный параметр
     /// </summary>
     [HttpPost("create-or-update")]

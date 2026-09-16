@@ -535,6 +535,26 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             }
         }
 
+        /// <inheritdoc />
+        public async Task<GetFundamentalRatingShortListResponse> GetFundamentalRatingShortListAsync(GetFundamentalRatingShortListRequest request)
+        {
+            var response = await GetFundamentalRatingListAsync(new());
+
+            return new GetFundamentalRatingShortListResponse
+            {
+                Items = [.. response
+                .Items
+                .Select(x =>
+                new FundamentalRatingShortListItem
+                {
+                    Ticker = x.Ticker,
+                    Score = x.Score?.Score.Value ?? 0.0,
+                    DividendYieldRatio = x.Score?.DividendYield?.Ratio ?? 0.0,
+                    DividendAristocratRatio = x.Score?.DividendAristocrat?.Ratio ?? 0.0
+                })]
+            };
+        }
+
         private static List<(string Period, double Value)> GetFundamentalParameterValues(List<FundamentalParameterListItem> fundamentalParameters, string ticker, string type, List<string> periods)
         {
             if (fundamentalParameters is null) return [];

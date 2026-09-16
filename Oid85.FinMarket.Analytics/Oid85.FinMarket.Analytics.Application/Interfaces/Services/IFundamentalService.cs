@@ -37,5 +37,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить рейтинг по фундаментальным данным
         /// </summary>
         Task<GetFundamentalRatingListResponse> GetFundamentalRatingListAsync(GetFundamentalRatingListRequest request);
+
+        /// <summary>
+        /// Получить рейтинг по фундаментальным данным
+        /// </summary>
+        Task<GetFundamentalRatingShortListResponse> GetFundamentalRatingShortListAsync(GetFundamentalRatingShortListRequest request);
     }
 }
