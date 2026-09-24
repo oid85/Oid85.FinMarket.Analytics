@@ -26,7 +26,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             List<string> receivedDividendTickers = [];
 
             // Тикеры купленных облигаций
-            List<string> buyBondTickers = ["RU000A10B313"];
+            List<string> buyBondTickers = ["RU000A100W60"];
 
             // Тикеры купленных акций
             List<string> buyShareTickers = [];
