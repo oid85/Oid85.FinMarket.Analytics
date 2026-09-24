@@ -16,20 +16,20 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     {
         public async Task<CreateWeekTradesPostResponse> CreateWeekTradesPostAsync(CreateWeekTradesPostRequest request)
         {
+            // Тикеры, по которым были получены дивиденды
+            List<string> receivedDividendTickers = GetTickerList(request.ReceivedDividendTickers);
+
+            // Тикеры купленных облигаций
+            List<string> buyBondTickers = GetTickerList(request.BuyBondTickers);
+
+            // Тикеры купленных акций
+            List<string> buyShareTickers = GetTickerList(request.BuyShareTickers);
+
             var keyRate = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).Last().Value;
             var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new())).Items;
             var fundamentalRatingListItems = (await fundamentalService.GetFundamentalRatingListAsync(new())).Items;
             var instruments = await instrumentService.GetInstrumentListAsync();
             var positionListResponse = (await portfolioService.GetPortfolioPositionListAsync(new()));
-
-            // Тикеры, по которым были получены дивиденды
-            List<string> receivedDividendTickers = [];
-
-            // Тикеры купленных облигаций
-            List<string> buyBondTickers = ["RU000A100W60"];
-
-            // Тикеры купленных акций
-            List<string> buyShareTickers = [];
 
             string filePath = @"c:\Users\79131\Downloads\пост.txt";
 
@@ -114,6 +114,19 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             File.WriteAllLines(filePath, lines);
 
             return new();
+        }
+
+        private static List<string> GetTickerList(string input)
+        {
+            var str = input.Trim();
+
+            if (string.IsNullOrEmpty(str)) 
+                return [];
+
+            if (!str.Contains(';'))
+                return [str];
+
+            return [.. str.Split(';')];
         }
     }
 }
