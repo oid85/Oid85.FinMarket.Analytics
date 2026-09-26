@@ -19,12 +19,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var instruments = (await instrumentService.GetInstrumentListAsync() ?? [])
                 .Where(x => x.Type == KnownInstrumentTypes.Bond)
-                .Where(x => x.MaturityDate >= DateOnly.FromDateTime(DateTime.Today.AddYears(1)))
+                .Where(x => x.MaturityDate >= DateOnly.FromDateTime(DateTime.Today.AddYears(2)))
                 .Where(x => x.LastPrice is not null)
                 .Where(x => x.Nominal is not null)
                 .Where(x => x.Currency is not null)
                 .Where(x => x.LastPrice > 0)
-                .Where(x => x.Nominal == 1000)
+                .Where(x => x.Nominal == 1000)                
                 .Where(x => string.Equals(x.Currency, KnownCurrencies.Rub, StringComparison.InvariantCultureIgnoreCase))
                 .OrderBy(x => x.Ticker)
                 .ToList();
