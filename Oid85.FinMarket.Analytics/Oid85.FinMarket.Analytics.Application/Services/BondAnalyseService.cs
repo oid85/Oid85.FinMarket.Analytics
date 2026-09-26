@@ -16,7 +16,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     {
         /// <inheritdoc />
         public async Task<GetBondAnalyseResponse> GetBondAnalyseAsync(GetBondAnalyseRequest request)
-        {
+        {            
             var instruments = (await instrumentService.GetInstrumentListAsync() ?? [])
                 .Where(x => x.Type == KnownInstrumentTypes.Bond)
                 .OrderBy(x => x.Ticker)
@@ -86,10 +86,16 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 bondAnalyseItems.Add(bondAnalyseItem);
             }
 
+            var keyRate = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).Last().Value;
+
+            var filteredBondAnalyseItems = bondAnalyseItems
+                .Where(x => x.Yield >= keyRate)
+                .ToList();
+
             response.Items = 
                 [
-                .. bondAnalyseItems.Where(x => x.InPortfolio).OrderByDescending(x => x.Yield),
-                .. bondAnalyseItems.Where(x => !x.InPortfolio).OrderByDescending(x => x.Yield)
+                .. filteredBondAnalyseItems.Where(x => x.InPortfolio).OrderByDescending(x => x.Yield),
+                .. filteredBondAnalyseItems.Where(x => !x.InPortfolio).OrderByDescending(x => x.Yield)
                 ];
 
             int number = 1; foreach (var item in response.Items) item.Number = number++;
