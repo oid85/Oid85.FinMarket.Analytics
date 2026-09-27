@@ -1,9 +1,9 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using System.Timers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
-using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -61,6 +61,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             if (request.PortfolioName == "GrowingNetProfit")
                 return await GrowingNetProfitFundamentalScorePortfolioBacktestAsync();
+
+            if (request.PortfolioName == "7 ETF")
+                return await SevenEtfPortfolioBacktestAsync();
 
             if (request.PortfolioName == "Bond")
                 return await BondPortfolioForwardtestAsync();
@@ -275,7 +278,75 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             return response;
         }
-        
+
+        private async Task<PortfolioBacktestResponse> SevenEtfPortfolioBacktestAsync()
+        {
+            var weights = new Dictionary<string, double>
+            {
+                { "TDIV", 1.0 },
+                { "TITR", 1.0 },
+                { "TMOS", 1.0 },
+                { "TRND", 1.0 },
+                { "TBRU", 4.0 },
+                { "TOFZ", 4.0 },
+                { "TMON", 8.0 }
+            };
+
+            var positions = weights
+                .Select(x =>
+                new PortfolioPositionListItem
+                {
+                    Ticker = x.Key,
+                    Name = x.Key,
+                    ResultCoefficient = x.Value,
+                    Percent = (x.Value / weights.Values.Sum() * 100.0).RoundTo(2)
+                })
+                .ToList();
+
+            var portfolioEquitySeries = await GetPortfolioSeriesAsync(
+                positions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
+                "Портфель", KnownColors.Green, true);
+
+            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
+
+            var drawdownValues = GetDrawdownValues(portfolioEquitySeries);
+
+            var response = new PortfolioBacktestResponse
+            {
+                Series =
+                [
+                    portfolioEquitySeries,
+                    msftrSeries
+                ],
+                Yield = GetAverageYearYieldPercent(portfolioEquitySeries),
+                MaxDrawdown = drawdownValues.Min(),
+                CurrentDrawdown = drawdownValues.Last(),
+                DividendSum = _dividendSum.RoundTo(2),
+                MoneySum = _moneySum.RoundTo(2)
+            };
+
+            response.PortfolioPositions = positions
+                .Select(x =>
+                new PortfolioPositionItem
+                {
+                    Ticker = x.Ticker,
+                    Sector = x.Sector,
+                    Name = x.Name,
+                    FundamentalScoreCoefficient = x.FundamentalScoreCoefficient,
+                    DividendCoefficient = x.DividendCoefficient,
+                    MarketCapCoefficient = x.MarketCapCoefficient,
+                    ResultCoefficient = x.ResultCoefficient,
+                    Percent = x.Percent,
+                    CurrentDividendYield = x.CurrentDividendYield
+                })
+                .ToList();
+
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Number = i + 1;
+
+            return response;
+        }
+
         private async Task<PortfolioBacktestResponse> HighDividendFundamentalScorePortfolioBacktestAsync()
         {
             var response = new PortfolioBacktestResponse();
