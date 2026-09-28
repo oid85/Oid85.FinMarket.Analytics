@@ -292,12 +292,23 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 { "TMON", 8.0 }
             };
 
+            var names = new Dictionary<string, string>
+            {
+                { "TDIV", "Дивидендные акции" },
+                { "TITR", "Акции роста" },
+                { "TMOS", "Крупнейшие компании РФ" },
+                { "TRND", "Трендовые акции" },
+                { "TBRU", "Российский облигации" },
+                { "TOFZ", "Т-Капитал ОФЗ" },
+                { "TMON", "Денежный рынок" }
+            };
+
             var positions = weights
                 .Select(x =>
                 new PortfolioPositionListItem
                 {
                     Ticker = x.Key,
-                    Name = x.Key,
+                    Name = names[x.Key],
                     ResultCoefficient = x.Value,
                     Percent = (x.Value / weights.Values.Sum() * 100.0).RoundTo(2)
                 })
