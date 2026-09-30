@@ -80,8 +80,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new()))
                 .Items
-                .Where(x => x.IsFloatingCoupon != "да")
-                .Where(x => x.Yield >= keyRate * 1.2)
+                .Where(x => x.Yield >= keyRate)
                 .OrderByDescending(x => x.Yield)
                 .ToList();
 
