@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Oid85.FinMarket.Analytics.Infrastructure.Database;
@@ -11,9 +12,11 @@ using Oid85.FinMarket.Analytics.Infrastructure.Database;
 namespace Oid85.FinMarket.Analytics.Infrastructure.Migrations
 {
     [DbContext(typeof(FinMarketContext))]
-    partial class FinMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20261002091437_02102026_1")]
+    partial class _02102026_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,17 +36,17 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double?>("Price")
+                    b.Property<double>("Price")
                         .HasColumnType("double precision");
 
-                    b.Property<int?>("Size")
+                    b.Property<int>("Size")
                         .HasColumnType("integer");
 
                     b.Property<string>("Ticker")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double?>("Weight")
+                    b.Property<double>("Weight")
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");
@@ -144,17 +147,17 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double?>("Price")
+                    b.Property<double>("Price")
                         .HasColumnType("double precision");
 
-                    b.Property<int?>("Size")
+                    b.Property<int>("Size")
                         .HasColumnType("integer");
 
                     b.Property<string>("Ticker")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double?>("Weight")
+                    b.Property<double>("Weight")
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");
@@ -172,17 +175,17 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double?>("Price")
+                    b.Property<double>("Price")
                         .HasColumnType("double precision");
 
-                    b.Property<int?>("Size")
+                    b.Property<int>("Size")
                         .HasColumnType("integer");
 
                     b.Property<string>("Ticker")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<double?>("Weight")
+                    b.Property<double>("Weight")
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");
