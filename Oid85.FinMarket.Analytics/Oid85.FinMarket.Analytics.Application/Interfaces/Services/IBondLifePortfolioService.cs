@@ -5,6 +5,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
     public interface IBondLifePortfolioService
     {
-        Task<BondLifePortfolioPositionListResponse> GetBondLifePortfolioPositionListAsync(BondLifePortfolioPositionListRequest request);
+        Task<BondLifePortfolioPositionListResponse> GetPositionListAsync(BondLifePortfolioPositionListRequest request);
     }
 }

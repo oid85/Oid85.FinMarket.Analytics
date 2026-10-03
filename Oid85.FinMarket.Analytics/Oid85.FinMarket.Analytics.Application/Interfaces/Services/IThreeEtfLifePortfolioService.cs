@@ -5,6 +5,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
     public interface IThreeEtfLifePortfolioService
     {
-        Task<ThreeEtfLifePortfolioPositionListResponse> GetThreeEtfLifePortfolioPositionListAsync(ThreeEtfLifePortfolioPositionListRequest request);
+        Task<ThreeEtfLifePortfolioPositionListResponse> GetPositionListAsync(ThreeEtfLifePortfolioPositionListRequest request);
     }
 }

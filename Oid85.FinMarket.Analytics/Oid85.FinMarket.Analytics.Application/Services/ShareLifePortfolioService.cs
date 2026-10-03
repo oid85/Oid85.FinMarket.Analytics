@@ -4,9 +4,9 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
-    public class ThreeEtfLifePortfolioService : IThreeEtfLifePortfolioService
+    public class ShareLifePortfolioService : IShareLifePortfolioService
     {
-        public Task<ThreeEtfLifePortfolioPositionListResponse> GetPositionListAsync(ThreeEtfLifePortfolioPositionListRequest request)
+        public Task<ShareLifePortfolioPositionListResponse> GetPositionListAsync(ShareLifePortfolioPositionListRequest request)
         {
             throw new NotImplementedException();
         }

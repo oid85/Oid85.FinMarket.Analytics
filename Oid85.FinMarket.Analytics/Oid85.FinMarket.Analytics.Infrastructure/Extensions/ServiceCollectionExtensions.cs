@@ -31,6 +31,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IParameterRepository, ParameterRepository>();
         services.AddTransient<ILifePortfolioPositionRepository, LifePortfolioPositionRepository>();
         services.AddTransient<IBondLifePortfolioPositionRepository, BondLifePortfolioPositionRepository>();
+        services.AddTransient<IShareLifePortfolioPositionRepository, ShareLifePortfolioPositionRepository>();
         services.AddTransient<IThreeEtfLifePortfolioPositionRepository, ThreeEtfLifePortfolioPositionRepository>();
         services.AddTransient<ISevenEtfLifePortfolioPositionRepository, SevenEtfLifePortfolioPositionRepository>();
     }

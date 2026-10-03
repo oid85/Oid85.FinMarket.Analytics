@@ -3,8 +3,8 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
-    public interface ISevenEtfLifePortfolioService
+    public interface IShareLifePortfolioService
     {
-        Task<SevenEtfLifePortfolioPositionListResponse> GetPositionListAsync(SevenEtfLifePortfolioPositionListRequest request);
+        Task<ShareLifePortfolioPositionListResponse> GetPositionListAsync(ShareLifePortfolioPositionListRequest request);
     }
 }
