@@ -49,9 +49,9 @@
         public double Percent { get; set; }
 
         /// <summary>
-        /// Результирующий коэффициент
+        /// Вес
         /// </summary>
-        public double ResultCoefficient { get; set; }
+        public double Weight { get; set; }
 
         /// <summary>
         /// Разница между реальной и расчетной позицией
@@ -64,6 +64,11 @@
         public double DeltaPercent { get; set; }
 
         /// <summary>
+        /// Разница между реальной и расчетной позицией в процентах (текст)
+        /// </summary>
+        public string DeltaPercentText { get; set; }
+
+        /// <summary>
         /// Изменение цены за последний месяц в процентах
         /// </summary>
         public double MonthDeltaPricePercent { get; set; }
@@ -72,5 +77,10 @@
         /// Рекомендация
         /// </summary>
         public string Recommendation { get; set; }
+
+        /// <summary>
+        /// Цвет
+        /// </summary>
+        public string ColorFill { get; set; }
     }
 }

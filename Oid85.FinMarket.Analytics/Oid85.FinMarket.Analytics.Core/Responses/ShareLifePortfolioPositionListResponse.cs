@@ -1,12 +1,12 @@
 ﻿namespace Oid85.FinMarket.Analytics.Core.Responses
 {
-    public class ThreeEtfLifePortfolioPositionListResponse
+    public class ShareLifePortfolioPositionListResponse
     {
         public double TotalSum { get; set; }
-        public List<ThreeEtfLifePortfolioPositionListItem> PortfolioPositions { get; set; } = [];
+        public List<ShareLifePortfolioPositionListItem> PortfolioPositions { get; set; } = [];
     }
 
-    public class ThreeEtfLifePortfolioPositionListItem
+    public class ShareLifePortfolioPositionListItem
     {
         /// <summary>
         /// Порядковый номер
