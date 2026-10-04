@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Linq.Expressions;
+using Hangfire;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Oid85.FinMarket.Analytics.Application.Factories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Factories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
@@ -31,7 +35,29 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFundamentalParameterRatioService, FundamentalParameterRatioService>();
         services.AddScoped<IBulletinService, BulletinService>();
         services.AddScoped<IBlogService, BlogService>();
+        services.AddTransient<IJobService, JobService>();
 
         services.AddScoped<IAnalyseParameterFactory, AnalyseParameterFactory>();
+    }
+
+    public static async Task RegisterHangfireJobs(
+    this IHost host,
+    IConfiguration configuration)
+    {
+        var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
+        await using var scope = scopeFactory.CreateAsyncScope();
+        var jobService = scope.ServiceProvider.GetRequiredService<IJobService>();
+
+        RegisterJob("SyncInstruments", () => jobService.SyncInstrumentsAsync());
+
+        void RegisterJob(string configurationSection, Expression<Func<Task>> methodCall)
+        {
+            bool enable = configuration.GetValue<bool>($"Hangfire:{configurationSection}:Enable");
+            string jobId = configuration.GetValue<string>($"Hangfire:{configurationSection}:JobId")!;
+            string cron = configuration.GetValue<string>($"Hangfire:{configurationSection}:Cron")!;
+
+            if (enable)
+                RecurringJob.AddOrUpdate(jobId, methodCall, cron);
+        }
     }
 }

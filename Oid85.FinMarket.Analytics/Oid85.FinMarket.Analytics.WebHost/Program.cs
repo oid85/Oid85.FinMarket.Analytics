@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Hangfire;
 using Oid85.FinMarket.Analytics.Application.Extensions;
 using Oid85.FinMarket.Analytics.Common.Converters;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -45,6 +46,10 @@ namespace Oid85.FinMarket.Analytics.WebHost
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
+
+            app.UseHangfireDashboard("/dashboard");
+
+            await app.RegisterHangfireJobs(builder.Configuration);
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
