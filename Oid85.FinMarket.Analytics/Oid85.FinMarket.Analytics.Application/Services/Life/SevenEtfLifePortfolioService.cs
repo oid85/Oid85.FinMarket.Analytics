@@ -2,11 +2,11 @@
 using Oid85.FinMarket.Analytics.Core.Requests.Life;
 using Oid85.FinMarket.Analytics.Core.Responses.Life;
 
-namespace Oid85.FinMarket.Analytics.Application.Services
+namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
-    public class ThreeEtfLifePortfolioService : IThreeEtfLifePortfolioService
+    public class SevenEtfLifePortfolioService : ISevenEtfLifePortfolioService
     {
-        public Task<ThreeEtfLifePortfolioResponse> GetPositionListAsync(ThreeEtfLifePortfolioRequest request)
+        public Task<SevenEtfLifePortfolioResponse> GetPositionListAsync(SevenEtfLifePortfolioRequest request)
         {
             throw new NotImplementedException();
         }

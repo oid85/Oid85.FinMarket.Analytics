@@ -3,10 +3,10 @@
     public class BondLifePortfolioResponse
     {
         public double TotalSum { get; set; }
-        public List<BondLifePortfolioPositionListItem> PortfolioPositions { get; set; } = [];
+        public List<BondLifePositionListItem> PortfolioPositions { get; set; } = [];
     }
 
-    public class BondLifePortfolioPositionListItem
+    public class BondLifePositionListItem
     {
         /// <summary>
         /// Порядковый номер
@@ -59,6 +59,11 @@
         public int Delta { get; set; }
 
         /// <summary>
+        /// Разница между реальной и расчетной позицией (текст)
+        /// </summary>
+        public string DeltaText { get; set; } = string.Empty;
+
+        /// <summary>
         /// Разница между реальной и расчетной позицией в процентах
         /// </summary>
         public double DeltaPercent { get; set; }
@@ -66,21 +71,16 @@
         /// <summary>
         /// Разница между реальной и расчетной позицией в процентах (текст)
         /// </summary>
-        public string DeltaPercentText { get; set; }
-
-        /// <summary>
-        /// Изменение цены за последний месяц в процентах
-        /// </summary>
-        public double MonthDeltaPricePercent { get; set; }
+        public string DeltaPercentText { get; set; } = string.Empty;
 
         /// <summary>
         /// Рекомендация
         /// </summary>
-        public string Recommendation { get; set; }
+        public string Recommendation { get; set; } = string.Empty;
 
         /// <summary>
         /// Цвет
         /// </summary>
-        public string ColorFill { get; set; }
+        public string ColorFill { get; set; } = string.Empty;
     }
 }

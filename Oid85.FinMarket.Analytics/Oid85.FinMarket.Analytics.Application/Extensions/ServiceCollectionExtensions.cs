@@ -3,6 +3,7 @@ using Oid85.FinMarket.Analytics.Application.Factories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Factories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Application.Services;
+using Oid85.FinMarket.Analytics.Application.Services.Life;
 
 namespace Oid85.FinMarket.Analytics.Application.Extensions;
 

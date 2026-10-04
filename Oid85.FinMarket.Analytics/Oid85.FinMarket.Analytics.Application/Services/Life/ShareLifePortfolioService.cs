@@ -2,7 +2,7 @@
 using Oid85.FinMarket.Analytics.Core.Requests.Life;
 using Oid85.FinMarket.Analytics.Core.Responses.Life;
 
-namespace Oid85.FinMarket.Analytics.Application.Services
+namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class ShareLifePortfolioService : IShareLifePortfolioService
     {
