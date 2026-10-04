@@ -33,11 +33,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             var positions = lifePositionData.Values
                 .Select(x =>
                 {
-                    string ticker = x.Ticker;
+                    bondAnalyseData.TryGetValue(x.Ticker, out var bondAnalyse);
+                    
                     string name = instrumentData[x.Ticker].Name ?? string.Empty;
-                    var yield = bondAnalyseData.ContainsKey(ticker) ? bondAnalyseData[ticker]?.Yield ?? 0.0 : 0.0;
-                    var rating = bondAnalyseData.ContainsKey(ticker) ? bondAnalyseData[ticker]?.Rating ?? string.Empty : string.Empty;
-                    var weight = lifePositionData[ticker]?.Weight ?? 0;
+                    var yield = bondAnalyse?.Yield ?? 0.0;
+                    var rating = bondAnalyse?.Rating ?? string.Empty;
+                    var weight = lifePositionData[x.Ticker]?.Weight ?? 0;
                     var lifeSize = lifePositionData[x.Ticker]?.Size ?? 0;
                     var price = instrumentData[x.Ticker]?.LastPrice ?? 0;
                     var cost = GetCost(lifePositionData, instrumentData, x.Ticker);
@@ -80,10 +81,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
                     return new BondLifePositionListItem
                     {
-                        Ticker = ticker,
+                        Ticker = x.Ticker,
                         Name = name,
                         Yield = yield,
-                        // Rating = rating,
+                        Rating = rating,
                         Weight = weight,
                         Cost = cost,
                         Percent = percent,
