@@ -11,6 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class BondLifePortfolioService(
         IInstrumentService instrumentService,
+        IBondAnalyseService bondAnalyseService,
         IBondLifePositionRepository positionRepository) 
         : IBondLifePortfolioService
     {
@@ -22,6 +23,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             var instrumentData = (await instrumentService.GetInstrumentListAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Bond)
                 .ToDictionary(k => k.Ticker, v => v);
+            
+            var bondAnalyseData = (await bondAnalyseService.GetBondAnalyseAsync(new()))
+                .Items
+                .ToDictionary(k => k.Ticker, v => v);
 
             double totalSum = GetTotalSum(lifePositionData, instrumentData);            
 
@@ -30,7 +35,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 {
                     string ticker = x.Ticker;
                     string name = instrumentData[x.Ticker].Name ?? string.Empty;
-                    var weight = lifePositionData[ticker].Weight ?? 0;
+                    var yield = bondAnalyseData.ContainsKey(ticker) ? bondAnalyseData[ticker]?.Yield ?? 0.0 : 0.0;
+                    var rating = bondAnalyseData.ContainsKey(ticker) ? bondAnalyseData[ticker]?.Rating ?? string.Empty : string.Empty;
+                    var weight = lifePositionData[ticker]?.Weight ?? 0;
                     var lifeSize = lifePositionData[x.Ticker]?.Size ?? 0;
                     var price = instrumentData[x.Ticker]?.LastPrice ?? 0;
                     var cost = GetCost(lifePositionData, instrumentData, x.Ticker);
@@ -75,6 +82,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     {
                         Ticker = ticker,
                         Name = name,
+                        Yield = yield,
+                        // Rating = rating,
                         Weight = weight,
                         Cost = cost,
                         Percent = percent,

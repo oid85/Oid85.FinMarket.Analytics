@@ -22,7 +22,17 @@
         /// Наименование компании
         /// </summary>
         public string Name { get; set; } = string.Empty;
-        
+
+        /// <summary>
+        /// Купонная доходность, %
+        /// </summary>
+        public double Yield { get; set; }
+
+        /// <summary>
+        /// Кредитный рейтинг
+        /// </summary>
+        public string Rating { get; set; } = string.Empty;
+
         /// <summary>
         /// Стоимость позиции (расч.)
         /// </summary>
