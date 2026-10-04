@@ -1,9 +1,8 @@
-﻿using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities.Base;
-
-namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Entities
+﻿namespace Oid85.FinMarket.Analytics.Core.Models.Life
 {
-    public class ThreeEtfLifePortfolioPositionEntity : BaseEntity
+    public class ThreeEtfLifePosition
     {
+		public Guid Id { get; set; }
         public string Ticker { get; set; }
         public string Name { get; set; }
         public int? Size { get; set; }

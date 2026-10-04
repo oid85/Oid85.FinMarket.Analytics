@@ -30,10 +30,11 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IInstrumentRepository, InstrumentRepository>();
         services.AddTransient<IParameterRepository, ParameterRepository>();
         services.AddTransient<ILifePortfolioPositionRepository, LifePortfolioPositionRepository>();
-        services.AddTransient<IBondLifePortfolioPositionRepository, BondLifePortfolioPositionRepository>();
-        services.AddTransient<IShareLifePortfolioPositionRepository, ShareLifePortfolioPositionRepository>();
-        services.AddTransient<IThreeEtfLifePortfolioPositionRepository, ThreeEtfLifePortfolioPositionRepository>();
-        services.AddTransient<ISevenEtfLifePortfolioPositionRepository, SevenEtfLifePortfolioPositionRepository>();
+        
+        services.AddTransient<IBondLifePositionRepository, BondLifePositionRepository>();
+        services.AddTransient<IShareLifePositionRepository, ShareLifePositionRepository>();
+        services.AddTransient<IThreeEtfLifePositionRepository, ThreeEtfLifePositionRepository>();
+        services.AddTransient<ISevenEtfLifePositionRepository, SevenEtfLifePositionRepository>();
     }
 
     public static void ConfigureStorageApiClient(

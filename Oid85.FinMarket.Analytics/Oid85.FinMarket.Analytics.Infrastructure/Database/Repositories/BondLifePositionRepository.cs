@@ -1,25 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
-using Oid85.FinMarket.Analytics.Core.Models;
+using Oid85.FinMarket.Analytics.Core.Models.Life;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {
-    public class BondLifePortfolioPositionRepository(
+    public class BondLifePositionRepository(
         IDbContextFactory<FinMarketContext> contextFactory)
-        : IBondLifePortfolioPositionRepository
+        : IBondLifePositionRepository
     {
-        public async Task<List<BondLifePortfolioPosition>> GetAsync()
+        public async Task<List<BondLifePosition>> GetAsync()
         {
             await using var context = await contextFactory.CreateDbContextAsync();
 
-            var entities = await context.BondLifePortfolioPositionEntities.ToListAsync();
+            var entities = await context.BondLifePositionEntities.ToListAsync();
 
             if (entities is null)
                 return [];
 
             var models = entities
                 .Select(x =>
-                    new BondLifePortfolioPosition
+                    new BondLifePosition
                     {
                         Id = x.Id,
                         Ticker = x.Ticker,

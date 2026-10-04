@@ -1,25 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
-using Oid85.FinMarket.Analytics.Core.Models;
+using Oid85.FinMarket.Analytics.Core.Models.Life;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {
-    public class SevenEtfLifePortfolioPositionRepository(
+    public class ShareLifePositionRepository(
         IDbContextFactory<FinMarketContext> contextFactory)
-        : ISevenEtfLifePortfolioPositionRepository
+        : IShareLifePositionRepository
     {
-        public async Task<List<SevenEtfLifePortfolioPosition>> GetAsync()
+        public async Task<List<ShareLifePosition>> GetAsync()
         {
             await using var context = await contextFactory.CreateDbContextAsync();
 
-            var entities = await context.SevenEtfLifePortfolioPositionEntities.ToListAsync();
+            var entities = await context.ShareLifePositionEntities.ToListAsync();
 
             if (entities is null)
                 return [];
 
             var models = entities
                 .Select(x =>
-                    new SevenEtfLifePortfolioPosition
+                    new ShareLifePosition
                     {
                         Id = x.Id,
                         Ticker = x.Ticker,

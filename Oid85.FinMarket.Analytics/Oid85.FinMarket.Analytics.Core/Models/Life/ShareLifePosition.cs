@@ -1,6 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Models
+﻿namespace Oid85.FinMarket.Analytics.Core.Models.Life
 {
-    public class ThreeEtfLifePortfolioPosition
+    public class ShareLifePosition
     {
 		public Guid Id { get; set; }
         public string Ticker { get; set; }

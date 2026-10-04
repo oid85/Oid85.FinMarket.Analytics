@@ -1,6 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿namespace Oid85.FinMarket.Analytics.Core.Responses.Life
 {
-    public class BondLifePortfolioPositionListResponse
+    public class BondLifePortfolioResponse
     {
         public double TotalSum { get; set; }
         public List<BondLifePortfolioPositionListItem> PortfolioPositions { get; set; } = [];

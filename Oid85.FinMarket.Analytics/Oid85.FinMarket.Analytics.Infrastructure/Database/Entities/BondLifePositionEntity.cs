@@ -2,7 +2,7 @@
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Entities
 {
-    public class BondLifePortfolioPositionEntity : BaseEntity
+    public class BondLifePositionEntity : BaseEntity
     {
         public string Ticker { get; set; }
         public string Name { get; set; }

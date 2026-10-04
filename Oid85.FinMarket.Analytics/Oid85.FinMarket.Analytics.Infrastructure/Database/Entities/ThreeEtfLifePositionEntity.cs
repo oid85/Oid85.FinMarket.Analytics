@@ -2,7 +2,7 @@
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Entities
 {
-    public class SevenEtfLifePortfolioPositionEntity : BaseEntity
+    public class ThreeEtfLifePositionEntity : BaseEntity
     {
         public string Ticker { get; set; }
         public string Name { get; set; }

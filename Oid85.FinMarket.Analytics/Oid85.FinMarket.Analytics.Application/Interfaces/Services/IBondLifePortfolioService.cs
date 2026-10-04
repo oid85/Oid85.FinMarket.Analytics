@@ -1,10 +1,10 @@
-﻿using Oid85.FinMarket.Analytics.Core.Requests;
-using Oid85.FinMarket.Analytics.Core.Responses;
+﻿using Oid85.FinMarket.Analytics.Core.Requests.Life;
+using Oid85.FinMarket.Analytics.Core.Responses.Life;
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
 {
     public interface IBondLifePortfolioService
     {
-        Task<BondLifePortfolioPositionListResponse> GetPositionListAsync(BondLifePortfolioPositionListRequest request);
+        Task<BondLifePortfolioResponse> GetPositionListAsync(BondLifePortfolioRequest request);
     }
 }

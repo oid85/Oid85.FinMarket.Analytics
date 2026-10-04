@@ -1,15 +1,15 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
-using Oid85.FinMarket.Analytics.Core.Requests;
-using Oid85.FinMarket.Analytics.Core.Responses;
+using Oid85.FinMarket.Analytics.Core.Requests.Life;
+using Oid85.FinMarket.Analytics.Core.Responses.Life;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class BondLifePortfolioService(
-        IBondpositionRepository positionRepository) 
+        IBondLifePositionRepository positionRepository) 
         : IBondLifePortfolioService
     {
-        public async Task<BondLifePortfolioPositionListResponse> GetPositionListAsync(BondLifePortfolioPositionListRequest request)
+        public async Task<BondLifePortfolioResponse> GetPositionListAsync(BondLifePortfolioRequest request)
         {
             var positions = await positionRepository.GetAsync();
 
@@ -29,31 +29,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             double totalSum = positionItems.Sum(x => x.Size * x.Price);
 
-            List<BondLifePortfolioPositionListItem> orderedpositionItems = [.. positionItems.OrderByDescending(x => x.Percent)];
+            List<BondLifePortfolioPositionListItem> orderedPositionItems = [.. positionItems.OrderByDescending(x => x.Percent)];
 
             if (request.OrderField is not null)
-            {
-                if (request.OrderField == string.Empty)
-                    orderedpositionItems = [.. positionItems.OrderByDescending(x => x.Percent)];
-
-                else if (request.OrderField == "Percent")
-                    orderedpositionItems = [.. positionItems.OrderByDescending(x => x.Percent)];
-
-                else if (request.OrderField == "DeltaPercent")
-                    orderedpositionItems = [.. positionItems.OrderByDescending(x => x.DeltaPercent)];
-
-                else if (request.OrderField == "MonthDeltaPricePercent")
-                    orderedpositionItems = [.. positionItems.OrderByDescending(x => x.MonthDeltaPricePercent)];
+            {                
+                if (request.OrderField == "Percent") orderedPositionItems = [.. positionItems.OrderByDescending(x => x.Percent)];
+                else if (request.OrderField == "DeltaPercent") orderedPositionItems = [.. positionItems.OrderByDescending(x => x.DeltaPercent)];
+                else if (request.OrderField == "MonthDeltaPricePercent") orderedPositionItems = [.. positionItems.OrderByDescending(x => x.MonthDeltaPricePercent)];
+                else orderedPositionItems = [.. positionItems.OrderByDescending(x => x.Percent)];
             }
 
-            var response = new BondLifePortfolioPositionListResponse
+            var response = new BondLifePortfolioResponse
             {
                 TotalSum = totalSum,
-                positionItems = orderedpositionItems
+                PortfolioPositions = orderedPositionItems
             };
 
-            for (int i = 0; i < response.positionItems.Count; i++)
-                response.positionItems[i].Number = i + 1;
+            for (int i = 0; i < response.PortfolioPositions.Count; i++)
+                response.PortfolioPositions[i].Number = i + 1;
 
             return response;
         }

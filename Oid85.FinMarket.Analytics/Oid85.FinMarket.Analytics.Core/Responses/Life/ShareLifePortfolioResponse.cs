@@ -1,12 +1,12 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿namespace Oid85.FinMarket.Analytics.Core.Responses.Life
 {
-    public class ShareLifePortfolioPositionListResponse
+    public class ShareLifePortfolioResponse
     {
         public double TotalSum { get; set; }
-        public List<ShareLifePortfolioPositionListItem> PortfolioPositions { get; set; } = [];
+        public List<ShareLifePositionItem> PortfolioPositions { get; set; } = [];
     }
 
-    public class ShareLifePortfolioPositionListItem
+    public class ShareLifePositionItem
     {
         /// <summary>
         /// Порядковый номер

@@ -1,12 +1,12 @@
 ﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
-using Oid85.FinMarket.Analytics.Core.Requests;
-using Oid85.FinMarket.Analytics.Core.Responses;
+using Oid85.FinMarket.Analytics.Core.Requests.Life;
+using Oid85.FinMarket.Analytics.Core.Responses.Life;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
     public class ShareLifePortfolioService : IShareLifePortfolioService
     {
-        public Task<ShareLifePortfolioPositionListResponse> GetPositionListAsync(ShareLifePortfolioPositionListRequest request)
+        public Task<ShareLifePortfolioResponse> GetPositionListAsync(ShareLifePortfolioRequest request)
         {
             throw new NotImplementedException();
         }
