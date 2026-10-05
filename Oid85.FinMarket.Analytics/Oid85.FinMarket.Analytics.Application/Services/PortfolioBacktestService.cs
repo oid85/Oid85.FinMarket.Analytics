@@ -79,6 +79,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new()))
                 .Items
+                .Where(x => x.DaysToMaturity >= 365)
+                .Where(x => x.Rating is "AA" or "AAA")
                 .Where(x => x.Yield >= keyRate)
                 .OrderByDescending(x => x.Yield)
                 .ToList();
