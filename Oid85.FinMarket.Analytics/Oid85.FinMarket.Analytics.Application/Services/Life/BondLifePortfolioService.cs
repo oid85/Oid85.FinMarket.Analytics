@@ -49,8 +49,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
                     string deltaText = delta switch
                     {
-                        > 0 => $"Купить {Math.Abs(delta)} шт.",
-                        < 0 => $"Продать {Math.Abs(delta)} шт.",
+                        > 0 => $"купить {Math.Abs(delta)} шт.",
+                        < 0 => $"продать {Math.Abs(delta)} шт.",
                         _ => string.Empty
                     };
 
@@ -58,8 +58,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     
                     string deltaPercentText = deltaPercent switch
                     {
-                        > 0.0 => $"Больше расч. на {Math.Abs(deltaPercent)} %",
-                        < 0.0 => $"Меньше расч. на {Math.Abs(deltaPercent)} %",
+                        > 0.0 => $"(-) меньше расч. на {Math.Abs(deltaPercent)} %",
+                        < 0.0 => $"(+) больше расч. на {Math.Abs(deltaPercent)} %",
                         _ => string.Empty
                     };
 
@@ -67,8 +67,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
                     string recommendation = deltaPercent switch
                     {
-                        > deltaLimit => $"Сократить",
-                        < -1 * deltaLimit => $"Докупить",
+                        > deltaLimit => $"докупить",
                         _ => string.Empty
                     };
 
