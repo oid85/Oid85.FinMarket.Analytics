@@ -1,6 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Models.Life
+﻿namespace Oid85.FinMarket.Analytics.Core.Models
 {
-    public class BondLifePosition
+    public class LifePosition
     {
 		public Guid Id { get; set; }
         public string Ticker { get; set; }

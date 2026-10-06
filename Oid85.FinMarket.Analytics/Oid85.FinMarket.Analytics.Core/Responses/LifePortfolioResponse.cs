@@ -1,12 +1,12 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses.Life
+﻿namespace Oid85.FinMarket.Analytics.Core.Responses
 {
-    public class SevenEtfLifePortfolioResponse
+    public class LifePortfolioResponse
     {
         public double TotalSum { get; set; }
-        public List<SevenEtfLifePositionItem> PortfolioPositions { get; set; } = [];
+        public List<LifePositionItem> PortfolioPositions { get; set; } = [];
     }
 
-    public class SevenEtfLifePositionItem
+    public class LifePositionItem
     {
         /// <summary>
         /// Порядковый номер
@@ -22,7 +22,17 @@
         /// Наименование компании
         /// </summary>
         public string Name { get; set; } = string.Empty;
-        
+
+        /// <summary>
+        /// Купонная доходность, %
+        /// </summary>
+        public double Yield { get; set; }
+
+        /// <summary>
+        /// Кредитный рейтинг
+        /// </summary>
+        public string Rating { get; set; } = string.Empty;
+
         /// <summary>
         /// Стоимость позиции (расч.)
         /// </summary>
@@ -59,6 +69,11 @@
         public int Delta { get; set; }
 
         /// <summary>
+        /// Разница между реальной и расчетной позицией (текст)
+        /// </summary>
+        public string DeltaText { get; set; } = string.Empty;
+
+        /// <summary>
         /// Разница между реальной и расчетной позицией в процентах
         /// </summary>
         public double DeltaPercent { get; set; }
@@ -66,21 +81,16 @@
         /// <summary>
         /// Разница между реальной и расчетной позицией в процентах (текст)
         /// </summary>
-        public string DeltaPercentText { get; set; }
-
-        /// <summary>
-        /// Изменение цены за последний месяц в процентах
-        /// </summary>
-        public double MonthDeltaPricePercent { get; set; }
+        public string DeltaPercentText { get; set; } = string.Empty;
 
         /// <summary>
         /// Рекомендация
         /// </summary>
-        public string Recommendation { get; set; }
+        public string Recommendation { get; set; } = string.Empty;
 
         /// <summary>
         /// Цвет
         /// </summary>
-        public string ColorFill { get; set; }
+        public string ColorFill { get; set; } = string.Empty;
     }
 }

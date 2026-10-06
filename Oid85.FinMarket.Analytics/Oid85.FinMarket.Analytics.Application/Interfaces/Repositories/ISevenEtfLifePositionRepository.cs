@@ -1,9 +1,9 @@
-﻿using Oid85.FinMarket.Analytics.Core.Models.Life;
+﻿using Oid85.FinMarket.Analytics.Core.Models;
 
 namespace Oid85.FinMarket.Analytics.Application.Interfaces.Repositories
 {
     public interface ISevenEtfLifePositionRepository
     {
-        Task<List<SevenEtfLifePosition>> GetAsync();
+        Task<List<LifePosition>> GetAsync();
     }
 }

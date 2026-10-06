@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Core;
-using Oid85.FinMarket.Analytics.Core.Requests.Life;
-using Oid85.FinMarket.Analytics.Core.Responses.Life;
+using Oid85.FinMarket.Analytics.Core.Requests;
+using Oid85.FinMarket.Analytics.Core.Responses;
 using Oid85.FinMarket.Analytics.WebHost.Controller.Base;
 
 namespace Oid85.FinMarket.Analytics.WebHost.Controller.Life;
@@ -20,12 +20,12 @@ public class SevenEtfLifePortfolioController(
     /// Список позиций
     /// </summary>
     [HttpPost("position/list")]
-    [ProducesResponseType(typeof(BaseResponse<SevenEtfLifePortfolioResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<SevenEtfLifePortfolioResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<SevenEtfLifePortfolioResponse>), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(BaseResponse<LifePortfolioResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<LifePortfolioResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<LifePortfolioResponse>), StatusCodes.Status500InternalServerError)]
     public Task<IActionResult> SevenEtfLifePortfolioAsync(
-        [FromBody] SevenEtfLifePortfolioRequest request) =>
+        [FromBody] LifePortfolioRequest request) =>
         GetResponseAsync(
             () => portfolioService.GetPositionListAsync(request),
-            result => new BaseResponse<SevenEtfLifePortfolioResponse> { Result = result });
+            result => new BaseResponse<LifePortfolioResponse> { Result = result });
 }

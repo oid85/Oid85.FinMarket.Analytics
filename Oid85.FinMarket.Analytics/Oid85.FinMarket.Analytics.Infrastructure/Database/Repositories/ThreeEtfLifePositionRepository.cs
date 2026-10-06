@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
-using Oid85.FinMarket.Analytics.Core.Models.Life;
+using Oid85.FinMarket.Analytics.Core.Models;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {
@@ -8,7 +8,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
         IDbContextFactory<FinMarketContext> contextFactory)
         : IThreeEtfLifePositionRepository
     {
-        public async Task<List<ThreeEtfLifePosition>> GetAsync()
+        public async Task<List<LifePosition>> GetAsync()
         {
             await using var context = await contextFactory.CreateDbContextAsync();
 
@@ -19,7 +19,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 
             var models = entities
                 .Select(x =>
-                    new ThreeEtfLifePosition
+                    new LifePosition
                     {
                         Id = x.Id,
                         Ticker = x.Ticker,

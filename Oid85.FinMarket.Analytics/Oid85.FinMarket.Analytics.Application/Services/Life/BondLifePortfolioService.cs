@@ -1,11 +1,11 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using System.Drawing;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Models;
-using Oid85.FinMarket.Analytics.Core.Models.Life;
-using Oid85.FinMarket.Analytics.Core.Requests.Life;
-using Oid85.FinMarket.Analytics.Core.Responses.Life;
+using Oid85.FinMarket.Analytics.Core.Requests;
+using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
@@ -15,7 +15,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         IBondLifePositionRepository positionRepository) 
         : IBondLifePortfolioService
     {
-        public async Task<BondLifePortfolioResponse> GetPositionListAsync(BondLifePortfolioRequest request)
+        public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
         {
             var lifePositionData = (await positionRepository.GetAsync())
                 .ToDictionary(k => k.Ticker, v => v);
@@ -44,41 +44,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     var cost = GetCost(lifePositionData, instrumentData, x.Ticker);
                     var size = GetSize(lifePositionData, instrumentData, x.Ticker);
                     var percent = (cost / totalSum * 100.0).RoundTo(2);
+                    var (delta, deltaText) = GetDelta(size, lifeSize);
+                    var (deltaPercent, deltaPercentText) = GetDeltaPercent(size, lifeSize);
+                    string recommendation = GetRecommendation(deltaPercent);
+                    string colorFill = GetColor(deltaPercent);
 
-                    int delta = size - lifeSize;
-
-                    string deltaText = delta switch
-                    {
-                        > 0 => $"купить {Math.Abs(delta)} шт.",
-                        < 0 => $"продать {Math.Abs(delta)} шт.",
-                        _ => string.Empty
-                    };
-
-                    double deltaPercent = (Convert.ToDouble(delta) / Convert.ToDouble(lifeSize) * 100.0).RoundTo(2);
-                    
-                    string deltaPercentText = deltaPercent switch
-                    {
-                        > 0.0 => $"(-) меньше расч. на {Math.Abs(deltaPercent)} %",
-                        < 0.0 => $"(+) больше расч. на {Math.Abs(deltaPercent)} %",
-                        _ => string.Empty
-                    };
-
-                    const double deltaLimit = 10.0;
-
-                    string recommendation = deltaPercent switch
-                    {
-                        > deltaLimit => $"докупить",
-                        _ => string.Empty
-                    };
-
-                    string colorFill = deltaPercent switch
-                    {
-                        > deltaLimit => KnownColors.LightYellow,
-                        < -1 * deltaLimit => KnownColors.LightYellow,
-                        _ => KnownColors.LightGreen
-                    };
-
-                    return new BondLifePositionListItem
+                    return new LifePositionItem
                     {
                         Ticker = x.Ticker,
                         Name = name,
@@ -99,17 +70,72 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 })
                 .ToList();
             
-            var response = new BondLifePortfolioResponse
+            return new LifePortfolioResponse
             {
                 TotalSum = totalSum,
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
+        }
 
-            return response;
+        private static (int delta, string deltaText) GetDelta(int size, int lifeSize)
+        {
+            int delta = size - lifeSize;
+
+            string deltaText = delta switch
+            {
+                > 0 => $"купить {Math.Abs(delta)} шт.",
+                < 0 => $"продать {Math.Abs(delta)} шт.",
+                _ => string.Empty
+            };
+
+            return (delta, deltaText);
+        }
+
+        private static (double deltaPercent, string deltaPercentText) GetDeltaPercent(int size, int lifeSize)
+        {
+            int delta = size - lifeSize;
+
+            double deltaPercent = (Convert.ToDouble(delta) / Convert.ToDouble(lifeSize) * 100.0).RoundTo(2);
+
+            string deltaPercentText = deltaPercent switch
+            {
+                > 0.0 => $"(-) меньше расч. на {Math.Abs(deltaPercent)} %",
+                < 0.0 => $"(+) больше расч. на {Math.Abs(deltaPercent)} %",
+                _ => string.Empty
+            };
+
+            return (deltaPercent, deltaPercentText);
+        }
+
+        private static string GetRecommendation(double deltaPercent)
+        {
+            const double deltaLimit = 10.0;
+
+            string recommendation = deltaPercent switch
+            {
+                > deltaLimit => $"докупить",
+                _ => string.Empty
+            };
+
+            return recommendation;
+        }
+
+        private static string GetColor(double deltaPercent)
+        {
+            const double deltaLimit = 10.0;
+
+            string colorFill = deltaPercent switch
+            {
+                > deltaLimit => KnownColors.LightYellow,
+                < -1 * deltaLimit => KnownColors.LightYellow,
+                _ => KnownColors.LightGreen
+            };
+
+            return colorFill;
         }
 
         private static int GetSize(
-            Dictionary<string, BondLifePosition> lifePositionData, 
+            Dictionary<string, LifePosition> lifePositionData, 
             Dictionary<string, Instrument> instrumentData,
             string ticker)
         {
@@ -120,7 +146,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         }
 
         private static double GetCost(
-            Dictionary<string, BondLifePosition> lifePositionData,
+            Dictionary<string, LifePosition> lifePositionData,
             Dictionary<string, Instrument> instrumentData,
             string ticker)
         {
@@ -131,13 +157,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             return (totalSum * share).RoundTo(2);
         }
 
-        private static double GetTotalSum(Dictionary<string, BondLifePosition> lifePositionData, Dictionary<string, Instrument> instrumentData) =>
+        private static double GetTotalSum(
+            Dictionary<string, LifePosition> lifePositionData, 
+            Dictionary<string, Instrument> instrumentData) =>
             lifePositionData.Values.Sum(x => (x.Size ?? 0) * (instrumentData[x.Ticker]?.LastPrice ?? 0 + instrumentData[x.Ticker]?.Nkd ?? 0));
 
-        private static List<BondLifePositionListItem> GetOrderedPositions(
-            List<BondLifePositionListItem> positions, string? orderField)
+        private static List<LifePositionItem> GetOrderedPositions(
+            List<LifePositionItem> positions, string? orderField)
         {
-            List<BondLifePositionListItem> orderedPositions = orderField switch
+            List<LifePositionItem> orderedPositions = orderField switch
             {
                 null => [.. positions.OrderByDescending(x => x.Percent)],
                 "" => [.. positions.OrderByDescending(x => x.Percent)],
