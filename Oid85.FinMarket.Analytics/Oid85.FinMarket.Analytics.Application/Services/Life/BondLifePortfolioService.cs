@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
@@ -34,13 +33,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 .Select(x =>
                 {
                     bondAnalyseData.TryGetValue(x.Ticker, out var bondAnalyse);
-                    
-                    string name = instrumentData[x.Ticker].Name ?? string.Empty;
+                    instrumentData.TryGetValue(x.Ticker, out var instrument);
+
+                    string name = instrument?.Name ?? string.Empty;
                     var yield = bondAnalyse?.Yield ?? 0.0;
                     var rating = bondAnalyse?.Rating ?? string.Empty;
                     var weight = lifePositionData[x.Ticker]?.Weight ?? 0;
                     var lifeSize = lifePositionData[x.Ticker]?.Size ?? 0;
-                    var price = instrumentData[x.Ticker]?.LastPrice ?? 0;
+                    var price = instrument?.LastPrice ?? 0;
                     var cost = GetCost(lifePositionData, instrumentData, x.Ticker);
                     var size = GetSize(lifePositionData, instrumentData, x.Ticker);
                     var percent = (cost / totalSum * 100.0).RoundTo(2);
@@ -139,8 +139,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             Dictionary<string, Instrument> instrumentData,
             string ticker)
         {
+            instrumentData.TryGetValue(ticker, out var instrument);
+
             double tickerCost = GetCost(lifePositionData, instrumentData, ticker);
-            double price = instrumentData[ticker].LastPrice ?? 0 + instrumentData[ticker].Nkd ?? 0;
+            double price = instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0;
 
             return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
         }
@@ -158,9 +160,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         }
 
         private static double GetTotalSum(
-            Dictionary<string, LifePosition> lifePositionData, 
-            Dictionary<string, Instrument> instrumentData) =>
-            lifePositionData.Values.Sum(x => (x.Size ?? 0) * (instrumentData[x.Ticker]?.LastPrice ?? 0 + instrumentData[x.Ticker]?.Nkd ?? 0));
+            Dictionary<string, LifePosition> lifePositionData,
+            Dictionary<string, Instrument> instrumentData) => 
+            lifePositionData.Values.Sum(x =>
+            {
+                instrumentData.TryGetValue(x.Ticker, out var instrument);
+                return (x.Size ?? 0) * (instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0);
+            });
 
         private static List<LifePositionItem> GetOrderedPositions(
             List<LifePositionItem> positions, string? orderField)
