@@ -29,11 +29,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var response = new GetBondAnalyseResponse() { Dates = dates };
 
-            var bondAnalyseItems = new List<GetBondAnalyseItemResponse>();
+            var bondAnalyseItems = new List<BondAnalyseItem>();
 
             foreach (var instrument in instruments)
             {
-                var bondAnalyseItem = new GetBondAnalyseItemResponse
+                var bondAnalyseItem = new BondAnalyseItem
                 {
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
@@ -66,7 +66,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 {
                     var coupon = coupons.Find(x => x.CouponDate.Month == date.Month && x.CouponDate.Year == date.Year);
 
-                    bondAnalyseItem.Coupons.Add(new GetBondAnalyseCouponData
+                    bondAnalyseItem.Coupons.Add(new BondAnalyseCouponData
                     {
                         Date = date,
                         CouponSum = coupon is null ? null : Math.Round(coupon.PayOneBond, 2)

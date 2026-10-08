@@ -3,10 +3,10 @@
     public class GetBondAnalyseResponse
     {
         public List<DateOnly> Dates { get; set; } = [];
-        public List<GetBondAnalyseItemResponse> Items { get; set; } = [];
+        public List<BondAnalyseItem> Items { get; set; } = [];
     }
 
-    public class GetBondAnalyseItemResponse
+    public class BondAnalyseItem
     {
         public int Number { get; set; }
         public string Ticker { get; set; }
@@ -15,13 +15,13 @@
         public double Nkd { get; set; }
         public double Yield { get; set; }
         public int DaysToMaturity { get; set; }
-        public List<GetBondAnalyseCouponData> Coupons { get; set; } = [];
+        public List<BondAnalyseCouponData> Coupons { get; set; } = [];
         public bool InPortfolio { get; set; }
         public string? Rating { get; set; }
         public string? IsFloatingCoupon { get; set; }        
     }
 
-    public class GetBondAnalyseCouponData
+    public class BondAnalyseCouponData
     {
         public DateOnly Date { get; set; }
         public double? CouponSum { get; set; } = null;

@@ -27,7 +27,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 .Items
                 .ToDictionary(k => k.Ticker, v => v);
 
-            double totalSum = GetTotalSum(lifePositionData, instrumentData);            
+            double totalSum = GetTotalSum();            
 
             var positions = lifePositionData.Values
                 .Select(x =>
@@ -38,11 +38,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     string name = instrument?.Name ?? string.Empty;
                     var yield = bondAnalyse?.Yield ?? 0.0;
                     var rating = bondAnalyse?.Rating ?? string.Empty;
-                    var weight = lifePositionData[x.Ticker]?.Weight ?? 0;
+                    var weight = GetWeight(x.Ticker);
                     var lifeSize = lifePositionData[x.Ticker]?.Size ?? 0;
                     var price = instrument?.LastPrice ?? 0;
-                    var cost = GetCost(lifePositionData, instrumentData, x.Ticker);
-                    var size = GetSize(lifePositionData, instrumentData, x.Ticker);
+                    var cost = GetCost(x.Ticker);
+                    var size = GetSize(x.Ticker);
                     var percent = (cost / totalSum * 100.0).RoundTo(2);
                     var (delta, deltaText) = GetDelta(size, lifeSize);
                     var (deltaPercent, deltaPercentText) = GetDeltaPercent(size, lifeSize);
@@ -75,6 +75,41 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 TotalSum = totalSum,
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
+
+            double GetWeight(string ticker)
+            {
+                lifePositionData.TryGetValue(ticker, out var lifePosition);
+                return lifePosition?.Weight ?? 0;
+            }
+
+            int GetSize(string ticker)
+            {
+                instrumentData.TryGetValue(ticker, out var instrument);
+
+                double tickerCost = GetCost(ticker);
+                double price = instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0;
+
+                return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
+            }
+
+            double GetCost(string ticker)
+            {
+                double totalSum = GetTotalSum();
+                double weightSum = lifePositionData.Values.Sum(x => GetWeight(x.Ticker));
+
+                lifePositionData.TryGetValue(ticker, out var lifePosition);
+
+                double share = (lifePosition?.Weight ?? 0) / weightSum;
+
+                return (totalSum * share).RoundTo(2);
+            }
+
+            double GetTotalSum() =>
+                lifePositionData.Values.Sum(x =>
+                {
+                    instrumentData.TryGetValue(x.Ticker, out var instrument);
+                    return (x.Size ?? 0) * (instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0);
+                });
         }
 
         private static (int delta, string deltaText) GetDelta(int size, int lifeSize)
@@ -111,62 +146,24 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         {
             const double deltaLimit = 10.0;
 
-            string recommendation = deltaPercent switch
+            return deltaPercent switch
             {
                 > deltaLimit => $"докупить",
                 _ => string.Empty
             };
-
-            return recommendation;
         }
 
         private static string GetColor(double deltaPercent)
         {
             const double deltaLimit = 10.0;
 
-            string colorFill = deltaPercent switch
+            return deltaPercent switch
             {
                 > deltaLimit => KnownColors.LightYellow,
                 < -1 * deltaLimit => KnownColors.LightYellow,
                 _ => KnownColors.LightGreen
             };
-
-            return colorFill;
         }
-
-        private static int GetSize(
-            Dictionary<string, LifePosition> lifePositionData, 
-            Dictionary<string, Instrument> instrumentData,
-            string ticker)
-        {
-            instrumentData.TryGetValue(ticker, out var instrument);
-
-            double tickerCost = GetCost(lifePositionData, instrumentData, ticker);
-            double price = instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0;
-
-            return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
-        }
-
-        private static double GetCost(
-            Dictionary<string, LifePosition> lifePositionData,
-            Dictionary<string, Instrument> instrumentData,
-            string ticker)
-        {
-            double totalSum = GetTotalSum(lifePositionData, instrumentData);
-            double weightSum = lifePositionData.Values.Sum(x => x.Weight ?? 0);
-            double share = (lifePositionData[ticker].Weight ?? 0) / weightSum;
-
-            return (totalSum * share).RoundTo(2);
-        }
-
-        private static double GetTotalSum(
-            Dictionary<string, LifePosition> lifePositionData,
-            Dictionary<string, Instrument> instrumentData) => 
-            lifePositionData.Values.Sum(x =>
-            {
-                instrumentData.TryGetValue(x.Ticker, out var instrument);
-                return (x.Size ?? 0) * (instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0);
-            });
 
         private static List<LifePositionItem> GetOrderedPositions(
             List<LifePositionItem> positions, string? orderField)
