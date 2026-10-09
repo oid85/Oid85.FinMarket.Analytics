@@ -89,7 +89,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 instrumentData.TryGetValue(ticker, out var instrument);
 
                 double tickerCost = GetCost(ticker);
-                double price = instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0;
+                double price = instrument?.LastPrice ?? 0;
 
                 return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
             }
@@ -110,7 +110,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 lifePositionData.Values.Sum(x =>
                 {
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
-                    return (x.Size ?? 0) * (instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0);
+                    return (x.Size ?? 0) * (instrument?.LastPrice ?? 0);
                 });
         }
 
