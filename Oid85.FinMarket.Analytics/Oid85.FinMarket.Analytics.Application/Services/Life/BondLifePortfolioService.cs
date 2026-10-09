@@ -38,12 +38,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 {
                     bondAnalyseData.TryGetValue(x.Ticker, out var bondAnalyse);
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
+                    lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
 
                     string name = instrument?.Name ?? string.Empty;
                     var yield = bondAnalyse?.Yield ?? 0.0;
                     var rating = bondAnalyse?.Rating ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
-                    var lifeSize = lifePositionData[x.Ticker]?.Size ?? 0;
+                    var lifeSize = lifePosition?.Size ?? 0;
                     var price = instrument?.LastPrice ?? 0;
                     var cost = GetCost(x.Ticker);
                     var size = GetSize(x.Ticker);
