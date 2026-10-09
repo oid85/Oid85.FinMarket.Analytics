@@ -29,6 +29,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 .Where(x => lifePositionData.ContainsKey(x.Ticker))                
                 .ToDictionary(k => k.Ticker, v => v);
 
+            var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
+
             double totalSum = GetTotalSum();            
 
             var positions = lifePositionData.Values
@@ -80,8 +82,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             double GetWeight(string ticker)
             {
-                lifePositionData.TryGetValue(ticker, out var lifePosition);
-                return lifePosition?.Weight ?? 0;
+                bondAnalyseData.TryGetValue(ticker, out var bondAnalyse);
+
+                return bondAnalyse?.Rating switch
+                {
+                    "AAA" => 3.0,
+                    "AA" => 2.0,
+                    "A" => 1.0,
+                    _ => 1.0
+                };
             }
 
             int GetSize(string ticker)
@@ -96,12 +105,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             double GetCost(string ticker)
             {
-                double totalSum = GetTotalSum();
-                double weightSum = lifePositionData.Values.Sum(x => GetWeight(x.Ticker));
-
                 lifePositionData.TryGetValue(ticker, out var lifePosition);
+                weightData.TryGetValue(ticker, out var weight);
 
-                double share = (lifePosition?.Weight ?? 0) / weightSum;
+                double totalSum = GetTotalSum();
+                double weightSum = weightData.Values.Sum();
+                double share = weight / weightSum;
 
                 return (totalSum * share).RoundTo(2);
             }
