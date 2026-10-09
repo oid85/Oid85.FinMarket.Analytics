@@ -21,10 +21,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             var instrumentData = (await instrumentService.GetInstrumentListAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Bond)
+                .Where(x => lifePositionData.ContainsKey(x.Ticker))
                 .ToDictionary(k => k.Ticker, v => v);
             
             var bondAnalyseData = (await bondAnalyseService.GetBondAnalyseAsync(new()))
                 .Items
+                .Where(x => lifePositionData.ContainsKey(x.Ticker))                
                 .ToDictionary(k => k.Ticker, v => v);
 
             double totalSum = GetTotalSum();            
