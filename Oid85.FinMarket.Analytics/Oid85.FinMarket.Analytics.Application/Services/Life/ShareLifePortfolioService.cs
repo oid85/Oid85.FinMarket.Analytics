@@ -1,21 +1,34 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using System.Timers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class ShareLifePortfolioService(
+        IStorageApiClient storageApiClient,
+        IFundamentalScoreService fundamentalScoreService,
         IInstrumentService instrumentService,
         IShareLifePositionRepository positionRepository) 
         : IShareLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
         {
+            var keyRates = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).ToList();
+            double currentKeyRate = keyRates.Last().Value ?? 0.0;
+
             var lifePositionData = (await positionRepository.GetAsync())
                 .ToDictionary(k => k.Ticker, v => v);
+
+            Dictionary<string, FundamentalScore?> fundamentalData = [];
+
+            foreach (var ticker in lifePositionData.Keys)
+                fundamentalData.Add(ticker, await fundamentalScoreService.GetFundamentalScoreAsync(ticker));
 
             var instrumentData = (await instrumentService.GetInstrumentListAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
@@ -31,9 +44,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 {
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
                     lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
+                    fundamentalData.TryGetValue(x.Ticker, out var fundamental);
 
                     string name = instrument?.Name ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
+                    var yield = fundamental?.DividendYield?.Value ?? 0.0;
                     var lifeSize = lifePosition?.Size ?? 0;
                     var price = instrument?.LastPrice ?? 0;
                     var cost = GetCost(x.Ticker);
@@ -49,6 +64,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                         Ticker = x.Ticker,
                         Name = name,
                         Weight = weight,
+                        Yield = yield,
                         Cost = cost,
                         Percent = percent,
                         Size = size,
@@ -69,9 +85,45 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
 
-            double GetWeight(string ticker)
+            double GetWeight(string ticker) =>
+                GetMarketCapCoefficient(ticker) + GetFundamentalScoreCoefficient(ticker) + GetDividendCoefficient(ticker);
+
+            double GetMarketCapCoefficient(string ticker)
             {
-                return 1.0;
+                fundamentalData.TryGetValue(ticker, out var fundamental);
+
+                return fundamental?.MarketCap?.Ratio switch
+                {
+                    0.5 => 1.0,
+                    0.75 => 2.0,
+                    1.0 => 3.0,
+                    _ => 1.0
+                };
+            }
+
+            double GetFundamentalScoreCoefficient(string ticker)
+            {
+                fundamentalData.TryGetValue(ticker, out var fundamental);
+                return fundamental?.Score.Value ?? 1.0;
+            }
+
+            double GetDividendCoefficient(string ticker)
+            {
+                fundamentalData.TryGetValue(ticker, out var fundamental);
+
+                double dividendCoefficient = 1.0;
+                const double hiLimitCoefficient = 5.0;
+                const double loLimitCoefficient = 3.0;
+                double hiLimitYield = currentKeyRate;
+                double loLimitYield = hiLimitYield / 3.0 * 2.0;
+
+                var yield = fundamental?.DividendYield?.Value ?? 0.0;
+
+                if (yield >= hiLimitYield) dividendCoefficient = hiLimitCoefficient;
+                else if (yield <= loLimitYield) dividendCoefficient = 1.0;
+                else dividendCoefficient = (yield - loLimitYield) * (hiLimitCoefficient - loLimitCoefficient) / (hiLimitYield - loLimitYield) + loLimitCoefficient;
+
+                return dividendCoefficient;
             }
 
             int GetSize(string ticker)
@@ -80,8 +132,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
                 double tickerCost = GetCost(ticker);
                 double price = instrument?.LastPrice ?? 0;
+                int lot = instrument?.Lot ?? 1;
 
-                return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
+                return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price / lot) * lot);
             }
 
             double GetCost(string ticker)
