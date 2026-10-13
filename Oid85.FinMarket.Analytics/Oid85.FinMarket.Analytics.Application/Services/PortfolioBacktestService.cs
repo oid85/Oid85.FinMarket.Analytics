@@ -379,9 +379,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 ]
             };
 
-            for (int i = 0; i < response.PortfolioPositions.Count; i++)
-                response.PortfolioPositions[i].Number = i + 1;
-
             return response;
         }
 
