@@ -364,23 +364,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         private async Task<PortfolioBacktestResponse> SharesAndBondsPortfolioForwardtestAsync()
         {
             var _20_80_EquitySeries = await GetPortfolioSeriesAsync(new Dictionary<string, double> { { "TMOS", 2.0 }, { "TBRU", 8.0 } }, "Акции vs Облигации 20/80", KnownColors.Green, true);
-            var _40_60_EquitySeries = await GetPortfolioSeriesAsync(new Dictionary<string, double> { { "TMOS", 4.0 }, { "TBRU", 6.0 } }, "Акции vs Облигации 40/60", KnownColors.Green, true);
-            var _50_50_EquitySeries = await GetPortfolioSeriesAsync(new Dictionary<string, double> { { "TMOS", 5.0 }, { "TBRU", 5.0 } }, "Акции vs Облигации 50/50", KnownColors.Green, true);
+            var _40_60_EquitySeries = await GetPortfolioSeriesAsync(new Dictionary<string, double> { { "TMOS", 4.0 }, { "TBRU", 6.0 } }, "Акции vs Облигации 40/60", KnownColors.Green, true);            
             var _60_40_EquitySeries = await GetPortfolioSeriesAsync(new Dictionary<string, double> { { "TMOS", 6.0 }, { "TBRU", 4.0 } }, "Акции vs Облигации 60/40", KnownColors.Blue, true);
             var _80_20_EquitySeries = await GetPortfolioSeriesAsync(new Dictionary<string, double> { { "TMOS", 8.0 }, { "TBRU", 2.0 } }, "Акции vs Облигации 80/20", KnownColors.Blue, true);
-
-            var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
 
             var response = new PortfolioBacktestResponse
             {
                 Series =
                 [
                     _20_80_EquitySeries,
-                    _40_60_EquitySeries,
-                    _50_50_EquitySeries,
+                    _40_60_EquitySeries,                    
                     _60_40_EquitySeries,
-                    _80_20_EquitySeries,
-                    msftrSeries
+                    _80_20_EquitySeries
                 ]
             };
 
