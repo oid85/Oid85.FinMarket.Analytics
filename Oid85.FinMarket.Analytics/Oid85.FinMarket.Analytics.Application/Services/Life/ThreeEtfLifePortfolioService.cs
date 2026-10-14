@@ -48,6 +48,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                         LifeSize = lifeSize,
                         Price = price,
                         Delta = delta,
+                        DeltaPercent = deltaPercent,
                         DeltaText = deltaText,
                         DeltaPercentText = deltaPercentText,
                         Recommendation = recommendation,
@@ -155,11 +156,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         {
             List<LifePositionItem> orderedPositions = orderField switch
             {
-                null => [.. positions.OrderByDescending(x => x.Percent)],
-                "" => [.. positions.OrderByDescending(x => x.Percent)],
-                "Percent" => [.. positions.OrderByDescending(x => x.Percent)],
-                "DeltaPercent" => [.. positions.OrderByDescending(x => x.DeltaPercent)],
-                _ => [.. positions.OrderByDescending(x => x.Percent)]
+                null => [.. positions.OrderBy(x => x.DeltaPercent)],
+                "" => [.. positions.OrderBy(x => x.DeltaPercent)],
+                "Percent" => [.. positions.OrderBy(x => x.Percent)],
+                "DeltaPercent" => [.. positions.OrderBy(x => x.DeltaPercent)],
+                _ => [.. positions.OrderBy(x => x.DeltaPercent)]
             };
 
             for (int i = 0; i < orderedPositions.Count; i++)
