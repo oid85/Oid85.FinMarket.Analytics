@@ -78,9 +78,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 if (instrument.LastPrice.HasValue && instrument.Nkd.HasValue)
                 {
                     if (bondAnalyseItem.DaysToMaturity <= 365)
-                        bondAnalyseItem.Yield = Math.Round((couponTotalSum + (1000.0 - instrument.LastPrice.Value)) / (instrument.LastPrice.Value + instrument.Nkd.Value) * 100.0, 2);
+                        bondAnalyseItem.Yield = Math.Round((couponTotalSum + (1000.0 - instrument.LastPrice.Value)) / (instrument.LastPrice.Value/* + instrument.Nkd.Value*/) * 100.0, 2);
                     else
-                        bondAnalyseItem.Yield = Math.Round(couponTotalSum / (instrument.LastPrice.Value + instrument.Nkd.Value) * 100.0, 2);
+                        bondAnalyseItem.Yield = Math.Round(couponTotalSum / (instrument.LastPrice.Value/* + instrument.Nkd.Value*/) * 100.0, 2);
                 }
 
                 bondAnalyseItems.Add(bondAnalyseItem);
