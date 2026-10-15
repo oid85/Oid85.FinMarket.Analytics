@@ -182,11 +182,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         {
             List<LifePositionItem> orderedPositions = orderField switch
             {
-                null => [.. positions.OrderBy(x => x.DeltaPercent)],
-                "" => [.. positions.OrderBy(x => x.DeltaPercent)],
-                "Percent" => [.. positions.OrderBy(x => x.Percent)],
-                "DeltaPercent" => [.. positions.OrderBy(x => x.DeltaPercent)],
-                _ => [.. positions.OrderBy(x => x.DeltaPercent)]
+                "Percent" => [.. positions.OrderByDescending(x => x.Percent)],
+                "Yield" => [.. positions.OrderByDescending(x => x.Yield)],
+                "DeltaPercent" => [.. positions.OrderByDescending(x => x.DeltaPercent)],
+                _ => [.. positions.OrderByDescending(x => x.DeltaPercent)]
             };
 
             for (int i = 0; i < orderedPositions.Count; i++)
