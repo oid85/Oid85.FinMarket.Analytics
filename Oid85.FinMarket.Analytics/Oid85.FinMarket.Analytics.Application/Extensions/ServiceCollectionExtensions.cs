@@ -24,9 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFundamentalService, FundamentalService>();
         services.AddScoped<IFundamentalScoreService, FundamentalScoreService>();
         services.AddScoped<IMacroService, MacroService>();
-        services.AddScoped<IPortfolioService, PortfolioService>();
         services.AddScoped<IPortfolioBacktestService, PortfolioBacktestService>();
-        services.AddScoped<ILifePortfolioService, LifePortfolioService>();
         services.AddScoped<IBondLifePortfolioService, BondLifePortfolioService>();
         services.AddScoped<IThreeEtfLifePortfolioService, ThreeEtfLifePortfolioService>();
         services.AddScoped<ISevenEtfLifePortfolioService, SevenEtfLifePortfolioService>();

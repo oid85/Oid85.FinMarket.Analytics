@@ -29,7 +29,6 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<IInstrumentRepository, InstrumentRepository>();
         services.AddTransient<IParameterRepository, ParameterRepository>();
-        services.AddTransient<ILifePortfolioPositionRepository, LifePortfolioPositionRepository>();
         
         services.AddTransient<IBondLifePositionRepository, BondLifePositionRepository>();
         services.AddTransient<IShareLifePositionRepository, ShareLifePositionRepository>();

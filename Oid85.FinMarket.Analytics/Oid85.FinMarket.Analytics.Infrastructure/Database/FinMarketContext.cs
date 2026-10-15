@@ -9,7 +9,6 @@ public class FinMarketContext(DbContextOptions<FinMarketContext> options) : DbCo
 {
     public DbSet<InstrumentEntity> InstrumentEntities { get; set; }
     public DbSet<ParameterEntity> ParameterEntities { get; set; }
-    public DbSet<LifePortfolioPositionEntity> LifePortfolioPositionEntities { get; set; }
     public DbSet<ShareLifePositionEntity> ShareLifePositionEntities { get; set; }
 	public DbSet<BondLifePositionEntity> BondLifePositionEntities { get; set; }
 	public DbSet<SevenEtfLifePositionEntity> SevenEtfLifePositionEntities { get; set; }

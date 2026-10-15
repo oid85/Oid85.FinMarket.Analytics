@@ -10,7 +10,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IBondAnalyseService bondAnalyseService,
         IFundamentalService fundamentalService,
         IInstrumentService instrumentService,
-        IPortfolioService portfolioService,
+        IShareLifePortfolioService portfolioService,
         IStorageApiClient storageApiClient) 
         : IBlogService
     {
@@ -29,7 +29,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new())).Items;
             var fundamentalRatingListItems = (await fundamentalService.GetFundamentalRatingListAsync(new())).Items;
             var instruments = await instrumentService.GetInstrumentListAsync();
-            var positionListResponse = (await portfolioService.GetPortfolioPositionListAsync(new()));
+            var positionListResponse = (await portfolioService.GetPositionListAsync(new()));
 
             string filePath = @"c:\Users\79131\Downloads\пост.txt";
 
@@ -84,11 +84,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     var fundamentalRatingListItem = fundamentalRatingListItems.Find(x => x.Ticker == ticker);
                     var position = positionListResponse.PortfolioPositions.Find(x => x.Ticker == ticker);
 
-                    var lifePercent = ((position.LifeSize * position.Price) / positionListResponse.TotalSum * 100.0).Value.RoundTo(2);
+                    var lifePercent = ((position?.LifeSize * position?.Price) / positionListResponse.TotalSum * 100.0).RoundTo(2);
 
                     lines.Add($"📌 {instrument?.Ticker} - {instrument?.Name}");
 
-                    lines.Add($"   ДД к текущей цене: {position?.CurrentDividendYield} %");
+                    lines.Add($"   ДД к текущей цене: {position?.Yield} %");
                     lines.Add($"   Доля в портфеле: {lifePercent} %");
                     lines.Add("");
                 }

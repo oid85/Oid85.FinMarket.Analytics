@@ -11,7 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class PortfolioBacktestService(
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
-        IPortfolioService portfolioService,
+        IShareLifePortfolioService portfolioService,
         IBondAnalyseService bondAnalyseService,
         IFundamentalService fundamentalService,
         IInstrumentService instrumentService,
@@ -236,10 +236,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         private async Task<PortfolioBacktestResponse> LifePortfolioBacktestAsync()
         {
-            var positions = (await portfolioService.GetPortfolioPositionListAsync(new())).PortfolioPositions;
+            var positions = (await portfolioService.GetPositionListAsync(new())).PortfolioPositions;
 
             var portfolioEquitySeries = await GetPortfolioSeriesAsync(
-                positions.ToDictionary(k => k.Ticker, v => v.ResultCoefficient),
+                positions.ToDictionary(k => k.Ticker, v => v.Weight),
                 "Портфель", KnownColors.Green, true);
 
             var msftrSeries = await GetIndexSeriesAsync(KnownIndexTickers.MCFTR, $"Индекс полн. дох. MCFTR", KnownColors.Orange);
@@ -265,14 +265,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 new PortfolioPositionItem
                 {
                     Ticker = x.Ticker,
-                    Sector = x.Sector,
+                    Sector = string.Empty,
                     Name = x.Name,
-                    FundamentalScoreCoefficient = x.FundamentalScoreCoefficient,
-                    DividendCoefficient = x.DividendCoefficient,
-                    MarketCapCoefficient = x.MarketCapCoefficient,
-                    ResultCoefficient = x.ResultCoefficient,
                     Percent = x.Percent,
-                    CurrentDividendYield = x.CurrentDividendYield
+                    CurrentDividendYield = x.Yield
                 })
                 .ToList();
 
@@ -308,7 +304,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var positions = weights
                 .Select(x =>
-                new PortfolioPositionListItem
+                new PortfolioPositionItem
                 {
                     Ticker = x.Key,
                     Name = names[x.Key],
