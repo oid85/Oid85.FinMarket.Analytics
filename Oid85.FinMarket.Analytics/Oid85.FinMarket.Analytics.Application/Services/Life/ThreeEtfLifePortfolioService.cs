@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
@@ -8,13 +9,19 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class ThreeEtfLifePortfolioService(
-        IThreeEtfLifePositionRepository positionRepository)
+        IThreeEtfLifePositionRepository positionRepository,
+        ITraderFinamApiClient traderFinamApiClient)
         : IThreeEtfLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
         {
             var lifePositionData = (await positionRepository.GetAsync())
                 .ToDictionary(k => k.Ticker, v => v);
+
+            var tickers = lifePositionData.Keys.Select(x => $"{x}@MISX").ToList();
+
+            var priceData = (await traderFinamApiClient.GetInstrumentPriceAsync(new() { Tickers = tickers }))
+                .Result.Items.ToDictionary(k => k.Ticker.Replace("@MISX", ""), v => v.Price);
 
             var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
 
@@ -24,11 +31,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 .Select(x =>
                 {
                     lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
+                    priceData.TryGetValue(x.Ticker, out var priceValue);
 
                     string name = lifePosition?.Name ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
                     var lifeSize = lifePosition?.Size ?? 0;
-                    var price = lifePosition?.Price ?? 0;
+                    var price = priceValue.RoundTo(2);
                     var cost = GetCost(x.Ticker);
                     var size = GetSize(x.Ticker);
                     var percent = (cost / totalSum * 100.0).RoundTo(2);

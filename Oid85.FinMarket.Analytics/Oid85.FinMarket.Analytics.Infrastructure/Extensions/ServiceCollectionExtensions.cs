@@ -49,6 +49,19 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IStorageApiClient, StorageApiClient>();
     }
 
+    public static void ConfigureTraderFinamApiClient(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHttpClient(KnownHttpClients.FinMarketTraderFinamServiceApiClient, client =>
+        {
+            string baseUrl = configuration.GetValue<string>(KnownSettingsKeys.FinMarketTraderFinamServiceApiClientBaseAddress)!;
+            client.BaseAddress = new Uri(baseUrl);
+        });
+
+        services.AddTransient<ITraderFinamApiClient, TraderFinamApiClient>();
+    }
+
     public static async Task ApplyMigrations(this IHost host)
     {
         var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();

@@ -29,6 +29,7 @@ namespace Oid85.FinMarket.Analytics.WebHost
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureDatabase(builder.Configuration);
             builder.Services.ConfigureStorageApiClient(builder.Configuration);
+            builder.Services.ConfigureTraderFinamApiClient(builder.Configuration);
 
             builder.Services.AddWindowsService(options =>
             {
