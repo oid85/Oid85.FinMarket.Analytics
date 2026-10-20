@@ -299,7 +299,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 { "TMOS", "Крупнейшие компании РФ" },
                 { "TRND", "Трендовые акции" },
                 { "TBRU", "Российский облигации" },
-                { "TOFZ", "Т-Капитал ОФЗ" },
+                { "TOFZ", "ОФЗ" },
                 { "TGLD", "Золото" },
                 { "TMON", "Денежный рынок" }
             };
