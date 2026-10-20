@@ -288,6 +288,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 { "TRND", 1.0 },
                 { "TBRU", 4.0 },
                 { "TOFZ", 4.0 },
+                { "TGLD", 4.0 },
                 { "TMON", 8.0 }
             };
 
@@ -299,6 +300,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 { "TRND", "Трендовые акции" },
                 { "TBRU", "Российский облигации" },
                 { "TOFZ", "Т-Капитал ОФЗ" },
+                { "TGLD", "Золото" },
                 { "TMON", "Денежный рынок" }
             };
 

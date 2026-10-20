@@ -80,6 +80,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     "TRND" => 1.0,
                     "TBRU" => 4.0,
                     "TOFZ" => 4.0,
+                    "TGLD" => 4.0,
                     "TMON" => 8.0,
                     _ => 1.0
                 };
