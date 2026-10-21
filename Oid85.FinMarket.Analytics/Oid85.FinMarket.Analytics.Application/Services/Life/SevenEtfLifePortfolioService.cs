@@ -22,7 +22,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 .Where(x => lifePositionData.ContainsKey(x.Ticker))
                 .ToDictionary(k => k.Ticker, v => v);
 
-            var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
+            var weightData = lifePositionData.ToDictionary(k => k.Key, v => v.Value.Weight ?? 1.0);
 
             double totalSum = GetTotalSum();
 
@@ -32,8 +32,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
                     lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
 
-                    string name = instrument?.Name ?? string.Empty;
-                    var weight = GetWeight(x.Ticker);
+                    string name = lifePosition?.Name ?? string.Empty;
+                    var weight = lifePosition?.Weight ?? 1.0;
                     var lifeSize = lifePosition?.Size ?? 0;
                     var price = instrument?.LastPrice ?? 0;
                     var cost = GetCost(x.Ticker);
@@ -69,22 +69,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 TotalSum = totalSum,
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
-
-            double GetWeight(string ticker)
-            {
-                return ticker switch
-                {
-                    "TDIV" => 1.0,
-                    "TITR" => 1.0,
-                    "TMOS" => 1.0,
-                    "TRND" => 1.0,
-                    "TBRU" => 4.0,
-                    "TOFZ" => 4.0,
-                    "TGLD" => 4.0,
-                    "TMON" => 8.0,
-                    _ => 1.0
-                };
-            }
 
             int GetSize(string ticker)
             {
