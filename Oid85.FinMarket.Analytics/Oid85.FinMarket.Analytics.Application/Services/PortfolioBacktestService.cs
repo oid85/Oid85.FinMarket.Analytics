@@ -289,8 +289,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 { "TBRU", 4.0 },
                 { "TOFZ", 4.0 },
                 { "TGLD", 4.0 },
-                { "TMON", 8.0 },
-                { "SBCN", 4.0 }
+                { "TMON", 8.0 }
             };
 
             var names = new Dictionary<string, string>
@@ -302,8 +301,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 { "TBRU", "Российский облигации" },
                 { "TOFZ", "ОФЗ" },
                 { "TGLD", "Золото" },
-                { "TMON", "Денежный рынок" },
-                { "SBCN", "Юань" }
+                { "TMON", "Денежный рынок" }
             };
 
             var positions = weights

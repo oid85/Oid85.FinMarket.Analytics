@@ -31,7 +31,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var response = new GetTrendDynamicResponse
             {
                 Dates = dates,
-                Shares = await GetTrendDynamicDataAsync([.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)])
+                Shares = await GetTrendDynamicDataAsync([.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Share)]),
+                Etfs = await GetTrendDynamicDataAsync([.. instruments!.Where(x => x.Type == KnownInstrumentTypes.Etf)])
             };
 
             return response;
