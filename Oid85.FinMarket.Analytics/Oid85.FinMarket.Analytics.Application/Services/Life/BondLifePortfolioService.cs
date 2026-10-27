@@ -39,7 +39,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
                     lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
 
-                    string name = instrument?.Name ?? string.Empty;
+                    string name = lifePosition?.Name ?? string.Empty;
                     var yield = bondAnalyse?.Yield ?? 0.0;
                     var rating = bondAnalyse?.Rating ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
