@@ -81,18 +81,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
 
-            double GetWeight(string ticker)
-            {
-                bondAnalyseData.TryGetValue(ticker, out var bondAnalyse);
-
-                return bondAnalyse?.Rating switch
-                {
-                    "AAA" => 3.0,
-                    "AA" => 2.0,
-                    "A" => 1.0,
-                    _ => 1.0
-                };
-            }
+            double GetWeight(string ticker) => 1.0;
 
             int GetSize(string ticker)
             {
