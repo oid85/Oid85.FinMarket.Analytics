@@ -71,10 +71,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
 
-            double GetWeight(string ticker)
-            {
-                return 1.0;
-            }
+            double GetWeight(string ticker) => 1.0;
 
             int GetSize(string ticker)
             {
