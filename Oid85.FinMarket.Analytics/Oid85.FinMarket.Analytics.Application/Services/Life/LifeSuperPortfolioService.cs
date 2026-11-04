@@ -9,9 +9,58 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         ILifePortfolioRepository lifePortfolioRepository)
         : ILifeSuperPortfolioService
     {
-        public Task<LifeSuperPortfolioResponse> GetLifeSuperPortfolioAsync(LifeSuperPortfolioRequest request)
+        public async Task<LifeSuperPortfolioResponse> GetLifeSuperPortfolioAsync(LifeSuperPortfolioRequest request)
         {
-            throw new NotImplementedException();
+            var lifePortfolios = await lifePortfolioRepository.GetAsync();
+            
+            var lifePortfolioItems = new List<LifePortfolioItem>();
+            double totalSum = 0;
+
+            foreach (var lifePortfolio in lifePortfolios)
+            {
+                if (lifePortfolio.Name == "Share")
+                {
+                    var lifePortfolioItem = new LifePortfolioItem();
+                    lifePortfolioItems.Add(lifePortfolioItem);
+                    continue;
+                }
+
+                if (lifePortfolio.Name == "Bond")
+                {
+                    var lifePortfolioItem = new LifePortfolioItem();
+                    lifePortfolioItems.Add(lifePortfolioItem);
+                    continue;
+                }
+
+                if (lifePortfolio.Name == "Momentum")
+                {
+                    var lifePortfolioItem = new LifePortfolioItem();
+                    lifePortfolioItems.Add(lifePortfolioItem);
+                    continue;
+                }
+
+                if (lifePortfolio.Name == "SevenEtf")
+                {
+                    var lifePortfolioItem = new LifePortfolioItem();
+                    lifePortfolioItems.Add(lifePortfolioItem);
+                    continue;
+                }
+
+                if (lifePortfolio.Name == "ThreeEtf")
+                {
+                    var lifePortfolioItem = new LifePortfolioItem();
+                    lifePortfolioItems.Add(lifePortfolioItem);
+                    continue;
+                }
+            }
+
+            var orderedLifePortfolioItems = lifePortfolioItems.OrderByDescending(x => x.Weight).ToList();
+
+            return new LifeSuperPortfolioResponse
+            {
+                TotalSum = totalSum,
+                Portfolios = orderedLifePortfolioItems
+            };
         }
     }
 }
