@@ -87,6 +87,24 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Migrations
                     b.ToTable("InstrumentEntities", "public");
                 });
 
+            modelBuilder.Entity("Oid85.FinMarket.Analytics.Infrastructure.Database.Entities.LifePortfolioEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double?>("Weight")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LifePortfolioEntities", "public");
+                });
+
             modelBuilder.Entity("Oid85.FinMarket.Analytics.Infrastructure.Database.Entities.ParameterEntity", b =>
                 {
                     b.Property<Guid>("Id")

@@ -12,7 +12,8 @@ public class FinMarketContext(DbContextOptions<FinMarketContext> options) : DbCo
     public DbSet<ShareLifePositionEntity> ShareLifePositionEntities { get; set; }
 	public DbSet<BondLifePositionEntity> BondLifePositionEntities { get; set; }
 	public DbSet<SevenEtfLifePositionEntity> SevenEtfLifePositionEntities { get; set; }
-	public DbSet<ThreeEtfLifePositionEntity> ThreeEtfLifePositionEntities { get; set; }
+    public DbSet<ThreeEtfLifePositionEntity> ThreeEtfLifePositionEntities { get; set; }
+    public DbSet<LifePortfolioEntity> LifePortfolioEntities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
