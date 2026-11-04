@@ -24,6 +24,11 @@
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// Сектор
+        /// </summary>
+        public string Sector { get; set; } = string.Empty;
+
+        /// <summary>
         /// Купонная доходность, %
         /// </summary>
         public double Yield { get; set; }
@@ -92,5 +97,10 @@
         /// Цвет
         /// </summary>
         public string ColorFill { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Изменение за месяц
+        /// </summary>
+        public double MonthDeltaPercent { get; set; }
     }
 }

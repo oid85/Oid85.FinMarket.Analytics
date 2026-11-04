@@ -14,6 +14,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         IStorageApiClient storageApiClient,
         IFundamentalScoreService fundamentalScoreService,
         IInstrumentService instrumentService,
+        IDataService dataService,
         IShareLifePositionRepository positionRepository) 
         : IShareLifePortfolioService
     {
@@ -24,10 +25,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             var lifePositionData = (await positionRepository.GetAsync())
                 .ToDictionary(k => k.Ticker, v => v);
+            
+            var tickers = lifePositionData.Keys.ToList();
+
+            var candleData = await dataService.GetCandleDataAsync(tickers);
 
             Dictionary<string, FundamentalScore?> fundamentalData = [];
 
-            foreach (var ticker in lifePositionData.Keys)
+            foreach (var ticker in tickers)
                 fundamentalData.Add(ticker, await fundamentalScoreService.GetFundamentalScoreAsync(ticker));
 
             var instrumentData = (await instrumentService.GetInstrumentListAsync())
@@ -47,6 +52,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     fundamentalData.TryGetValue(x.Ticker, out var fundamental);
 
                     string name = instrument?.Name ?? string.Empty;
+                    string sector = instrument?.Sector ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
                     var yield = fundamental?.DividendYield?.Value ?? 0.0;
                     var lifeSize = lifePosition?.Size ?? 0;
@@ -56,6 +62,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     var percent = (cost / totalSum * 100.0).RoundTo(2);
                     var (delta, deltaText) = GetDelta(size, lifeSize);
                     var (deltaPercent, deltaPercentText) = GetDeltaPercent(size, lifeSize);
+                    var monthDeltaPercent = GetMonthDeltaPercent(x.Ticker).RoundTo(2);
                     string recommendation = GetRecommendation(deltaPercent);
                     string colorFill = GetColor(deltaPercent);
 
@@ -63,6 +70,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     {
                         Ticker = x.Ticker,
                         Name = name,
+                        Sector = sector,
                         Weight = weight,
                         Yield = yield,
                         Cost = cost,
@@ -75,6 +83,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                         DeltaText = deltaText,
                         DeltaPercentText = deltaPercentText,
                         Recommendation = recommendation,
+                        MonthDeltaPercent = monthDeltaPercent,
                         ColorFill = colorFill
                     };
                 })
@@ -85,6 +94,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 TotalSum = totalSum,
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
+
+            double GetMonthDeltaPercent(string ticker)
+            {
+                var candles = candleData[ticker];
+
+                if (candles is []) return 0.0;
+
+                var firstCandle = candles.FindLast(x => x.Date <= DateOnly.FromDateTime(DateTime.Today));
+                var lastCandle = candles.FindLast(x => x.Date <= DateOnly.FromDateTime(DateTime.Today.AddMonths(-1)));                
+
+                if (firstCandle is null) return 0.0;
+                if (lastCandle is null) return 0.0;
+
+                return (lastCandle.Close - firstCandle.Close) / firstCandle.Close * 100.0;
+            }
 
             double GetWeight(string ticker) =>
                 GetMarketCapCoefficient(ticker) + GetFundamentalScoreCoefficient(ticker) + GetDividendCoefficient(ticker);

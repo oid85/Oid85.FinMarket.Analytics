@@ -9,6 +9,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class SevenEtfLifePortfolioService(        
         IInstrumentService instrumentService,
+        IDataService dataService,
         ISevenEtfLifePositionRepository positionRepository) 
         : ISevenEtfLifePortfolioService
     {
@@ -16,6 +17,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         {
             var lifePositionData = (await positionRepository.GetAsync())
                 .ToDictionary(k => k.Ticker, v => v);
+
+            var tickers = lifePositionData.Keys.ToList();
+
+            var candleData = await dataService.GetCandleDataAsync(tickers);
 
             var instrumentData = (await instrumentService.GetInstrumentListAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Etf)
@@ -41,6 +46,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     var percent = (cost / totalSum * 100.0).RoundTo(2);
                     var (delta, deltaText) = GetDelta(size, lifeSize);
                     var (deltaPercent, deltaPercentText) = GetDeltaPercent(size, lifeSize);
+                    var monthDeltaPercent = GetMonthDeltaPercent(x.Ticker).RoundTo(2);
                     string recommendation = GetRecommendation(deltaPercent);
                     string colorFill = GetColor(deltaPercent);
 
@@ -59,6 +65,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                         DeltaText = deltaText,
                         DeltaPercentText = deltaPercentText,
                         Recommendation = recommendation,
+                        MonthDeltaPercent = monthDeltaPercent,
                         ColorFill = colorFill
                     };
                 })
@@ -69,6 +76,21 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 TotalSum = totalSum,
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
+
+            double GetMonthDeltaPercent(string ticker)
+            {
+                var candles = candleData[ticker];
+
+                if (candles is []) return 0.0;
+
+                var firstCandle = candles.FindLast(x => x.Date <= DateOnly.FromDateTime(DateTime.Today));
+                var lastCandle = candles.FindLast(x => x.Date <= DateOnly.FromDateTime(DateTime.Today.AddMonths(-1)));
+
+                if (firstCandle is null) return 0.0;
+                if (lastCandle is null) return 0.0;
+
+                return (lastCandle.Close - firstCandle.Close) / firstCandle.Close * 100.0;
+            }
 
             int GetSize(string ticker)
             {
