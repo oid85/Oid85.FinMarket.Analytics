@@ -11,7 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<FundamentalParameterRatio> GetRatioRevenueAsync(string ticker, string period);
         Task<FundamentalParameterRatio> GetRatioNetProfitAsync(string ticker, string period);
         Task<FundamentalParameterRatio> GetRatioFcfAsync(string ticker, string period);
-        Task<FundamentalParameterRatio> GetColorEpsAsync(string ticker, string period);
+        Task<FundamentalParameterRatio> GetRatioEpsAsync(string ticker, string period);
         Task<FundamentalParameterRatio> GetRatioNetDebtAsync(string ticker, string period);
         Task<FundamentalParameterRatio> GetRatioRoaAsync(string ticker, string period);
         Task<FundamentalParameterRatio> GetRatioRoeAsync(string ticker, string period);

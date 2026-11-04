@@ -139,7 +139,7 @@ namespace Oid85.FinMarket.Analytics.Application.Factories
 
             if (metric is null) return new();
 
-            var parameterRatio = await fundamentalParameterRatioService.GetColorEpsAsync(ticker, period);
+            var parameterRatio = await fundamentalParameterRatioService.GetRatioEpsAsync(ticker, period);
 
             var displayParameter = new AnalyseRatioParameter<double?>
             {

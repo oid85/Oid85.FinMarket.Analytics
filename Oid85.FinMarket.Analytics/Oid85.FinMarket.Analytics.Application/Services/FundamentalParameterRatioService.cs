@@ -327,7 +327,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             return new();
         }
 
-        public async Task<FundamentalParameterRatio> GetColorEpsAsync(string ticker, string period)
+        public async Task<FundamentalParameterRatio> GetRatioEpsAsync(string ticker, string period)
         {
             var prevMetric = await GetMetricAsync(ticker, (int.Parse(period) - 1).ToString());
             var metric = await GetMetricAsync(ticker, period);
