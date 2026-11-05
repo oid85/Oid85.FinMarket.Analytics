@@ -20,6 +20,9 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients
         public async Task<GetInstrumentPriceResponse> GetInstrumentPriceAsync(GetInstrumentPriceRequest request) =>
             await GetCachedDataAsync<GetInstrumentPriceRequest, GetInstrumentPriceResponse>("/api/instruments/price", request);
 
+        public async Task<PortfolioInfoResponse> GetPortfolioInfoAsync(PortfolioInfoRequest request) =>
+            await GetResponseAsync<PortfolioInfoRequest, PortfolioInfoResponse>("/api/trader-finam/portfolio-info", request);
+
         private async Task<TResponse> GetCachedDataAsync<TRequest, TResponse>(string url, TRequest request) where TResponse : new()
         {
             string key = StringUtils.GetMd5($"{nameof(TRequest)}_{JsonSerializer.Serialize(request)}");

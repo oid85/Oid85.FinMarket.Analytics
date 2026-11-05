@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -6,59 +7,39 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class LifeSuperPortfolioService(
+        ITraderFinamApiClient traderFinamApiClient,
+        IShareLifePortfolioService shareLifePortfolioService,
+        IBondLifePortfolioService bondLifePortfolioService,
+        ISevenEtfLifePortfolioService sevenEtfLifePortfolioService,
+        IThreeEtfLifePortfolioService threeEtfLifePortfolioService,
         ILifePortfolioRepository lifePortfolioRepository)
         : ILifeSuperPortfolioService
     {
         public async Task<LifeSuperPortfolioResponse> GetLifeSuperPortfolioAsync(LifeSuperPortfolioRequest request)
         {
-            var lifePortfolios = await lifePortfolioRepository.GetAsync();
+            var lifePortfolioData = (await lifePortfolioRepository.GetAsync()).ToDictionary(k => k.Name, v => v);
             
-            var lifePortfolioItems = new List<LifePortfolioItem>();
-            double totalSum = 0;
-
-            foreach (var lifePortfolio in lifePortfolios)
-            {
-                if (lifePortfolio.Name == "Share")
+            var lifePortfolioItemData = lifePortfolioData.ToDictionary(
+                k => k.Key,
+                v => new LifePortfolioItem
                 {
-                    var lifePortfolioItem = new LifePortfolioItem();
-                    lifePortfolioItems.Add(lifePortfolioItem);
-                    continue;
-                }
+                    Name = v.Key,
+                    Description = v.Value.Description,
+                    Weight = v.Value.Weight ?? 0.0
+                });
 
-                if (lifePortfolio.Name == "Bond")
-                {
-                    var lifePortfolioItem = new LifePortfolioItem();
-                    lifePortfolioItems.Add(lifePortfolioItem);
-                    continue;
-                }
+            lifePortfolioItemData["Share"].Number = 1;
+            lifePortfolioItemData["Bond"].Number = 2;
+            lifePortfolioItemData["Momentum"].Number = 3;
+            lifePortfolioItemData["SevenEtf"].Number = 4;
+            lifePortfolioItemData["ThreeEtf"].Number = 5;
+            lifePortfolioItemData["FollowTrend"].Number = 6;
 
-                if (lifePortfolio.Name == "Momentum")
-                {
-                    var lifePortfolioItem = new LifePortfolioItem();
-                    lifePortfolioItems.Add(lifePortfolioItem);
-                    continue;
-                }
-
-                if (lifePortfolio.Name == "SevenEtf")
-                {
-                    var lifePortfolioItem = new LifePortfolioItem();
-                    lifePortfolioItems.Add(lifePortfolioItem);
-                    continue;
-                }
-
-                if (lifePortfolio.Name == "ThreeEtf")
-                {
-                    var lifePortfolioItem = new LifePortfolioItem();
-                    lifePortfolioItems.Add(lifePortfolioItem);
-                    continue;
-                }
-            }
-
-            var orderedLifePortfolioItems = lifePortfolioItems.OrderByDescending(x => x.Weight).ToList();
+            var orderedLifePortfolioItems = lifePortfolioItemData.Values.OrderByDescending(x => x.LifeCost).ToList();
 
             return new LifeSuperPortfolioResponse
             {
-                TotalSum = totalSum,
+                TotalSum = 0.0,
                 Portfolios = orderedLifePortfolioItems
             };
         }
