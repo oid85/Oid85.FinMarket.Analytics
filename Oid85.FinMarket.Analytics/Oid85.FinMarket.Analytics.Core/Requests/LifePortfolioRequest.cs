@@ -2,6 +2,6 @@
 {
     public class LifePortfolioRequest
     {
-        public string? OrderField { get; set; }
+        public string? OrderField { get; set; } = null;
     }
 }

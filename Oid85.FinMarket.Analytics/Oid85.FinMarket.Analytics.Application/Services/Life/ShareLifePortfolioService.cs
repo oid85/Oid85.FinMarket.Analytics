@@ -97,8 +97,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             double GetMonthDeltaPercent(string ticker)
             {
-                var candles = candleData[ticker];
+                candleData.TryGetValue(ticker, out var candles);
 
+                if (candles is null) return 0.0;
                 if (candles is []) return 0.0;
 
                 var firstCandle = candles.FindLast(x => x.Date <= DateOnly.FromDateTime(DateTime.Today));
@@ -219,6 +220,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             return deltaPercent switch
             {
                 > deltaLimit => $"докупить",
+                < -1 * deltaLimit => $"сократить",
                 _ => string.Empty
             };
         }

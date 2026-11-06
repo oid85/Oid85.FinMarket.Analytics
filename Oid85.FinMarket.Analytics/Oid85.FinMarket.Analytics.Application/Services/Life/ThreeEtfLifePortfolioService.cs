@@ -140,6 +140,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             return deltaPercent switch
             {
                 > deltaLimit => $"докупить",
+                < -1 * deltaLimit => $"сократить",
                 _ => string.Empty
             };
         }

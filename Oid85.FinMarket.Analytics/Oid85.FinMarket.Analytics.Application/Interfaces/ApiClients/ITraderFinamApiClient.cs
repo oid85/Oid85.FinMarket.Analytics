@@ -12,5 +12,10 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
         /// Получить цены по тикеру
         /// </summary>
         Task<GetInstrumentPriceResponse> GetInstrumentPriceAsync(GetInstrumentPriceRequest request);
+
+        /// <summary>
+        /// Получить информацию по портфелю
+        /// </summary>
+        Task<PortfolioInfoResponse> GetPortfolioInfoAsync(PortfolioInfoRequest request);
     }
 }

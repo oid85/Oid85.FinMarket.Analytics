@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿using Oid85.FinMarket.Analytics.Common.KnownConstants;
+
+namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class LifeSuperPortfolioResponse
     {
@@ -61,6 +63,6 @@
         /// <summary>
         /// Цвет
         /// </summary>
-        public string ColorFill { get; set; } = string.Empty;
+        public string ColorFill { get; set; } = KnownColors.LightGreen;
     }
 }
