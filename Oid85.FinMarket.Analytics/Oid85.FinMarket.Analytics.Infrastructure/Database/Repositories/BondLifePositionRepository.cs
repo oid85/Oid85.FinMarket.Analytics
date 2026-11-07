@@ -10,6 +10,32 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
         IDbContextFactory<FinMarketContext> contextFactory)
         : IBondLifePositionRepository
     {
+        public async Task<List<LifePosition>> GetAsync()
+        {
+            await using var context = await contextFactory.CreateDbContextAsync();
+
+            var entities = await context.BondLifePositionEntities.ToListAsync();
+
+            if (entities is null)
+                return [];
+
+            var models = entities
+                .Select(x =>
+                    new LifePosition
+                    {
+                        Id = x.Id,
+                        Ticker = x.Ticker,
+                        Name = x.Name,
+                        Size = x.Size, 
+                        Price = x.Price, 
+                        Weight = x.Weight
+                    })
+                .OrderBy(x => x.Ticker)
+                .ToList();
+
+            return models;
+        }
+
         public async Task AddAsync(List<LifePosition> models)
         {
             await using var context = await contextFactory.CreateDbContextAsync();
@@ -36,32 +62,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 
             await context.BondLifePositionEntities.ExecuteDeleteAsync();
             await context.SaveChangesAsync();
-        }
-
-        public async Task<List<LifePosition>> GetAsync()
-        {
-            await using var context = await contextFactory.CreateDbContextAsync();
-
-            var entities = await context.BondLifePositionEntities.ToListAsync();
-
-            if (entities is null)
-                return [];
-
-            var models = entities
-                .Select(x =>
-                    new LifePosition
-                    {
-                        Id = x.Id,
-                        Ticker = x.Ticker,
-                        Name = x.Name,
-                        Size = x.Size, 
-                        Price = x.Price, 
-                        Weight = x.Weight
-                    })
-                .OrderBy(x => x.Ticker)
-                .ToList();
-
-            return models;
         }
     }
 }

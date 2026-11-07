@@ -15,7 +15,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         IFundamentalScoreService fundamentalScoreService,
         IInstrumentService instrumentService,
         IDataService dataService,
-        IShareLifePositionRepository positionRepository) 
+        IShareLifePositionRepository positionRepository,
+        IParameterRepository parameterRepository) 
         : IShareLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
@@ -252,6 +253,29 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 orderedPositions[i].Number = i + 1;
 
             return orderedPositions;
+        }
+
+        public async Task<LifePortfolioImportResponse> ImportPositionListAsync(LifePortfolioImportRequest request)
+        {
+            var path = await parameterRepository.GetParameterValueAsync("SnowballHoldingsFilePath");
+
+            var models =
+                (await File.ReadAllLinesAsync(path!))
+                .Skip(1)
+                .Select(x => x.Split(','))
+                .Select(x => new LifePosition
+                {
+                    Ticker = x[0].Replace("\"", ""),
+                    Name = x[1].Replace("\"", ""),
+                    Size = int.Parse(x[3].Replace("\"", "")),
+                    Weight = 1.0
+                })
+                .ToList();
+
+            await positionRepository.DeleteAsync();
+            await positionRepository.AddAsync(models);
+
+            return new();
         }
     }
 }

@@ -6,5 +6,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
     public interface IShareLifePortfolioService
     {
         Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request);
+        Task<LifePortfolioImportResponse> ImportPositionListAsync(LifePortfolioImportRequest request);
     }
 }
