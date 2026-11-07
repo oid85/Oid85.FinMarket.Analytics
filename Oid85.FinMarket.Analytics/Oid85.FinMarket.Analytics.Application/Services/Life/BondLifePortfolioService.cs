@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -10,7 +11,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
     public class BondLifePortfolioService(
         IInstrumentService instrumentService,
         IBondAnalyseService bondAnalyseService,
-        IBondLifePositionRepository positionRepository) 
+        IBondLifePositionRepository positionRepository,
+        IParameterRepository parameterRepository) 
         : IBondLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
@@ -180,6 +182,29 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 orderedPositions[i].Number = i + 1;
 
             return orderedPositions;
+        }
+
+        public async Task<LifePortfolioImportResponse> ImportPositionListAsync(LifePortfolioImportRequest request)
+        {
+            var path = await parameterRepository.GetParameterValueAsync("SnowballHoldingsFilePath");
+            
+            var models = 
+                (await File.ReadAllLinesAsync(path!))
+                .Skip(1)
+                .Select(x => x.Split(','))
+                .Select(x => new LifePosition
+                {
+                    Ticker = x[0].Replace("\"", ""),
+                    Name = x[1].Replace("\"", ""),
+                    Size = int.Parse(x[3].Replace("\"", "")),
+                    Weight = 1.0
+                })
+                .ToList();
+
+            await positionRepository.DeleteAsync();
+            await positionRepository.AddAsync(models);
+
+            return new ();
         }
     }
 }
