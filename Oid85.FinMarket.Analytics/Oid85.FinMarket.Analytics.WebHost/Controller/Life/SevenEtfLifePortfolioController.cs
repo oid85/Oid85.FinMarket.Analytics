@@ -28,4 +28,17 @@ public class SevenEtfLifePortfolioController(
         GetResponseAsync(
             () => portfolioService.GetPositionListAsync(request),
             result => new BaseResponse<LifePortfolioResponse> { Result = result });
+
+    /// <summary>
+    /// Импорт позиций
+    /// </summary>
+    [HttpPost("position/import")]
+    [ProducesResponseType(typeof(BaseResponse<LifePortfolioImportResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<LifePortfolioImportResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<LifePortfolioImportResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> SevenEtfLifePortfolioImportAsync(
+        [FromBody] LifePortfolioImportRequest request) =>
+        GetResponseAsync(
+            () => portfolioService.ImportPositionListAsync(request),
+            result => new BaseResponse<LifePortfolioImportResponse> { Result = result });
 }
