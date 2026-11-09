@@ -45,7 +45,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     var rating = bondAnalyse?.Rating ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
                     var lifeSize = lifePosition?.Size ?? 0;
-                    var price = instrument?.LastPrice ?? 0;
+                    var price = instrument?.LastPrice ?? 1000;
                     var cost = GetCost(x.Ticker);
                     var size = GetSize(x.Ticker);
                     var percent = (cost / totalSum * 100.0).RoundTo(2);
