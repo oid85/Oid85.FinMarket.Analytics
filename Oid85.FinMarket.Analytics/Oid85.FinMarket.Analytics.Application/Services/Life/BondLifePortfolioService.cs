@@ -88,7 +88,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 instrumentData.TryGetValue(ticker, out var instrument);
 
                 double tickerCost = GetCost(ticker);
-                double price = instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0;
+                double price = instrument?.LastPrice ?? 1000 + instrument?.Nkd ?? 0;
 
                 return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
             }
