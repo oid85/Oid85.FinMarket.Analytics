@@ -70,12 +70,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
             if (entity is null)
                 return null;
 
-            bool inPortfolio =
-                await context.BondLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                await context.ShareLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                await context.SevenEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                await context.ThreeEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker);
-
             var model = new Instrument
             {
                 Id = entity.Id,
@@ -83,7 +77,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Name = entity.Name,
                 Type = entity.Type,
                 IsSelected = entity.IsSelected,
-                InPortfolio = inPortfolio,
                 Sector = entity.Sector
             };
 
@@ -99,12 +92,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
             if (entity is null)
                 return null;
 
-            bool inPortfolio =
-                await context.BondLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                await context.ShareLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                await context.SevenEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                await context.ThreeEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker);
-
             var model = new Instrument
             {
                 Id = entity.Id,
@@ -112,7 +99,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Name = entity.Name,
                 Type = entity.Type,
                 IsSelected = entity.IsSelected,
-                InPortfolio = inPortfolio,
                 Sector = entity.Sector
             };
 
@@ -132,12 +118,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 
             foreach (var entity in entities)
             {
-                bool inPortfolio =
-                    await context.BondLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                    await context.ShareLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                    await context.SevenEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
-                    await context.ThreeEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker);
-
                 models.Add(new Instrument
                 {
                     Id = entity.Id,
@@ -145,7 +125,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                     Name = entity.Name,
                     Type = entity.Type,
                     IsSelected = entity.IsSelected,
-                    InPortfolio = inPortfolio,
                     Sector = entity.Sector
                 });
             }

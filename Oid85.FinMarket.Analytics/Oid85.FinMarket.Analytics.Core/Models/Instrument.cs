@@ -26,11 +26,6 @@
         public bool IsSelected { get; set; }
 
         /// <summary>
-        /// Инструмент в портфеле
-        /// </summary>
-        public bool InPortfolio { get; set; }
-
-        /// <summary>
         /// Тип
         /// </summary>
         public string Type { get; set; }

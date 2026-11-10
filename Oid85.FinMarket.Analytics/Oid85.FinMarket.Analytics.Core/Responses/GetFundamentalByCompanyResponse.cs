@@ -10,11 +10,6 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public string? Ticker { get; set; } = null;
 
         /// <summary>
-        /// Инструмент в портфеле
-        /// </summary>
-        public bool InPortfolio { get; set; }
-
-        /// <summary>
         /// Наименование
         /// </summary>
         public string? Name { get; set; } = null;

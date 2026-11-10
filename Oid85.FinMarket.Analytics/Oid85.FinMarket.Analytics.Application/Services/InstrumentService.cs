@@ -54,7 +54,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Ticker = instrument.Ticker,
                     Name = instrument.Name,
                     IsSelected = instrument.IsSelected,
-                    InPortfolio = instrument.InPortfolio,
                     Type = instrument.Type
                 });
 
@@ -64,18 +63,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             };
 
             return response;
-        }
-
-        /// <inheritdoc />
-        public async Task<PortfolioInstrumentResponse> PortfolioInstrumentAsync(PortfolioInstrumentRequest request)
-        {
-            var instrument = await instrumentRepository.GetInstrumentByTickerAsync(request.Ticker);
-
-            instrument!.InPortfolio = !instrument!.InPortfolio;
-
-            await instrumentRepository.EditInstrumentAsync(instrument);
-
-            return new PortfolioInstrumentResponse() { Id = instrument.Id };
         }
 
         /// <inheritdoc />

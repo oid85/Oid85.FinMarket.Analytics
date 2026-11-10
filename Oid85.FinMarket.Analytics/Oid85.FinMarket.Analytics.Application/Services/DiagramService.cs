@@ -27,21 +27,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 .OrderBy(x => indexTickers.Contains(x.Ticker))
                 .ToList();
 
-            var instrumentsInPortfolio = allInstruments
+            var instrumentsIsSelected = allInstruments
                 .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
-                .Where(x => x.IsSelected)
-                .Where(x => x.InPortfolio)
+                .Where(x => x.IsSelected)                
                 .OrderBy(x => x.Ticker)
                 .ToList();
 
-            var instrumentsNotInPortfolio = allInstruments
-                .Where(x => x.Type == KnownInstrumentTypes.Share || x.Type == KnownInstrumentTypes.Etf)
-                .Where(x => x.IsSelected)
-                .Where(x => !x.InPortfolio)
-                .OrderBy(x => x.Ticker)
-                .ToList();
-
-            List<GetAnalyticInstrumentListItemResponse> instruments = [.. indexes, .. instrumentsInPortfolio, .. instrumentsNotInPortfolio];
+            List<GetAnalyticInstrumentListItemResponse> instruments = [.. indexes, .. instrumentsIsSelected];
 
             var tickers = instruments.Select(x => x.Ticker).ToList();
 
@@ -61,8 +53,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     new()
                     {
                         Ticker = instrument.Ticker,
-                        Name = instrument.Name,
-                        InPortfolio = instrument.InPortfolio,
+                        Name = instrument.Name,                        
                         Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * years))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
                         TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
                         DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? value.Yield!.Value.RoundTo(1) : null
@@ -71,12 +62,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             response.Items =
                 [
-                    .. items.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
-                    .. items.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
-                    .. items.Where(x => x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend),
-                    .. items.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.UpTrend),
-                    .. items.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.NoTrend),
-                    .. items.Where(x => !x.InPortfolio).Where(x => x.TrendState == KnownTrendStates.DownTrend)
+                    .. items.Where(x => x.TrendState == KnownTrendStates.UpTrend),
+                    .. items.Where(x => x.TrendState == KnownTrendStates.NoTrend),
+                    .. items.Where(x => x.TrendState == KnownTrendStates.DownTrend)
                 ];
 
             return response;
@@ -85,8 +73,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         public async Task<GetTrendAggregateDiagramResponse> GetTrendAggregateDiagramAsync(GetTrendAggregateDiagramRequest request)
         {
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments                
-                .Where(x => x.Type == KnownInstrumentTypes.Share)
-                .Where(x => x.InPortfolio)
+                .Where(x => x.Type == KnownInstrumentTypes.Share)                
                 .ToList();
 
             var tickers = instruments.Select(x => x.Ticker).ToList();

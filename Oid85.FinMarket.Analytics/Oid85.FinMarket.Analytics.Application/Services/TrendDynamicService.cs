@@ -26,7 +26,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dates = DateUtils.GetDates(from, to);
-            bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
 
             var response = new GetTrendDynamicResponse
             {
@@ -50,7 +49,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,
-                        InPortfolio = instrument.InPortfolio && showInPortfolio,
                         Items = []
                     };
 
@@ -72,8 +70,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     data.Add(trendDynamicData);
                 }
 
-                var inPortfolioItems = data
-                    .Where(x => x.InPortfolio)
+                return data
                     .OrderByDescending(x =>
                     {
                         var reverse = x.Items.Select(x => x.Trend).Where(x => x != null).AsEnumerable().Reverse();
@@ -81,18 +78,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         return count;
                     })
                     .ToList();
-
-                var notInPortfolioItems = data
-                    .Where(x => !x.InPortfolio)
-                    .OrderByDescending(x =>
-                    {
-                        var reverse = x.Items.Select(x => x.Trend).Where(x => x != null).AsEnumerable().Reverse();
-                        var count = reverse.TakeWhile(x => x == 1).Count();
-                        return count;
-                    })
-                    .ToList();
-
-                return [.. inPortfolioItems, .. notInPortfolioItems];
             }
         }
     }

@@ -132,8 +132,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
             var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments.Where(x => x.Type == KnownInstrumentTypes.Share).OrderBy(x => x.Ticker).ToList();
-            var analyticInstruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
-            bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
+            var analyticInstruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).ToList();            
 
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
@@ -146,8 +145,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Periods = periods,
                     Ticker = instrument.Ticker,
                     Sector = analyticInstruments.First(x => x.Ticker == instrument.Ticker)?.Sector ?? string.Empty,
-                    Name = instrument.Name,
-                    InPortfolio = instrument.InPortfolio && showInPortfolio,
+                    Name = instrument.Name,                    
                     BenchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker),
                     Moex = analyseDataContext.GetMoexIndexShare(instrument.Ticker),
                     Concept = analyseDataContext.GetExtData(instrument.Ticker)?.Concept,
@@ -210,8 +208,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
             var fundamentalParameters = (await storageApiClient.GetFundamentalParameterListAsync(new())).Result.FundamentalParameters;
-            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).Where(x => x.IsSelected).OrderBy(x => x.Ticker).ToList();
-            bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
+            var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? []).Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.Sector == request.Sector).Where(x => x.IsSelected).OrderBy(x => x.Ticker).ToList();            
             var fundamentalRatings = (await GetFundamentalRatingListAsync(new() { Sector = request.Sector })).Items;
             var tickers = fundamentalRatings.Select(x => x.Ticker).ToList();
             var priceData = await dataService.GetClosePriceDataAsync(tickers);
@@ -227,7 +224,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ticker = ticker,
                         Name = instruments.Find(x => x.Ticker == ticker)!.Name,
-                        InPortfolio = instruments.Find(x => x.Ticker == ticker)!.InPortfolio && showInPortfolio,
                         Data = [.. priceDataMonth.Select(x => new FundamentalBySectorDateValue { Date = x.Date.ToString(), Value = x.Value })]
                     });
             }
@@ -241,7 +237,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ticker = ticker,
                         Name = instruments.Find(x => x.Ticker == ticker)!.Name,
-                        InPortfolio = instruments.Find(x => x.Ticker == ticker)!.InPortfolio && showInPortfolio,
                         Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
@@ -255,7 +250,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ticker = ticker,
                         Name = instruments.Find(x => x.Ticker == ticker)!.Name,
-                        InPortfolio = instruments.Find(x => x.Ticker == ticker)!.InPortfolio && showInPortfolio,
                         Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
@@ -269,7 +263,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     {
                         Ticker = ticker,
                         Name = instruments.Find(x => x.Ticker == ticker)!.Name,
-                        InPortfolio = instruments.Find(x => x.Ticker == ticker)!.InPortfolio && showInPortfolio,
                         Data = [.. fundamentalParameterValues.Select(x => new FundamentalBySectorDateValue { Date = x.Period, Value = x.Value })]
                     });
             }
@@ -322,14 +315,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var candles = analyseDataContext.GetCandles(instrument.Ticker).Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddYears(-1)));
             double maxPrice = candles.Select(x => x.Close).Max();
             double lastCandlePrice = candles.Last().Close;
-            double fallingFromMax = (-1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0).RoundTo(2);
-            
-            bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
+            double fallingFromMax = (-1 * (maxPrice - lastCandlePrice) / maxPrice * 100.0).RoundTo(2);           
 
             var response = new GetFundamentalByCompanyResponse
             {
                 Ticker = instrument.Ticker,
-                InPortfolio = instrument.InPortfolio && showInPortfolio,
                 Name = instrument.Name,
                 Sector = instrument.Sector,
                 Price = price,
@@ -403,8 +393,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         /// <inheritdoc />
         public async Task<GetFundamentalRatingListResponse> GetFundamentalRatingListAsync(GetFundamentalRatingListRequest request)
         {
-            bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
-
             var instruments = (await instrumentRepository.GetInstrumentsAsync() ?? [])
                 .Where(x => x.Type == KnownInstrumentTypes.Share)
                 .Where(x => x.IsSelected)
@@ -447,7 +435,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ticker = ticker,
                         Name = instrument?.Name ?? string.Empty,
                         Sector = instrument?.Sector ?? string.Empty,
-                        InPortfolio = (instrument?.InPortfolio ?? false) && showInPortfolio,
                         Score = score,
                         Metric = analyseDataContext.GetFundamentalMetric(ticker),
                         FallingFromMax = fallingFromMax.RoundTo(2)

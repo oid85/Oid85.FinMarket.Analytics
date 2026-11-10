@@ -21,9 +21,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var today = DateOnly.FromDateTime(DateTime.Today);
 
             var allInstruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).ToList();
-            var sharesInPortfolio = allInstruments.Where(x => x.Type == KnownInstrumentTypes.Share).Where(x => x.InPortfolio).ToList();
+            var shares = allInstruments.Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
             var benchmarkInsrtument = allInstruments.Find(x => x.Ticker == KnownIndexTickers.MCFTR);
-            List<Instrument> instruments = [.. sharesInPortfolio, benchmarkInsrtument];
+            List<Instrument> instruments = [.. shares, benchmarkInsrtument!];
 
             var tickers = instruments!.Select(x => x.Ticker).ToList();
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);

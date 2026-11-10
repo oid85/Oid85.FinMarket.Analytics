@@ -2,8 +2,7 @@
 
 public static class KnownParameters
 {
-    public const string TotalSum = "TotalSum";
-    public const string MinTotalNumberSharesInPortfolio = "MinTotalNumberSharesInPortfolio";
+    public const string TotalSum = "TotalSum";    
     public const string Periods = "Periods";
     public const string TTMYear = "TTMYear";
     public const string SnowballHoldingsFilePath = "SnowballHoldingsFilePath";

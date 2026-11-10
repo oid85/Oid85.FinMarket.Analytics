@@ -551,7 +551,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         {
             var tickers = weights.Keys.ToList();
             var dividends = (await storageApiClient.GetDividendListAsync(new())).Result.Dividends.Where(x => tickers.Contains(x.Ticker)).ToList();
-            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => tickers.Contains(x.Ticker)).Where(x => x.InPortfolio).ToList();
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => tickers.Contains(x.Ticker)).ToList();
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync()).Where(x => tickers.Contains(x.Ticker)).ToList();
             var sizes = tickers.ToDictionary(k => k, v => 0);
             var costs = tickers.ToDictionary(k => k, v => 0.0);

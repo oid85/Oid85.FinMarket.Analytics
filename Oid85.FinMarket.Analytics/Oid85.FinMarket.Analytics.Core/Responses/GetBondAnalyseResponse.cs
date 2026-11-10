@@ -16,7 +16,6 @@
         public double Yield { get; set; }
         public int DaysToMaturity { get; set; }
         public List<BondAnalyseCouponData> Coupons { get; set; } = [];
-        public bool InPortfolio { get; set; }
         public string? Rating { get; set; }
         public string? IsFloatingCoupon { get; set; }        
     }

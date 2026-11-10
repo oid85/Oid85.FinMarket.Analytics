@@ -39,7 +39,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Name = instrument.Name,
                     Price = instrument.LastPrice.HasValue ? Math.Round(instrument.LastPrice.Value, 2) : 0.0,
                     Nkd = instrument.Nkd.HasValue ? Math.Round(instrument.Nkd.Value, 2) : 0.0,
-                    InPortfolio = instrument.InPortfolio,
                     Rating = instrument.Rating,
                     IsFloatingCoupon = instrument.FloatingCouponFlag.HasValue
                     ? (instrument.FloatingCouponFlag.Value ? "да" : string.Empty)
@@ -86,11 +85,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 bondAnalyseItems.Add(bondAnalyseItem);
             }
 
-            response.Items = 
-                [
-                .. bondAnalyseItems.Where(x => x.InPortfolio).OrderByDescending(x => x.Yield),
-                .. bondAnalyseItems.Where(x => !x.InPortfolio).OrderByDescending(x => x.Yield)
-                ];
+            response.Items = [.. bondAnalyseItems.OrderByDescending(x => x.Yield)];
 
             int number = 1; foreach (var item in response.Items) item.Number = number++;
 

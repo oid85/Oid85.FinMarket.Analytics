@@ -17,7 +17,6 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public string Name { get; set; } = string.Empty;
         public string Sector { get; set; } = string.Empty;
         public string Report { get; set; } = string.Empty;
-        public bool InPortfolio { get; set; }
         public bool FillData { get; set; }
         public FundamentalScore? Score { get; set; } = null;
         public double? BenchmarkChange { get; set; }

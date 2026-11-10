@@ -30,7 +30,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var weeks = DateUtils.GetWeeks(startDate, today);
-            bool showInPortfolio = (await parameterRepository.GetParameterValueAsync(KnownParameters.ShowInPortfolio)) == "true";
 
             var response = new GetWeekDeltaResponse
             {
@@ -62,13 +61,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         {
                             Ticker = instrument.Ticker,
                             Name = instrument.Name,
-                            InPortfolio = instrument.InPortfolio && showInPortfolio,
                             Items = weekDeltaData
                         });
                 }
 
-                var inPortfolioItems = weekDeltaDataList
-                    .Where(x => x.InPortfolio)
+                return weekDeltaDataList
                     .OrderByDescending(x =>
                     {
                         var reverse = x.Items.Select(x => x.Delta).Where(x => x != null && x != 0.0).AsEnumerable().Reverse();
@@ -76,18 +73,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         return count;
                     })
                     .ToList();
-
-                var notInPortfolioItems = weekDeltaDataList
-                    .Where(x => !x.InPortfolio)
-                    .OrderByDescending(x =>
-                    {
-                        var reverse = x.Items.Select(x => x.Delta).Where(x => x != null && x != 0.0).AsEnumerable().Reverse();
-                        var count = reverse.TakeWhile(x => x > 0).Count();
-                        return count;
-                    })
-                    .ToList();
-
-                return [.. inPortfolioItems, .. notInPortfolioItems];
             }
 
             WeekDeltaDataItem GetWeekDeltaDataItem(string ticker, DateOnly weekStartDay, DateOnly weekEndDay)
