@@ -2,6 +2,7 @@
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Infrastructure.Database.Entities;
+using static Grpc.Core.Metadata;
 
 namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
 {
@@ -24,8 +25,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Ticker = instrument.Ticker,
                 Name = instrument.Name,
                 Type = instrument.Type,
-                IsSelected = instrument.IsSelected,
-                InPortfolio = instrument.InPortfolio,
+                IsSelected = instrument.IsSelected,                
                 ManualCoefficient = instrument.ManualCoefficient,
                 Sector = "-"
             };
@@ -54,8 +54,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         .SetProperty(entity => entity.Ticker, model.Ticker)
                         .SetProperty(entity => entity.Name, model.Name)
                         .SetProperty(entity => entity.Type, model.Type)
-                        .SetProperty(entity => entity.IsSelected, model.IsSelected)
-                        .SetProperty(entity => entity.InPortfolio, model.InPortfolio)
+                        .SetProperty(entity => entity.IsSelected, model.IsSelected)                        
                         .SetProperty(entity => entity.ManualCoefficient, model.ManualCoefficient)
                         .SetProperty(entity => entity.Sector, model.Sector));
 
@@ -73,6 +72,12 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
             if (entity is null)
                 return null;
 
+            bool inPortfolio =
+                await context.BondLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                await context.ShareLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                await context.SevenEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                await context.ThreeEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker);
+
             var model = new Instrument
             {
                 Id = entity.Id,
@@ -80,7 +85,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Name = entity.Name,
                 Type = entity.Type,
                 IsSelected = entity.IsSelected,
-                InPortfolio = entity.InPortfolio,
+                InPortfolio = inPortfolio,
                 ManualCoefficient = entity.ManualCoefficient,
                 Sector = entity.Sector
             };
@@ -97,6 +102,12 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
             if (entity is null)
                 return null;
 
+            bool inPortfolio =
+                await context.BondLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                await context.ShareLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                await context.SevenEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                await context.ThreeEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker);
+
             var model = new Instrument
             {
                 Id = entity.Id,
@@ -104,7 +115,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Name = entity.Name,
                 Type = entity.Type,
                 IsSelected = entity.IsSelected,
-                InPortfolio = entity.InPortfolio,
+                InPortfolio = inPortfolio,
                 ManualCoefficient = entity.ManualCoefficient,
                 Sector = entity.Sector
             };
@@ -121,20 +132,28 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
             if (entities is null)
                 return null;
 
-            var models = entities
-                .Select(x =>
-                    new Instrument
-                    {
-                        Id = x.Id,
-                        Ticker = x.Ticker,
-                        Name = x.Name,
-                        Type = x.Type,
-                        IsSelected = x.IsSelected,
-                        InPortfolio = x.InPortfolio,
-                        ManualCoefficient = x.ManualCoefficient,
-                        Sector = x.Sector
-                    })
-                .ToList();
+            var models = new List<Instrument>();
+
+            foreach (var entity in entities)
+            {
+                bool inPortfolio =
+                    await context.BondLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                    await context.ShareLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                    await context.SevenEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker) ||
+                    await context.ThreeEtfLifePositionEntities.AnyAsync(x => x.Ticker == entity.Ticker);
+
+                models.Add(new Instrument
+                {
+                    Id = entity.Id,
+                    Ticker = entity.Ticker,
+                    Name = entity.Name,
+                    Type = entity.Type,
+                    IsSelected = entity.IsSelected,
+                    InPortfolio = inPortfolio,
+                    ManualCoefficient = entity.ManualCoefficient,
+                    Sector = entity.Sector
+                });
+            }
 
             return models;
         }
