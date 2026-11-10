@@ -36,11 +36,6 @@
         public string Type { get; set; }
 
         /// <summary>
-        /// Ручной коэффициент
-        /// </summary>
-        public double ManualCoefficient { get; set; }
-
-        /// <summary>
         /// НКД
         /// </summary>
         public double? Nkd { get; set; }

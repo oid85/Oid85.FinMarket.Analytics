@@ -55,7 +55,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                     Name = instrument.Name,
                     IsSelected = instrument.IsSelected,
                     InPortfolio = instrument.InPortfolio,
-                    ManualCoefficient = instrument.ManualCoefficient,
                     Type = instrument.Type
                 });
 
@@ -113,8 +112,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         {
                             Ticker = storageInstrument.Ticker,
                             Name = storageInstrument.Name,
-                            Type = storageInstrument.Type,
-                            ManualCoefficient = 1
+                            Type = storageInstrument.Type
                         });
 
             // Удаляем неактуальные

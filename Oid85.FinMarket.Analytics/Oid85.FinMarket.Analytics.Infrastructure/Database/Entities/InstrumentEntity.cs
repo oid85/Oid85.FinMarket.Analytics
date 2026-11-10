@@ -28,11 +28,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Entities
         public string Type { get; set; }
 
         /// <summary>
-        /// Ручной коэффициент
-        /// </summary>
-        public double ManualCoefficient { get; set; } = 1.0;
-
-        /// <summary>
         /// Сектор
         /// </summary>
         public string Sector { get; set; }

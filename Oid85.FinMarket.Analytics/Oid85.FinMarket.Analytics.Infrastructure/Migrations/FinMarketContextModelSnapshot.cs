@@ -57,14 +57,8 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("InPortfolio")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsSelected")
                         .HasColumnType("boolean");
-
-                    b.Property<double>("ManualCoefficient")
-                        .HasColumnType("double precision");
 
                     b.Property<string>("Name")
                         .IsRequired()

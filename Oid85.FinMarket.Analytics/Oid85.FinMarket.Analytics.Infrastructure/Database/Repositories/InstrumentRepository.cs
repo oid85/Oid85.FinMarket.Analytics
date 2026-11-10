@@ -26,7 +26,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Name = instrument.Name,
                 Type = instrument.Type,
                 IsSelected = instrument.IsSelected,                
-                ManualCoefficient = instrument.ManualCoefficient,
                 Sector = "-"
             };
 
@@ -55,7 +54,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                         .SetProperty(entity => entity.Name, model.Name)
                         .SetProperty(entity => entity.Type, model.Type)
                         .SetProperty(entity => entity.IsSelected, model.IsSelected)                        
-                        .SetProperty(entity => entity.ManualCoefficient, model.ManualCoefficient)
                         .SetProperty(entity => entity.Sector, model.Sector));
 
             await context.SaveChangesAsync();
@@ -86,7 +84,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Type = entity.Type,
                 IsSelected = entity.IsSelected,
                 InPortfolio = inPortfolio,
-                ManualCoefficient = entity.ManualCoefficient,
                 Sector = entity.Sector
             };
 
@@ -116,7 +113,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                 Type = entity.Type,
                 IsSelected = entity.IsSelected,
                 InPortfolio = inPortfolio,
-                ManualCoefficient = entity.ManualCoefficient,
                 Sector = entity.Sector
             };
 
@@ -150,7 +146,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                     Type = entity.Type,
                     IsSelected = entity.IsSelected,
                     InPortfolio = inPortfolio,
-                    ManualCoefficient = entity.ManualCoefficient,
                     Sector = entity.Sector
                 });
             }
