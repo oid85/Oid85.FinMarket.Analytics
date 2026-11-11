@@ -175,7 +175,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 "Percent" => [.. positions.OrderByDescending(x => x.Percent)],
                 "Yield" => [.. positions.OrderByDescending(x => x.Yield)],
                 "DeltaPercent" => [.. positions.OrderByDescending(x => x.DeltaPercent)],
-                _ => [.. positions.OrderByDescending(x => x.DeltaPercent)]
+                _ => [.. positions.OrderByDescending(x => x.Name)]
             };
 
             for (int i = 0; i < orderedPositions.Count; i++)

@@ -74,8 +74,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
                 string deltaPercentText = deltaPercent switch
                 {
-                    > deltaLimit => $"(-) меньше расч. на {Math.Abs(deltaPercent)} %",
-                    < -1 * deltaLimit => $"(+) больше расч. на {Math.Abs(deltaPercent)} %",
+                    > 0.0 => $"(-) меньше расч. на {Math.Abs(deltaPercent)} %",
+                    < 0.0 => $"(+) больше расч. на {Math.Abs(deltaPercent)} %",
                     _ => string.Empty
                 };
 
