@@ -105,12 +105,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 return (totalSum * share).RoundTo(2);
             }
 
-            double GetTotalSum() =>
-                lifePositionData.Values.Sum(x =>
-                {
-                    instrumentData.TryGetValue(x.Ticker, out var instrument);
-                    return (x.Size ?? 0) * (instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0);
-                });
+            double GetTotalSum() => 1_109_000;
         }
 
         private static (int delta, string deltaText) GetDelta(int size, int lifeSize)
