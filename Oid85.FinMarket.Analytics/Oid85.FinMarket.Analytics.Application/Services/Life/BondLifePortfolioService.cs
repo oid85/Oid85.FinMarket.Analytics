@@ -105,7 +105,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 return (totalSum * share).RoundTo(2);
             }
 
-            double GetTotalSum() => 1_109_000;
+            double GetTotalSum() => 1_104_000.0;
         }
 
         private static (int delta, string deltaText) GetDelta(int size, int lifeSize)
