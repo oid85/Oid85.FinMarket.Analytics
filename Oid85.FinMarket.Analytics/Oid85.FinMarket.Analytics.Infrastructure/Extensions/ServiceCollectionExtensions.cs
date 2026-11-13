@@ -63,6 +63,32 @@ public static class ServiceCollectionExtensions
         services.AddTransient<ITraderFinamApiClient, TraderFinamApiClient>();
     }
 
+    public static void ConfigureTraderTinkoffOidApiClient(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHttpClient(KnownHttpClients.FinMarketTraderTinkoffOidServiceApiClient, client =>
+        {
+            string baseUrl = configuration.GetValue<string>(KnownSettingsKeys.FinMarketTraderTinkoffOidServiceApiClientBaseAddress)!;
+            client.BaseAddress = new Uri(baseUrl);
+        });
+
+        services.AddTransient<ITraderTinkoffOidApiClient, TraderTinkoffOidApiClient>();
+    }
+
+    public static void ConfigureTraderTinkoffEldApiClient(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHttpClient(KnownHttpClients.FinMarketTraderTinkoffEldServiceApiClient, client =>
+        {
+            string baseUrl = configuration.GetValue<string>(KnownSettingsKeys.FinMarketTraderTinkoffEldServiceApiClientBaseAddress)!;
+            client.BaseAddress = new Uri(baseUrl);
+        });
+
+        services.AddTransient<ITraderTinkoffEldApiClient, TraderTinkoffEldApiClient>();
+    }
+
     public static async Task ApplyMigrations(this IHost host)
     {
         var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();

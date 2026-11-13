@@ -30,6 +30,8 @@ namespace Oid85.FinMarket.Analytics.WebHost
             builder.Services.ConfigureDatabase(builder.Configuration);
             builder.Services.ConfigureStorageApiClient(builder.Configuration);
             builder.Services.ConfigureTraderFinamApiClient(builder.Configuration);
+            builder.Services.ConfigureTraderTinkoffOidApiClient(builder.Configuration);
+            builder.Services.ConfigureTraderTinkoffEldApiClient(builder.Configuration);
 
             builder.Services.AddWindowsService(options =>
             {

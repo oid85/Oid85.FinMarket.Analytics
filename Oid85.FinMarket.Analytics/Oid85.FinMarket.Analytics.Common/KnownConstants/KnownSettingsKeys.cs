@@ -7,4 +7,6 @@ public static class KnownSettingsKeys
     public const string DeployPort = "DeployPort";
     public const string FinMarketStorageServiceApiClientBaseAddress = "FinMarketStorageServiceApiClient:BaseAddress";
     public const string FinMarketTraderFinamServiceApiClientBaseAddress = "FinMarketTraderFinamServiceApiClient:BaseAddress";
+    public const string FinMarketTraderTinkoffOidServiceApiClientBaseAddress = "FinMarketTraderTinkoffOidServiceApiClient:BaseAddress";
+    public const string FinMarketTraderTinkoffEldServiceApiClientBaseAddress = "FinMarketTraderTinkoffEldServiceApiClient:BaseAddress";
 }

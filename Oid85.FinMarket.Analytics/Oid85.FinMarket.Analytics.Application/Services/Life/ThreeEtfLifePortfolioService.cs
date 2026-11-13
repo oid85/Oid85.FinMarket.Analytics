@@ -9,8 +9,8 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class ThreeEtfLifePortfolioService(
-        IThreeEtfLifePositionRepository positionRepository,
-        ITraderFinamApiClient traderFinamApiClient)
+        ITraderFinamApiClient traderFinamApiClient,
+        IThreeEtfLifePositionRepository positionRepository)
         : IThreeEtfLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)

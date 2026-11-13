@@ -16,6 +16,7 @@
     public class PositionData
     {
         public string Ticker { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public int Size { get; set; }
         public decimal Cost { get; set; }
         public decimal CurrentPrice { get; set; }

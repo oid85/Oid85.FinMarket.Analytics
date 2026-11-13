@@ -1,14 +1,17 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
+﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
+using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class BondLifePortfolioService(
+        ITraderTinkoffEldApiClient traderTinkoffApiClient,
         IInstrumentService instrumentService,
         IBondAnalyseService bondAnalyseService,
         IBondLifePositionRepository positionRepository,
@@ -17,6 +20,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
         {
+            var portfolioResponse = await traderTinkoffApiClient.GetPortfolioInfoAsync(
+                new TinkoffPortfolioInfoRequest { AccountName = "Bonds" });
+
+            var portfolioPositionData = portfolioResponse.Result.Positions
+                .ToDictionary(k => k.Ticker, v => v);
+
             var lifePositionData = (await positionRepository.GetAsync())
                 .ToDictionary(k => k.Ticker, v => v);
 
@@ -32,7 +41,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
 
-            double totalSum = GetTotalSum();            
+            double totalSum = Convert.ToDouble(portfolioResponse.Result.TotalSum);
 
             var positions = lifePositionData.Values
                 .Select(x =>
@@ -40,12 +49,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     bondAnalyseData.TryGetValue(x.Ticker, out var bondAnalyse);
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
                     lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
+                    portfolioPositionData.TryGetValue(x.Ticker, out var portfolioPosition);
 
                     string name = lifePosition?.Name ?? string.Empty;                    
                     var rating = bondAnalyse?.Rating ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
-                    var lifeSize = lifePosition?.Size ?? 0;
-                    var price = instrument?.LastPrice ?? 0;
+                    var lifeSize = portfolioPosition?.Size ?? 0;
+                    var price = portfolioPosition?.CurrentPrice ?? 0;
                     var cost = GetCost(x.Ticker);
                     var size = GetSize(x.Ticker);
                     var percent = (cost / totalSum * 100.0).RoundTo(2);
@@ -64,7 +74,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                         Percent = percent,
                         Size = size,
                         LifeSize = lifeSize,
-                        Price = price,
+                        Price = Convert.ToDouble(price),
                         Delta = delta,
                         DeltaPercent = deltaPercent,
                         DeltaText = deltaText,
@@ -94,18 +104,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             }
 
             double GetCost(string ticker)
-            {
-                lifePositionData.TryGetValue(ticker, out var lifePosition);
+            {                
                 weightData.TryGetValue(ticker, out var weight);
 
-                double totalSum = GetTotalSum();
                 double weightSum = weightData.Values.Sum();
                 double share = weight / weightSum;
 
                 return (totalSum * share).RoundTo(2);
             }
-
-            double GetTotalSum() => 1_104_000.0;
         }
 
         private static (int delta, string deltaText) GetDelta(int size, int lifeSize)
