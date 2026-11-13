@@ -4,171 +4,176 @@ using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Requests;
-using Oid85.FinMarket.Analytics.Core.Requests.ApiClient;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class ThreeEtfLifePortfolioService(
-        ITraderFinamApiClient traderFinamApiClient,
-        IThreeEtfLifePositionRepository positionRepository)
+        IThreeEtfLifePositionRepository positionRepository,
+        ITraderFinamApiClient traderFinamApiClient)
         : IThreeEtfLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
+    {
+        var lifePositionData = (await positionRepository.GetAsync())
+            .ToDictionary(k => k.Ticker, v => v);
+
+        var tickers = lifePositionData.Keys.Select(x => $"{x}@MISX").ToList();
+
+        var priceData = (await traderFinamApiClient.GetInstrumentPriceAsync(new() { Tickers = tickers }))
+            .Result.Items.ToDictionary(k => k.Ticker.Replace("@MISX", ""), v => v.Price);
+
+        var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
+
+        double totalSum = GetTotalSum();
+
+        var positions = lifePositionData.Values
+            .Select(x =>
+            {
+                lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
+                priceData.TryGetValue(x.Ticker, out var priceValue);
+
+                string name = lifePosition?.Name ?? string.Empty;
+                var weight = GetWeight(x.Ticker);
+                var lifeSize = lifePosition?.Size ?? 0;
+                var price = priceValue.RoundTo(2);
+                var cost = GetCost(x.Ticker);
+                var size = GetSize(x.Ticker);
+                var percent = (cost / totalSum * 100.0).RoundTo(2);
+                var (delta, deltaText) = GetDelta(size, lifeSize);
+                var (deltaPercent, deltaPercentText) = GetDeltaPercent(size, lifeSize);
+                string recommendation = GetRecommendation(deltaPercent);
+                string colorFill = GetColor(deltaPercent);
+
+                return new LifePositionItem
+                {
+                    Ticker = x.Ticker,
+                    Name = name,
+                    Weight = weight,
+                    Cost = cost,
+                    Percent = percent,
+                    Size = size,
+                    LifeSize = lifeSize,
+                    Price = price,
+                    Delta = delta,
+                    DeltaPercent = deltaPercent,
+                    DeltaText = deltaText,
+                    DeltaPercentText = deltaPercentText,
+                    Recommendation = recommendation,
+                    ColorFill = colorFill
+                };
+            })
+            .ToList();
+
+        return new LifePortfolioResponse
         {
-            var portfolioResponse = await traderFinamApiClient.GetPortfolioInfoAsync(
-                new PortfolioInfoRequest());
+            TotalSum = totalSum,
+            PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
+        };
 
-            var portfolioPositionData = portfolioResponse.Result.Positions
-                .ToDictionary(k => k.Ticker, v => v);
+        double GetWeight(string ticker) => 1.0;
 
-            var lifePositionData = (await positionRepository.GetAsync())
-                .ToDictionary(k => k.Ticker, v => v);            
+        int GetSize(string ticker)
+        {
+            lifePositionData.TryGetValue(ticker, out var lifePosition);
 
-            var priceData = portfolioPositionData
-                .ToDictionary(k => k.Key, v => Convert.ToDouble(v.Value.CurrentPrice));
+            double tickerCost = GetCost(ticker);
+            double price = lifePosition?.Price ?? 0;
 
-            var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
-
-            double totalSum = Convert.ToDouble(portfolioResponse.Result.TotalSum);
-
-            var positions = lifePositionData.Values
-                .Select(x =>
-                {                    
-                    priceData.TryGetValue(x.Ticker, out var priceValue);
-                    portfolioPositionData.TryGetValue(x.Ticker, out var portfolioPosition);
-
-                    string name = portfolioPosition?.Name ?? string.Empty;
-                    var weight = GetWeight(x.Ticker);
-                    var lifeSize = portfolioPosition?.Size ?? 0;
-                    var price = priceValue.RoundTo(2);
-                    var cost = GetCost(x.Ticker);
-                    var size = GetSize(x.Ticker);
-                    var percent = (cost / totalSum * 100.0).RoundTo(2);
-                    var (delta, deltaText) = GetDelta(size, lifeSize);
-                    var (deltaPercent, deltaPercentText) = GetDeltaPercent(size, lifeSize);
-                    string recommendation = GetRecommendation(deltaPercent);
-                    string colorFill = GetColor(deltaPercent);
-
-                    return new LifePositionItem
-                    {
-                        Ticker = x.Ticker,
-                        Name = name,
-                        Weight = weight,
-                        Cost = cost,
-                        Percent = percent,
-                        Size = size,
-                        LifeSize = lifeSize,
-                        Price = price,
-                        Delta = delta,
-                        DeltaPercent = deltaPercent,
-                        DeltaText = deltaText,
-                        DeltaPercentText = deltaPercentText,
-                        Recommendation = recommendation,
-                        ColorFill = colorFill
-                    };
-                })
-                .ToList();
-
-            return new LifePortfolioResponse
-            {
-                TotalSum = totalSum,
-                PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
-            };
-
-            double GetWeight(string ticker) => 1.0;
-
-            int GetSize(string ticker)
-            {
-                lifePositionData.TryGetValue(ticker, out var lifePosition);
-
-                double tickerCost = GetCost(ticker);
-                double price = lifePosition?.Price ?? 0;
-
-                return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
-            }
-
-            double GetCost(string ticker)
-            {
-                lifePositionData.TryGetValue(ticker, out var lifePosition);
-                weightData.TryGetValue(ticker, out var weight);
-
-                double weightSum = weightData.Values.Sum();
-                double share = weight / weightSum;
-
-                return (totalSum * share).RoundTo(2);
-            }
+            return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
         }
 
-        private static (int delta, string deltaText) GetDelta(int size, int lifeSize)
+        double GetCost(string ticker)
         {
-            int delta = size - lifeSize;
+            lifePositionData.TryGetValue(ticker, out var lifePosition);
+            weightData.TryGetValue(ticker, out var weight);
 
-            string deltaText = delta switch
-            {
-                > 0 => $"купить {Math.Abs(delta)} шт.",
-                < 0 => $"продать {Math.Abs(delta)} шт.",
-                _ => string.Empty
-            };
+            double totalSum = GetTotalSum();
+            double weightSum = weightData.Values.Sum();
+            double share = weight / weightSum;
 
-            return (delta, deltaText);
+            return (totalSum * share).RoundTo(2);
         }
 
-        private static (double deltaPercent, string deltaPercentText) GetDeltaPercent(int size, int lifeSize)
-        {
-            int delta = size - lifeSize;
-
-            double deltaPercent = (Convert.ToDouble(delta) / Convert.ToDouble(lifeSize) * 100.0).RoundTo(2);
-
-            string deltaPercentText = deltaPercent switch
+        double GetTotalSum() =>
+            lifePositionData.Values.Sum(x =>
             {
-                > 0.0 => $"(-) меньше расч. на {Math.Abs(deltaPercent)} %",
-                < 0.0 => $"(+) больше расч. на {Math.Abs(deltaPercent)} %",
-                _ => string.Empty
-            };
+                lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
+                priceData.TryGetValue(x.Ticker, out var price);
 
-            return (deltaPercent, deltaPercentText);
-        }
-
-        private static string GetRecommendation(double deltaPercent)
-        {
-            const double deltaLimit = 10.0;
-
-            return deltaPercent switch
-            {
-                > deltaLimit => $"докупить",
-                < -1 * deltaLimit => $"сократить",
-                _ => string.Empty
-            };
-        }
-
-        private static string GetColor(double deltaPercent)
-        {
-            const double deltaLimit = 10.0;
-
-            return deltaPercent switch
-            {
-                > deltaLimit => KnownColors.LightYellow,
-                < -1 * deltaLimit => KnownColors.LightYellow,
-                _ => KnownColors.LightGreen
-            };
-        }
-
-        private static List<LifePositionItem> GetOrderedPositions(
-            List<LifePositionItem> positions, string? orderField)
-        {
-            List<LifePositionItem> orderedPositions = orderField switch
-            {
-                "Percent" => [.. positions.OrderByDescending(x => x.Percent)],
-                "Yield" => [.. positions.OrderByDescending(x => x.Yield)],
-                "DeltaPercent" => [.. positions.OrderByDescending(x => x.DeltaPercent)],
-                _ => [.. positions.OrderByDescending(x => x.DeltaPercent)]
-            };
-
-            for (int i = 0; i < orderedPositions.Count; i++)
-                orderedPositions[i].Number = i + 1;
-
-            return orderedPositions;
-        }
+                return (lifePosition?.Size ?? 0) * price;
+            });
     }
+
+    private static (int delta, string deltaText) GetDelta(int size, int lifeSize)
+    {
+        int delta = size - lifeSize;
+
+        string deltaText = delta switch
+        {
+            > 0 => $"купить {Math.Abs(delta)} шт.",
+            < 0 => $"продать {Math.Abs(delta)} шт.",
+            _ => string.Empty
+        };
+
+        return (delta, deltaText);
+    }
+
+    private static (double deltaPercent, string deltaPercentText) GetDeltaPercent(int size, int lifeSize)
+    {
+        int delta = size - lifeSize;
+
+        double deltaPercent = (Convert.ToDouble(delta) / Convert.ToDouble(lifeSize) * 100.0).RoundTo(2);
+
+        string deltaPercentText = deltaPercent switch
+        {
+            > 0.0 => $"(-) меньше расч. на {Math.Abs(deltaPercent)} %",
+            < 0.0 => $"(+) больше расч. на {Math.Abs(deltaPercent)} %",
+            _ => string.Empty
+        };
+
+        return (deltaPercent, deltaPercentText);
+    }
+
+    private static string GetRecommendation(double deltaPercent)
+    {
+        const double deltaLimit = 10.0;
+
+        return deltaPercent switch
+        {
+            > deltaLimit => $"докупить",
+            < -1 * deltaLimit => $"сократить",
+            _ => string.Empty
+        };
+    }
+
+    private static string GetColor(double deltaPercent)
+    {
+        const double deltaLimit = 10.0;
+
+        return deltaPercent switch
+        {
+            > deltaLimit => KnownColors.LightYellow,
+            < -1 * deltaLimit => KnownColors.LightYellow,
+            _ => KnownColors.LightGreen
+        };
+    }
+
+    private static List<LifePositionItem> GetOrderedPositions(
+        List<LifePositionItem> positions, string? orderField)
+    {
+        List<LifePositionItem> orderedPositions = orderField switch
+        {
+            "Percent" => [.. positions.OrderByDescending(x => x.Percent)],
+            "Yield" => [.. positions.OrderByDescending(x => x.Yield)],
+            "DeltaPercent" => [.. positions.OrderByDescending(x => x.DeltaPercent)],
+            _ => [.. positions.OrderByDescending(x => x.DeltaPercent)]
+        };
+
+        for (int i = 0; i < orderedPositions.Count; i++)
+            orderedPositions[i].Number = i + 1;
+
+        return orderedPositions;
+    }
+}
 }
