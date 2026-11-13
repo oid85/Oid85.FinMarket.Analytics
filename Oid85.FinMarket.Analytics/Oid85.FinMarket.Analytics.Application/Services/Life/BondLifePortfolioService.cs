@@ -43,15 +43,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             double totalSum = Convert.ToDouble(portfolioResponse.Result.TotalSum);
 
-            var positions = lifePositionData.Values
+            var positions = portfolioPositionData.Values
                 .Select(x =>
                 {
                     bondAnalyseData.TryGetValue(x.Ticker, out var bondAnalyse);
-                    instrumentData.TryGetValue(x.Ticker, out var instrument);
-                    lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
+                    instrumentData.TryGetValue(x.Ticker, out var instrument);                    
                     portfolioPositionData.TryGetValue(x.Ticker, out var portfolioPosition);
 
-                    string name = lifePosition?.Name ?? string.Empty;                    
+                    string name = portfolioPosition?.Name ?? string.Empty;                    
                     var rating = bondAnalyse?.Rating ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
                     var lifeSize = portfolioPosition?.Size ?? 0;
