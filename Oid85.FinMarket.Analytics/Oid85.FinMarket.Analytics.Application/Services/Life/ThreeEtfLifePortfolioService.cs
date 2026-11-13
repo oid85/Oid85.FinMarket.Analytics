@@ -30,7 +30,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
 
-            double totalSum = GetTotalSum();
+            double totalSum = Convert.ToDouble(portfolioResponse.Result.TotalSum);
 
             var positions = lifePositionData.Values
                 .Select(x =>
@@ -93,19 +93,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 lifePositionData.TryGetValue(ticker, out var lifePosition);
                 weightData.TryGetValue(ticker, out var weight);
 
-                double totalSum = GetTotalSum();
                 double weightSum = weightData.Values.Sum();
                 double share = weight / weightSum;
 
                 return (totalSum * share).RoundTo(2);
             }
-
-            double GetTotalSum() =>
-                lifePositionData.Values.Sum(x =>
-                {
-                    lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
-                    return (x.Size ?? 0) * (lifePosition?.Price ?? 0);
-                });
         }
 
         private static (int delta, string deltaText) GetDelta(int size, int lifeSize)
