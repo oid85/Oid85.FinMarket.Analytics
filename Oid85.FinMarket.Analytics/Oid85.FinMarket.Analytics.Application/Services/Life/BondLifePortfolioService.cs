@@ -95,9 +95,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             int GetSize(string ticker)
             {
                 instrumentData.TryGetValue(ticker, out var instrument);
+                portfolioPositionData.TryGetValue(ticker, out var portfolioPosition);
 
                 double tickerCost = GetCost(ticker);
-                double price = instrument?.LastPrice ?? 0 + instrument?.Nkd ?? 0;
+                double price = Convert.ToDouble(portfolioPosition?.CurrentPrice ?? 0) + instrument?.Nkd ?? 0;
 
                 return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
             }
