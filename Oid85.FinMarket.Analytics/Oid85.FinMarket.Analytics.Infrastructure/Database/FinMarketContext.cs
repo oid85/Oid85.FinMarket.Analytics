@@ -14,6 +14,7 @@ public class FinMarketContext(DbContextOptions<FinMarketContext> options) : DbCo
 	public DbSet<SevenEtfLifePositionEntity> SevenEtfLifePositionEntities { get; set; }
     public DbSet<ThreeEtfLifePositionEntity> ThreeEtfLifePositionEntities { get; set; }
     public DbSet<LifePortfolioEntity> LifePortfolioEntities { get; set; }
+    public DbSet<MoneyDateValueEntity> MoneyDateValueEntities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

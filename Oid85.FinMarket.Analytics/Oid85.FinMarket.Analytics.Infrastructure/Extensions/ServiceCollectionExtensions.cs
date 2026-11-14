@@ -35,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IThreeEtfLifePositionRepository, ThreeEtfLifePositionRepository>();
         services.AddTransient<ISevenEtfLifePositionRepository, SevenEtfLifePositionRepository>();
         services.AddTransient<ILifePortfolioRepository, LifePortfolioRepository>();
+        services.AddTransient<IMoneyRepository, MoneyRepository>();
     }
 
     public static void ConfigureStorageApiClient(

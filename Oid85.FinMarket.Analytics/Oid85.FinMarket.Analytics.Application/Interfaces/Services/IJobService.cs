@@ -3,5 +3,6 @@
     public interface IJobService
     {
         Task SyncInstrumentsAsync();
+        Task SaveMoneyAsync();
     }
 }

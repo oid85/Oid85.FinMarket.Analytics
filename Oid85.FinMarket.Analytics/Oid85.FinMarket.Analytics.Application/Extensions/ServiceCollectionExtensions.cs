@@ -49,6 +49,7 @@ public static class ServiceCollectionExtensions
         var jobService = scope.ServiceProvider.GetRequiredService<IJobService>();
 
         RegisterJob("SyncInstruments", () => jobService.SyncInstrumentsAsync());
+        RegisterJob("SaveMoney", () => jobService.SaveMoneyAsync());
 
         void RegisterJob(string configurationSection, Expression<Func<Task>> methodCall)
         {

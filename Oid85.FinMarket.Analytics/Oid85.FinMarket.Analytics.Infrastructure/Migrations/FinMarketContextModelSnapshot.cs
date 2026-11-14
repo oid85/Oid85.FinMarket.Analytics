@@ -103,6 +103,27 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Migrations
                     b.ToTable("LifePortfolioEntities", "public");
                 });
 
+            modelBuilder.Entity("Oid85.FinMarket.Analytics.Infrastructure.Database.Entities.MoneyDateValueEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<double>("Money")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("PortfolioName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MoneyDateValueEntities", "public");
+                });
+
             modelBuilder.Entity("Oid85.FinMarket.Analytics.Infrastructure.Database.Entities.ParameterEntity", b =>
                 {
                     b.Property<Guid>("Id")

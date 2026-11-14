@@ -4,6 +4,7 @@ using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
+using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -15,7 +16,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         IBondLifePortfolioService bondLifePortfolioService,
         ISevenEtfLifePortfolioService sevenEtfLifePortfolioService,
         IThreeEtfLifePortfolioService threeEtfLifePortfolioService,
-        ILifePortfolioRepository lifePortfolioRepository)
+        ILifePortfolioRepository lifePortfolioRepository,
+        IMoneyRepository moneyRepository)
         : ILifeSuperPortfolioService
     {
         public async Task<LifeSuperPortfolioResponse> GetLifeSuperPortfolioAsync(LifeSuperPortfolioRequest request)
@@ -100,6 +102,34 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 TotalSum = totalSum,
                 Portfolios = orderedLifePortfolioItems
             };
+        }
+
+        public async Task SaveMoneyAsync()
+        {
+            var bondLifePortfolio = await bondLifePortfolioService.GetPositionListAsync(new());
+            var shareLifePortfolio = await shareLifePortfolioService.GetPositionListAsync(new());
+            var sevenEtfLifePortfolio = await sevenEtfLifePortfolioService.GetPositionListAsync(new());
+            var threeEtfLifePortfolio = await threeEtfLifePortfolioService.GetPositionListAsync(new());
+            var momentumLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new());
+
+            double totalSum =
+                (bondLifePortfolio.TotalSum +
+                shareLifePortfolio.TotalSum +
+                sevenEtfLifePortfolio.TotalSum +
+                threeEtfLifePortfolio.TotalSum +
+                Convert.ToDouble(momentumLifePortfolio.Result.TotalSum))
+                .RoundTo(2);
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            await moneyRepository.AddAsync([
+                new MoneyDateValue { Date = today, Money = totalSum, PortfolioName = "SuperPortfolio" },
+                new MoneyDateValue { Date = today, Money = bondLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "Bond" },
+                new MoneyDateValue { Date = today, Money = shareLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "Share" },                
+                new MoneyDateValue { Date = today, Money = sevenEtfLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "SevenEtf" },
+                new MoneyDateValue { Date = today, Money = threeEtfLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "ThreeEtf" },
+                new MoneyDateValue { Date = today, Money = Convert.ToDouble(momentumLifePortfolio.Result.TotalSum).RoundTo(2), PortfolioName = "Momentum" }
+            ]);
         }
     }
 }

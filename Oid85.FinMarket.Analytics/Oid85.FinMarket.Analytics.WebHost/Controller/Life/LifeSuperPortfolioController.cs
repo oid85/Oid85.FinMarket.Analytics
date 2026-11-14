@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
+using Oid85.FinMarket.Analytics.Application.Services;
 using Oid85.FinMarket.Analytics.Core;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
@@ -28,4 +29,14 @@ public class LifeSuperPortfolioController(
         GetResponseAsync(
             () => portfolioService.GetLifeSuperPortfolioAsync(request),
             result => new BaseResponse<LifeSuperPortfolioResponse> { Result = result });
+
+    /// <summary>
+    /// Сохранить суммы
+    /// </summary>
+    [HttpPost("save-money")]
+    public async Task<IActionResult> SaveMoneyAsync()
+    {
+        await portfolioService.SaveMoneyAsync();
+        return Ok();
+    }
 }
