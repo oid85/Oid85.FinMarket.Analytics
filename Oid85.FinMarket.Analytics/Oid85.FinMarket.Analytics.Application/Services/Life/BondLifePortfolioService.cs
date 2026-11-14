@@ -39,9 +39,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 .Where(x => lifePositionData.ContainsKey(x.Ticker))                
                 .ToDictionary(k => k.Ticker, v => v);
 
-            var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
+            var weightData = portfolioPositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
 
             double totalSum = Convert.ToDouble(portfolioResponse.Result.TotalSum);
+            double money = Convert.ToDouble(portfolioResponse.Result.Money);
 
             var positions = portfolioPositionData.Values
                 .Select(x =>
@@ -87,18 +88,18 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             return new LifePortfolioResponse
             {
                 TotalSum = totalSum,
+                Money = money,
                 PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
             };
 
             double GetWeight(string ticker) => 1.0;
 
             int GetSize(string ticker)
-            {
-                instrumentData.TryGetValue(ticker, out var instrument);
+            {                
                 portfolioPositionData.TryGetValue(ticker, out var portfolioPosition);
 
                 double tickerCost = GetCost(ticker);
-                double price = Convert.ToDouble(portfolioPosition?.CurrentPrice ?? 0) + instrument?.Nkd ?? 0;
+                double price = Convert.ToDouble(portfolioPosition?.CurrentPrice ?? 0);
 
                 return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
             }

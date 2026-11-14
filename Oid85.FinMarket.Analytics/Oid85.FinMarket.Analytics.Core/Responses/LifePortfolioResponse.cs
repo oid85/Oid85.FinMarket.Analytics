@@ -1,9 +1,36 @@
-﻿namespace Oid85.FinMarket.Analytics.Core.Responses
+﻿using Oid85.FinMarket.Analytics.Common.KnownConstants;
+
+namespace Oid85.FinMarket.Analytics.Core.Responses
 {
     public class LifePortfolioResponse
     {
-        public double TotalSum { get; set; }
+        public double TotalSum { get; set; } = 0.0;
+        public double Money { get; set; } = 0.0;
         public List<LifePositionItem> PortfolioPositions { get; set; } = [];
+        public List<ClassActiveItem> ClassActiveItems { get; set; } = [];
+    }
+
+    public class ClassActiveItem
+    {
+        /// <summary>
+        /// Порядковый номер
+        /// </summary>
+        public int Number { get; set; }
+
+        /// <summary>
+        /// Наименование
+        /// </summary>
+        public string Name { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Доля (расч.)
+        /// </summary>
+        public double Percent { get; set; }
+
+        /// <summary>
+        /// Цвет
+        /// </summary>
+        public string ColorFill { get; set; } = KnownColors.White;
     }
 
     public class LifePositionItem
@@ -19,7 +46,7 @@
         public string Ticker { get; set; } = string.Empty;
 
         /// <summary>
-        /// Наименование компании
+        /// Наименование
         /// </summary>
         public string Name { get; set; } = string.Empty;
 
@@ -29,7 +56,7 @@
         public string Sector { get; set; } = string.Empty;
 
         /// <summary>
-        /// Купонная доходность, %
+        /// Доходность, %
         /// </summary>
         public double Yield { get; set; }
 

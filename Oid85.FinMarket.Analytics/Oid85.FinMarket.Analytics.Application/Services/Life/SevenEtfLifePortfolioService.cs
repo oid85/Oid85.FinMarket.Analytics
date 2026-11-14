@@ -20,6 +20,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
         {
+            List<string> shareTickers = ["TITR", "TDIV", "TMOS", "TRND"];
+            List<string> bondTickers = ["TOFZ", "TBRU"];
+            List<string> goldTickers = ["TGLD", "GOLD"];
+            List<string> currencyTickers = ["TCNY", "TLCB"];
+            List<string> moneyTickers = ["TMON", "TPAY"];
+
             var portfolioResponse = await traderTinkoffApiClient.GetPortfolioInfoAsync(
                 new TinkoffPortfolioInfoRequest { AccountName = "ETF" });
 
@@ -38,9 +44,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 .Where(x => lifePositionData.ContainsKey(x.Ticker))
                 .ToDictionary(k => k.Ticker, v => v);
 
-            var weightData = lifePositionData.ToDictionary(k => k.Key, v => v.Value.Weight ?? 1.0);
+            var weightData = portfolioPositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
 
             double totalSum = Convert.ToDouble(portfolioResponse.Result.TotalSum);
+            double money = Convert.ToDouble(portfolioResponse.Result.Money);
 
             var positions = portfolioPositionData.Values
                 .Select(x =>
@@ -48,9 +55,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
                     lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
                     portfolioPositionData.TryGetValue(x.Ticker, out var portfolioPosition);
+                    weightData.TryGetValue(x.Ticker, out var weight);
 
-                    string name = portfolioPosition?.Name ?? string.Empty;
-                    var weight = lifePosition?.Weight ?? 1.0;
+                    string name = portfolioPosition?.Name ?? string.Empty;                    
                     var lifeSize = portfolioPosition?.Size ?? 0;
                     var price = portfolioPosition?.CurrentPrice ?? 0;
                     var cost = GetCost(x.Ticker);
@@ -83,11 +90,57 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 })
                 .ToList();
 
+            var classActiveItems = new List<ClassActiveItem>
+            {
+                new() { Name = $"Акции ({string.Join(',', shareTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(shareTickers) },
+                new() { Name = $"Облигации ({string.Join(',', bondTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(bondTickers) },
+                new() { Name = $"Золото ({string.Join(',', goldTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(goldTickers) },
+                new() { Name = $"Валюта ({string.Join(',', currencyTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(currencyTickers) },
+                new() { Name = $"Ликвидность ({string.Join(',', moneyTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(moneyTickers) }
+            };
+
             return new LifePortfolioResponse
             {
                 TotalSum = totalSum,
-                PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
+                Money = money,
+                PortfolioPositions = GetOrderedPositions(positions),
+                ClassActiveItems = GetOrderedClassActives(classActiveItems)
             };
+
+            double GetWeight(string ticker)
+            {
+                double moneyWeight = 2.0;
+                double shareWeight = 2.0;
+                double bondWeight = 2.0;
+                double goldWeight = 1.0;
+                double currencyWeight = 1.0;
+                
+                if (shareTickers.Contains(ticker)) return shareWeight / shareTickers.Count;
+                if (bondTickers.Contains(ticker)) return bondWeight / bondTickers.Count;                
+                if (currencyTickers.Contains(ticker)) return currencyWeight / currencyTickers.Count;
+                if (moneyTickers.Contains(ticker)) return moneyWeight / moneyTickers.Count;
+
+                if (goldTickers.Contains(ticker))
+                {
+                    if (ticker == "TGLD") return goldWeight * 0.25;
+                    if (ticker == "GOLD") return goldWeight * 0.75;
+                }
+
+                return 0.0;
+            }
+
+            double GetClassActivePercent(List<string> tickers)
+            {
+                double weightSum = weightData.Values.Sum();
+
+                double weight = weightData
+                    .Where(x => tickers.Contains(x.Key))
+                    .Sum(x => x.Value);
+
+                double percent = (weight / weightSum * 100.0).RoundTo(2);
+
+                return percent;
+            }
 
             double GetMonthDeltaPercent(string ticker)
             {
@@ -182,20 +235,25 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         }
 
         private static List<LifePositionItem> GetOrderedPositions(
-            List<LifePositionItem> positions, string? orderField)
+            List<LifePositionItem> positions)
         {
-            List<LifePositionItem> orderedPositions = orderField switch
-            {
-                "Percent" => [.. positions.OrderByDescending(x => x.Percent)],
-                "Yield" => [.. positions.OrderByDescending(x => x.Yield)],
-                "DeltaPercent" => [.. positions.OrderByDescending(x => x.DeltaPercent)],
-                _ => [.. positions.OrderByDescending(x => x.DeltaPercent)]
-            };
+            List<LifePositionItem> orderedPositions = [.. positions.OrderByDescending(x => x.DeltaPercent)];
 
             for (int i = 0; i < orderedPositions.Count; i++)
                 orderedPositions[i].Number = i + 1;
 
             return orderedPositions;
+        }
+
+        private static List<ClassActiveItem> GetOrderedClassActives(
+            List<ClassActiveItem> items)
+        {
+            List<ClassActiveItem> orderedItems = [.. items.OrderByDescending(x => x.Percent)];
+
+            for (int i = 0; i < orderedItems.Count; i++)
+                orderedItems[i].Number = i + 1;
+
+            return orderedItems;
         }
 
         public async Task<LifePortfolioImportResponse> ImportPositionListAsync(LifePortfolioImportRequest request)
