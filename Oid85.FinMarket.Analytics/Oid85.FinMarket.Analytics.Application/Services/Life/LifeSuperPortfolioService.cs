@@ -55,11 +55,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             foreach (var (_, portfolio) in lifePortfolioItemData)
             {
-                portfolio.Percent = (portfolio.Weight / weightSum * 100.0).RoundTo(2);
-                
+                portfolio.Percent = (portfolio.Weight / weightSum * 100.0).RoundTo(2);                
                 portfolio.Cost = (portfolio.Weight / weightSum * totalSum).RoundTo(2);
                                
-
                 double delta = portfolio.Cost - portfolio.LifeCost;
                 double deltaPercent = (delta / portfolio.LifeCost * 100.0).RoundTo(2);
 
