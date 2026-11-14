@@ -35,11 +35,12 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
         {
             await using var context = await contextFactory.CreateDbContextAsync();
 
-            var entities = await context.MoneyDateValueEntities.AsNoTracking().ToListAsync();
-
             foreach (var model in models)
             {
-                if (!entities.Any(x => x.Date == model.Date && x.PortfolioName == model.PortfolioName))
+                var entity = await context.MoneyDateValueEntities
+                    .FirstOrDefaultAsync(x => x.Date == model.Date && x.PortfolioName == model.PortfolioName);
+
+                if (entity is null)
                 {
                     await context.AddAsync(
                         new MoneyDateValueEntity
@@ -47,10 +48,13 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
                             Date = model.Date,
                             Money = model.Money,
                             PortfolioName = model.PortfolioName
-                        });
-
-                    await context.SaveChangesAsync();
+                        });                    
                 }
+
+                else
+                    entity.Money = model.Money;
+
+                await context.SaveChangesAsync();
             }            
         }
     }
