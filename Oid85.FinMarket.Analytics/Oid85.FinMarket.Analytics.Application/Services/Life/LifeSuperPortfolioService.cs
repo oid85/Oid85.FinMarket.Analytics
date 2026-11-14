@@ -100,7 +100,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             return new LifeSuperPortfolioResponse
             {
                 TotalSum = totalSum,
-                Portfolios = orderedLifePortfolioItems
+                Portfolios = orderedLifePortfolioItems,
+                MoneyStatistics = await GetMoneyStatisticsAsync()
             };
         }
 
@@ -130,6 +131,34 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 new MoneyDateValue { Date = today, Money = threeEtfLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "ThreeEtf" },
                 new MoneyDateValue { Date = today, Money = Convert.ToDouble(momentumLifePortfolio.Result.TotalSum).RoundTo(2), PortfolioName = "Momentum" }
             ]);
+        }
+
+        private async Task<MoneyStatistics> GetMoneyStatisticsAsync()
+        {
+            var moneyDateValues = await moneyRepository.GetAsync("SuperPortfolio");
+
+            var quarterValues = moneyDateValues.Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddDays(-90))).OrderBy(x => x.Date).ToList();
+            var monthValues = moneyDateValues.Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddDays(-30))).OrderBy(x => x.Date).ToList();
+            var weekValues = moneyDateValues.Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddDays(-7))).OrderBy(x => x.Date).ToList();
+
+            var moneyStatistics = new MoneyStatistics();
+
+            (moneyStatistics.QuarterYield, moneyStatistics.QuarterYieldPercent) = GetYield(quarterValues);
+            (moneyStatistics.MonthYield, moneyStatistics.MonthYieldPercent) = GetYield(monthValues);
+            (moneyStatistics.WeekYield, moneyStatistics.WeekYieldPercent) = GetYield(weekValues);
+
+            return moneyStatistics;
+        }
+
+        private static (double Yield, double YieldPercent) GetYield(List<MoneyDateValue> moneyDateValues)
+        {
+            var first = moneyDateValues[0].Money;
+            var last = moneyDateValues[^1].Money;
+
+            var yield = last - first;
+            var yieldPercent = yield / first * 100.0;
+
+            return (yield.RoundTo(2), yieldPercent.RoundTo(2));
         }
     }
 }

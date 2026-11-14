@@ -10,7 +10,7 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
         IDbContextFactory<FinMarketContext> contextFactory)
         : IMoneyRepository
     {
-        public async Task<List<MoneyDateValue>> GetAsync()
+        public async Task<List<MoneyDateValue>> GetAsync(string portfolioName)
         {
             await using var context = await contextFactory.CreateDbContextAsync();
 
@@ -18,8 +18,11 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.Database.Repositories
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             var entities = await context.MoneyDateValueEntities
+                .Where(x => x.PortfolioName == portfolioName)
                 .Where(x => x.Date >= from && x.Date <= to)
-                .AsNoTracking().ToListAsync();
+                .OrderBy(x => x.Date)
+                .AsNoTracking()
+                .ToListAsync();
 
             return [.. entities
                 .Select(x =>

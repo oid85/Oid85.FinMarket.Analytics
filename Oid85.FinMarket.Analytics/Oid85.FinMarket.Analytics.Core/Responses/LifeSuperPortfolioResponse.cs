@@ -6,6 +6,21 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
     {
         public double TotalSum { get; set; }
         public List<LifePortfolioItem> Portfolios { get; set; } = [];
+        public MoneyStatistics MoneyStatistics { get; set; } = new ();
+    }
+
+    public class MoneyStatistics
+    {
+        public double YearYield { get; set; }
+        public double YearYieldPercent { get; set; }
+        public double QuarterYield { get; set; }
+        public double QuarterYieldPercent { get; set; }
+        public double MonthYield { get; set; }
+        public double MonthYieldPercent { get; set; }
+        public double WeekYield { get; set; }
+        public double WeekYieldPercent { get; set; }
+        public double MaxDrawdownPercent { get; set; }
+        public double CurrentDrawdownPercent { get; set; }
     }
 
     public class LifePortfolioItem
