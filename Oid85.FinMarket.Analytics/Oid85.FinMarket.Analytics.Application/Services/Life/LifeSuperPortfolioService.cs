@@ -149,8 +149,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             (moneyStatistics.MonthYield, moneyStatistics.MonthYieldPercent) = GetYield(monthValues);
             (moneyStatistics.WeekYield, moneyStatistics.WeekYieldPercent) = GetYield(weekValues);
 
-            moneyStatistics.EquitySeries = new List<DiagramSeries>
-            {
+            moneyStatistics.EquitySeries =
+            [
                 new DiagramSeries
                 {
                     Name = "Капитал",
@@ -160,7 +160,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                         .Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddDays(-90))).OrderBy(x => x.Date)
                         .Select(x => new DateValue<double?> { Date = x.Date, Value = x.Money })]
                 }
-            };
+            ];
 
             return moneyStatistics;
         }
