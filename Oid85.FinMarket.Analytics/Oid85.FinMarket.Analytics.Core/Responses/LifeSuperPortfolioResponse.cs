@@ -1,4 +1,5 @@
 ﻿using Oid85.FinMarket.Analytics.Common.KnownConstants;
+using Oid85.FinMarket.Analytics.Core.Models;
 
 namespace Oid85.FinMarket.Analytics.Core.Responses
 {
@@ -21,6 +22,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public double WeekYieldPercent { get; set; }
         public double MaxDrawdownPercent { get; set; }
         public double CurrentDrawdownPercent { get; set; }
+        public List<DiagramSeries> EquitySeries { get; set; } = [];
     }
 
     public class LifePortfolioItem
