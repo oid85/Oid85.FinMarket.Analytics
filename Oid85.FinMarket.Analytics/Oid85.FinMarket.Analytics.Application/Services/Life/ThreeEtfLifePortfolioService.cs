@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -10,7 +11,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 {
     public class ThreeEtfLifePortfolioService(
         IThreeEtfLifePositionRepository positionRepository,
-        ITraderFinamApiClient traderFinamApiClient)
+        ITraderFinamApiClient traderFinamApiClient,
+        IMoneyRepository moneyRepository)
         : IThreeEtfLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
@@ -68,7 +70,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         return new LifePortfolioResponse
         {
             TotalSum = totalSum,
-            PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
+            PortfolioPositions = GetOrderedPositions(positions, request.OrderField),
+            MoneyStatistics = await GetMoneyStatisticsAsync()
         };
 
         double GetWeight(string ticker) => 1.0;
@@ -175,5 +178,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
         return orderedPositions;
     }
-}
+
+        private async Task<MoneyStatistics> GetMoneyStatisticsAsync() =>
+            MoneyStatisticsHelper.GetMoneyStatisticsAsync(await moneyRepository.GetAsync("ThreeEtf"));
+    }
 }

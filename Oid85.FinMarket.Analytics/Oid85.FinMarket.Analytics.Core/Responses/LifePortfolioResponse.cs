@@ -8,6 +8,7 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public double Money { get; set; } = 0.0;
         public List<LifePositionItem> PortfolioPositions { get; set; } = [];
         public List<ClassActiveItem> ClassActiveItems { get; set; } = [];
+        public MoneyStatistics MoneyStatistics { get; set; } = new();
     }
 
     public class ClassActiveItem

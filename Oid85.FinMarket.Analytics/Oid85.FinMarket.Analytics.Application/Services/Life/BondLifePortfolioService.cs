@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -15,7 +16,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         IInstrumentService instrumentService,
         IBondAnalyseService bondAnalyseService,
         IBondLifePositionRepository positionRepository,
-        IParameterRepository parameterRepository) 
+        IParameterRepository parameterRepository,
+        IMoneyRepository moneyRepository) 
         : IBondLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
@@ -89,7 +91,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             {
                 TotalSum = totalSum,
                 Money = money,
-                PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
+                PortfolioPositions = GetOrderedPositions(positions, request.OrderField),
+                MoneyStatistics = await GetMoneyStatisticsAsync()
             };
 
             double GetWeight(string ticker) => 1.0;
@@ -185,6 +188,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             return orderedPositions;
         }
+
+        private async Task<MoneyStatistics> GetMoneyStatisticsAsync() =>
+            MoneyStatisticsHelper.GetMoneyStatisticsAsync(await moneyRepository.GetAsync("Bond"));
 
         public async Task<LifePortfolioImportResponse> ImportPositionListAsync(LifePortfolioImportRequest request)
         {

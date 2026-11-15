@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
+﻿using Oid85.FinMarket.Analytics.Application.Helpers;
+using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
@@ -15,7 +16,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         IInstrumentService instrumentService,
         IDataService dataService,
         ISevenEtfLifePositionRepository positionRepository,
-        IParameterRepository parameterRepository) 
+        IParameterRepository parameterRepository,
+        IMoneyRepository moneyRepository) 
         : ISevenEtfLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
@@ -104,7 +106,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 TotalSum = totalSum,
                 Money = money,
                 PortfolioPositions = GetOrderedPositions(positions),
-                ClassActiveItems = GetOrderedClassActives(classActiveItems)
+                ClassActiveItems = GetOrderedClassActives(classActiveItems),
+                MoneyStatistics = await GetMoneyStatisticsAsync()
             };
 
             double GetWeight(string ticker)
@@ -255,6 +258,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             return orderedItems;
         }
+
+        private async Task<MoneyStatistics> GetMoneyStatisticsAsync() =>
+            MoneyStatisticsHelper.GetMoneyStatisticsAsync(await moneyRepository.GetAsync("SevenEtf"));
 
         public async Task<LifePortfolioImportResponse> ImportPositionListAsync(LifePortfolioImportRequest request)
         {

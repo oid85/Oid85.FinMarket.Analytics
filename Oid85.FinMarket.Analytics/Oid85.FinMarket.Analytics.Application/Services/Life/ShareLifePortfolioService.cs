@@ -1,4 +1,5 @@
 ﻿using System.Timers;
+using Oid85.FinMarket.Analytics.Application.Helpers;
 using Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
@@ -16,7 +17,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         IInstrumentService instrumentService,
         IDataService dataService,
         IShareLifePositionRepository positionRepository,
-        IParameterRepository parameterRepository) 
+        IParameterRepository parameterRepository,
+        IMoneyRepository moneyRepository) 
         : IShareLifePortfolioService
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
@@ -93,7 +95,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             return new LifePortfolioResponse
             {
                 TotalSum = totalSum,
-                PortfolioPositions = GetOrderedPositions(positions, request.OrderField)
+                PortfolioPositions = GetOrderedPositions(positions, request.OrderField),
+                MoneyStatistics = await GetMoneyStatisticsAsync()
             };
 
             double GetMonthDeltaPercent(string ticker)
@@ -254,6 +257,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             return orderedPositions;
         }
+
+        private async Task<MoneyStatistics> GetMoneyStatisticsAsync() =>
+            MoneyStatisticsHelper.GetMoneyStatisticsAsync(await moneyRepository.GetAsync("Share"));
 
         public async Task<LifePortfolioImportResponse> ImportPositionListAsync(LifePortfolioImportRequest request)
         {
