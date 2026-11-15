@@ -29,6 +29,11 @@ namespace Oid85.FinMarket.Analytics.Core.Responses
         public double Percent { get; set; }
 
         /// <summary>
+        /// Стоимость позиции (расч.)
+        /// </summary>
+        public double Cost { get; set; }
+
+        /// <summary>
         /// Цвет
         /// </summary>
         public string ColorFill { get; set; } = KnownColors.White;

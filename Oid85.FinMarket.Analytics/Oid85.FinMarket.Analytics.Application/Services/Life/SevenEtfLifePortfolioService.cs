@@ -94,11 +94,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             var classActiveItems = new List<ClassActiveItem>
             {
-                new() { Name = $"Акции ({string.Join(',', shareTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(shareTickers) },
-                new() { Name = $"Облигации ({string.Join(',', bondTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(bondTickers) },
-                new() { Name = $"Золото ({string.Join(',', goldTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(goldTickers) },
-                new() { Name = $"Валюта ({string.Join(',', currencyTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(currencyTickers) },
-                new() { Name = $"Ликвидность ({string.Join(',', moneyTickers.OrderBy(x => x))})", Percent = GetClassActivePercent(moneyTickers) }
+                new() { Name = $"Акции ({string.Join(',', shareTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(shareTickers), Cost = GetAssetClassCost(shareTickers) },
+                new() { Name = $"Облигации ({string.Join(',', bondTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(bondTickers), Cost = GetAssetClassCost(bondTickers) },
+                new() { Name = $"Золото ({string.Join(',', goldTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(goldTickers), Cost = GetAssetClassCost(goldTickers) },
+                new() { Name = $"Валюта ({string.Join(',', currencyTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(currencyTickers), Cost = GetAssetClassCost(currencyTickers) },
+                new() { Name = $"Ликвидность ({string.Join(',', moneyTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(moneyTickers), Cost = GetAssetClassCost(moneyTickers) },
             };
 
             return new LifePortfolioResponse
@@ -112,11 +112,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             double GetWeight(string ticker)
             {
-                double moneyWeight = 2.0;
-                double shareWeight = 2.0;
-                double bondWeight = 2.0;
-                double goldWeight = 1.0;
-                double currencyWeight = 1.0;
+                double shareWeight = 25.0;
+                double bondWeight = 25.0;
+                double moneyWeight = 25.0;
+                double goldWeight = 12.5;
+                double currencyWeight = 12.5;
                 
                 if (shareTickers.Contains(ticker)) return shareWeight / shareTickers.Count;
                 if (bondTickers.Contains(ticker)) return bondWeight / bondTickers.Count;                
@@ -125,14 +125,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
                 if (goldTickers.Contains(ticker))
                 {
-                    if (ticker == "TGLD") return goldWeight * 0.25;
-                    if (ticker == "GOLD") return goldWeight * 0.75;
+                    if (ticker == "TGLD") return goldWeight * 5.0 / 100.0;
+                    if (ticker == "GOLD") return goldWeight * 95.0 / 100.0;
                 }
 
                 return 0.0;
             }
 
-            double GetClassActivePercent(List<string> tickers)
+            double GetAssetClassPercent(List<string> tickers)
             {
                 double weightSum = weightData.Values.Sum();
 
@@ -144,6 +144,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
                 return percent;
             }
+
+            double GetAssetClassCost(List<string> tickers) => 
+                (totalSum * GetAssetClassPercent(tickers) / 100.0).RoundTo(2);
 
             double GetMonthDeltaPercent(string ticker)
             {
