@@ -23,16 +23,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         Task<Dictionary<string, List<DateValue<double>>>> GetClosePriceDataAsync(List<string> tickers);
 
         /// <summary>
-        /// Получить данные по купонам
-        /// </summary>
-        Task<Dictionary<string, List<BondCoupon>>> GetBondCouponsAsync(List<string> tickers);
-
-        /// <summary>
-        /// Получить данные по дивиденду (последний в БД)
-        /// </summary>
-        Task<Dictionary<string, Dividend>> GetDividendDataAsync(List<string> tickers);
-
-        /// <summary>
         /// Получить данные по изменению относительно индекса полной доходности MCFTR
         /// </summary>
         Task<Dictionary<string, double>> GetBenchmarkChangeDataAsync(List<string> tickers);
@@ -46,36 +36,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.Services
         /// Получить метрики по фундаментальным данным
         /// </summary>
         Task<Dictionary<string, List<FundamentalMetric>>> GetFundamentalMetricDataAsync(List<string> tickers);
-
-        /// <summary>
-        /// Получить данные по прогнозам
-        /// </summary>
-        Task<Dictionary<string, Forecast>> GetConsensusForecastDataAsync();
-
-        /// <summary>
-        /// Получить данные по прогнозам (NataliaBaffetovna)
-        /// </summary>
-        Task<Dictionary<string, Forecast>> GetNataliaBaffetovnaForecastDataAsync(List<string> tickers);
-
-        /// <summary>
-        /// Получить данные по прогнозам (FinanceMarker)
-        /// </summary>
-        Task<Dictionary<string, Forecast>> GetFinanceMarkerForecastDataAsync(List<string> tickers);
-
-        /// <summary>
-        /// Получить данные по прогнозам (VladProDengi)
-        /// </summary>
-        Task<Dictionary<string, Forecast>> GetVladProDengiForecastDataAsync(List<string> tickers);
-
-        /// <summary>
-        /// Получить данные по прогнозам (Mozgovik)
-        /// </summary>
-        Task<Dictionary<string, Forecast>> GetMozgovikForecastDataAsync(List<string> tickers);
-
-        /// <summary>
-        /// Получить данные по прогнозам (прогноз чистой прибыли)
-        /// </summary>
-        Task<Dictionary<string, Forecast>> GetPredictNetProfitForecastDataAsync(List<string> tickers);
 
         /// <summary>
         /// Получить данные по див политикеб драйверам роста, рискам

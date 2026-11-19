@@ -18,46 +18,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     {
         private Dictionary<string, List<Candle>>? _candleData = null;
         private List<FundamentalParameterListItem>? _fundamentalParameters = null;
-        private List<ForecastListItem>? _forecasts = null;
         private AnalyseDataContext? _analyseDataContext = null;
-
-        /// <inheritdoc />
-        public async Task<Dictionary<string, List<BondCoupon>>> GetBondCouponsAsync(List<string> tickers)
-        {
-            var couponDictionary = new Dictionary<string, List<BondCoupon>>();
-
-            foreach (var ticker in tickers)
-            {
-                var couponsTwoYear = (await storageApiClient.GetBondCouponListAsync(
-                    new GetBondCouponListRequest
-                    {
-                        Ticker = ticker,
-                        From = DateOnly.FromDateTime(DateTime.Today.AddYears(-1)),
-                        To = DateOnly.FromDateTime(DateTime.Today.AddYears(1))
-                    })).Result.BondCoupons;
-
-                for (int i = 1; i < couponsTwoYear.Count; i++)
-                    if (couponsTwoYear[i].PayOneBond == 0) couponsTwoYear[i].PayOneBond = couponsTwoYear[i - 1].PayOneBond;
-
-                var coupons = couponsTwoYear
-                    .Where(x =>
-                        x.CouponDate >= DateOnly.FromDateTime(DateTime.Today) &&
-                        x.CouponDate <= DateOnly.FromDateTime(DateTime.Today.AddYears(1)))
-                    .Select(x => new BondCoupon
-                    {
-                        Ticker = x.Ticker,
-                        CouponNumber = x.CouponNumber,
-                        CouponPeriod = x.CouponPeriod,
-                        CouponDate = x.CouponDate,
-                        PayOneBond = x.PayOneBond
-                    })
-                    .ToList();
-
-                couponDictionary.Add(ticker, coupons);
-            }
-
-            return couponDictionary;
-        }
 
         /// <inheritdoc />
         public async Task<Dictionary<string, List<Candle>>> GetCandleDataAsync(List<string> tickers)
@@ -109,37 +70,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<Dictionary<string, Dividend>> GetDividendDataAsync(List<string> tickers)
-        {
-            var candleData = await GetCandleDataAsync(tickers);
-
-            var fundamentalParameterList = await GetFundamentalParameterListAsync();
-
-            var fundamentalParameters = fundamentalParameterList.Where(x => x.Type == KnownFundamentalParameterTypes.Dividend).ToList();
-
-            var result = new Dictionary<string, Dividend>();
-
-            foreach (var ticker in tickers)
-            {
-                if (!candleData.ContainsKey(ticker)) continue;
-
-                var lastClosePrice = candleData[ticker].Last().Close;
-
-                var dividendFundamentalParameter = fundamentalParameters.Where(x => x.Ticker == ticker).OrderBy(x => x.Period).LastOrDefault();
-
-                if (dividendFundamentalParameter is null) continue;
-
-                double yield = dividendFundamentalParameter.Value / lastClosePrice * 100.0;
-
-                var dividend = new Dividend { Ticker = ticker, Value = dividendFundamentalParameter.Value, Yield = Math.Round(yield, 2) };
-
-                result.Add(ticker, dividend);
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc />
         public async Task<Dictionary<string, double>> GetBenchmarkChangeDataAsync(List<string> tickers)
         {
             const int lastDaysCount = 90; // Считаем изменение к бенчмарку за последние 90 дней
@@ -185,210 +115,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             {
                 var moexIndexShare = fundamentalParameterList.Find(x => x.Ticker == ticker && x.Type == KnownFundamentalParameterTypes.Moex)?.Value;
                 result.Add(ticker, moexIndexShare);
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        public async Task<Dictionary<string, Forecast>> GetConsensusForecastDataAsync()
-        {
-            var forecasts = await GetConsensusForecastListAsync();
-            var tickers = forecasts.Select(x => x.Ticker).ToList();
-            var candleData = await GetCandleDataAsync(tickers);
-
-            var result = new Dictionary<string, Forecast>();
-
-            foreach (var forecast in forecasts)
-            {
-                if (!candleData.ContainsKey(forecast.Ticker)) continue;
-
-                var price = candleData[forecast.Ticker].Last().Close;
-
-                result.Add(
-                    forecast.Ticker,
-                    new()
-                    {
-                        Ticker = forecast.Ticker,
-                        ConsensusPrice = forecast.ConsensusPrice,
-                        CurrentPrice = price,
-                        UpsidePrc = Math.Round((forecast.ConsensusPrice - price) / price * 100.0, 2),
-                        MaxTarget = forecast.MaxTarget,
-                        MinTarget = forecast.MinTarget,
-                        Recommendation = forecast.RecommendationString
-                    });
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        public async Task<Dictionary<string, Forecast>> GetNataliaBaffetovnaForecastDataAsync(List<string> tickers)
-        {
-            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
-            var fundamentalParameterList = await GetFundamentalParameterListAsync();
-            var candleData = await GetCandleDataAsync(tickers);
-
-            var result = new Dictionary<string, Forecast>();
-
-            foreach (var ticker in tickers)
-            {
-                if (!candleData.ContainsKey(ticker)) continue;
-
-                var price = candleData[ticker].Last().Close;
-
-                var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
-                var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.NataliaBaffetovnaForecast)?.Value).LastOrDefault();
-
-                if (!consensusPrice.HasValue) continue;
-
-                result.Add(ticker, new()
-                {
-                    Ticker = ticker,
-                    ConsensusPrice = consensusPrice,
-                    CurrentPrice = price,
-                    UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
-                });
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        public async Task<Dictionary<string, Forecast>> GetFinanceMarkerForecastDataAsync(List<string> tickers)
-        {
-            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
-            var fundamentalParameterList = await GetFundamentalParameterListAsync();
-            var candleData = await GetCandleDataAsync(tickers);
-
-            var result = new Dictionary<string, Forecast>();
-
-            foreach (var ticker in tickers)
-            {
-                if (!candleData.ContainsKey(ticker)) continue;
-
-                var price = candleData[ticker].Last().Close;
-
-                var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
-                var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.FinanceMarkerForecast)?.Value).LastOrDefault();
-
-                if (!consensusPrice.HasValue) continue;
-
-                result.Add(ticker, new()
-                {
-                    Ticker = ticker,
-                    ConsensusPrice = consensusPrice,
-                    CurrentPrice = price,
-                    UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
-                });
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        public async Task<Dictionary<string, Forecast>> GetVladProDengiForecastDataAsync(List<string> tickers)
-        {
-            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
-            var fundamentalParameterList = await GetFundamentalParameterListAsync();
-            var candleData = await GetCandleDataAsync(tickers);
-
-            var result = new Dictionary<string, Forecast>();
-
-            foreach (var ticker in tickers)
-            {
-                if (!candleData.ContainsKey(ticker)) continue;
-
-                var price = candleData[ticker].Last().Close;
-
-                var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
-                var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.VladProDengiForecast)?.Value).LastOrDefault();
-
-                if (!consensusPrice.HasValue) continue;
-
-                result.Add(ticker, new()
-                {
-                    Ticker = ticker,
-                    ConsensusPrice = consensusPrice,
-                    CurrentPrice = price,
-                    UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
-                });
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        public async Task<Dictionary<string, Forecast>> GetMozgovikForecastDataAsync(List<string> tickers)
-        {
-            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
-            var fundamentalParameterList = await GetFundamentalParameterListAsync();
-            var candleData = await GetCandleDataAsync(tickers);
-
-            var result = new Dictionary<string, Forecast>();
-
-            foreach (var ticker in tickers)
-            {
-                if (!candleData.ContainsKey(ticker)) continue;
-
-                var price = candleData[ticker].Last().Close;
-
-                var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
-                var consensusPrice = periods.Select(x => fundamentalParameterListByTicker.Find(fp => fp.Period == x && fp.Type == KnownFundamentalParameterTypes.MozgovikForecast)?.Value).LastOrDefault();
-
-                if (!consensusPrice.HasValue) continue;
-
-                result.Add(ticker, new()
-                {
-                    Ticker = ticker,
-                    ConsensusPrice = consensusPrice,
-                    CurrentPrice = price,
-                    UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
-                });
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc />
-        public async Task<Dictionary<string, Forecast>> GetPredictNetProfitForecastDataAsync(List<string> tickers)
-        {
-            List<string> periods = [.. (await parameterRepository.GetParameterValueAsync(KnownParameters.Periods))!.Split(';')];
-            string ttmYear = (await parameterRepository.GetParameterValueAsync(KnownParameters.TTMYear))!;
-
-            var fundamentalParameterList = await GetFundamentalParameterListAsync();
-            var candleData = await GetCandleDataAsync(tickers);
-
-            var result = new Dictionary<string, Forecast>();
-
-            foreach (var ticker in tickers)
-            {
-                if (!candleData.ContainsKey(ticker)) continue;
-
-                var price = candleData[ticker].Last().Close;
-
-                var fundamentalParameterListByTicker = fundamentalParameterList.Where(x => x.Ticker == ticker).ToList();
-
-                double? predictPe = fundamentalParameterListByTicker.Find(x => x.Period == ttmYear && x.Type == KnownFundamentalParameterTypes.Pe)?.Value;
-                double? predictNetProfit = fundamentalParameterListByTicker.Find(x => x.Period == ttmYear && x.Type == KnownFundamentalParameterTypes.NetProfit)?.Value;
-                double? predictNumberShares = fundamentalParameterListByTicker.Find(x => x.Period == ttmYear && x.Type == KnownFundamentalParameterTypes.NumberShares)?.Value;
-
-                predictNetProfit = predictNetProfit.Mult(1_000_000_000);
-                predictNumberShares = predictNumberShares.Mult(1_000_000);
-
-                double? predictNetProfitConsensusPrice = predictNetProfit.Mult(predictPe).Div(predictNumberShares);
-
-                double? consensusPrice = predictNetProfit.Mult(predictPe).Div(predictNumberShares);
-
-                if (!consensusPrice.HasValue) continue;
-
-                result.Add(ticker, new()
-                {
-                    Ticker = ticker,
-                    ConsensusPrice = consensusPrice,
-                    CurrentPrice = price,
-                    UpsidePrc = Math.Round((consensusPrice.Value - price) / price * 100.0, 2)
-                });
             }
 
             return result;
@@ -598,17 +324,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 CandleData = await GetCandleDataAsync(tickers),
                 UltimateSmootherData = await GetUltimateSmootherDataAsync(tickers),
                 ClosePriceData = await GetClosePriceDataAsync(tickers),
-                DividendData = await GetDividendDataAsync(tickers),
                 BenchmarkChangeData = await GetBenchmarkChangeDataAsync(tickers),
                 MoexIndexShareData = await GetMoexIndexShareDataAsync(tickers),
                 FundamentalMetricData = await GetFundamentalMetricDataAsync(tickers),
-                ConsensusForecastData = await GetConsensusForecastDataAsync(),
-                NataliaBaffetovnaForecastData = await GetNataliaBaffetovnaForecastDataAsync(tickers),
-                FinanceMarkerForecastData = await GetFinanceMarkerForecastDataAsync(tickers),
-                VladProDengiForecastData = await GetVladProDengiForecastDataAsync(tickers),
-                MozgovikForecastData = await GetMozgovikForecastDataAsync(tickers),
-                PredictNetProfitForecastData = await GetPredictNetProfitForecastDataAsync(tickers),
-                BondCouponData = await GetBondCouponsAsync(tickers),
                 FillFundamentalData = await GetFillFundamentalDataAsync(tickers),
                 ReportData = await GetReportDataAsync(tickers),
                 ExtData = await GetExtDataAsync(tickers)
@@ -713,15 +431,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             _fundamentalParameters = (await storageApiClient.GetFundamentalParameterListAsync(new() { Periods = periods })).Result.FundamentalParameters;
 
             return _fundamentalParameters;
-        }
-
-        private async Task<List<ForecastListItem>> GetConsensusForecastListAsync()
-        {
-            if (_forecasts is not null) return _forecasts;
-
-            _forecasts = (await storageApiClient.GetForecastListAsync(new())).Result.Forecasts;
-
-            return _forecasts;
         }
     }
 }

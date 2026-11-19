@@ -21,11 +21,6 @@
         public Dictionary<string, List<DateValue<double>>> ClosePriceData { get; set; } = [];
 
         /// <summary>
-        /// Дивиденды (последний в БД)
-        /// </summary>
-        public Dictionary<string, Dividend> DividendData { get; set; } = [];
-
-        /// <summary>
         /// Изменение относительно индекса полной доходности MCFTR
         /// </summary>
         public Dictionary<string, double> BenchmarkChangeData { get; set; } = [];
@@ -39,41 +34,6 @@
         /// Фундаментальные данные
         /// </summary>
         public Dictionary<string, List<FundamentalMetric>> FundamentalMetricData { get; set; } = [];
-
-        /// <summary>
-        /// Консенсус прогнозы
-        /// </summary>
-        public Dictionary<string, Forecast> ConsensusForecastData { get; set; } = [];
-
-        /// <summary>
-        /// Консенсус прогнозы (NataliaBaffetovna)
-        /// </summary>
-        public Dictionary<string, Forecast> NataliaBaffetovnaForecastData { get; set; } = [];
-
-        /// <summary>
-        /// Консенсус прогнозы (FinanceMarker)
-        /// </summary>
-        public Dictionary<string, Forecast> FinanceMarkerForecastData { get; set; } = [];
-
-        /// <summary>
-        /// Консенсус прогнозы (VladProDengi)
-        /// </summary>
-        public Dictionary<string, Forecast> VladProDengiForecastData { get; set; } = [];
-
-        /// <summary>
-        /// Консенсус прогнозы (Mozgovik)
-        /// </summary>
-        public Dictionary<string, Forecast> MozgovikForecastData { get; set; } = [];
-
-        /// <summary>
-        /// Консенсус прогнозы (прогноз чистой прибыли)
-        /// </summary>
-        public Dictionary<string, Forecast> PredictNetProfitForecastData { get; set; } = [];
-
-        /// <summary>
-        /// Купоны (для облигаций)
-        /// </summary>
-        public Dictionary<string, List<BondCoupon>> BondCouponData { get; set; } = [];
 
         /// <summary>
         /// Флаг заполненности данных по фундаменталу
@@ -175,11 +135,6 @@
         public List<DateValue<double>> GetClosePrices(string ticker) => !ClosePriceData.TryGetValue(ticker, out var result) ? [] : result;
 
         /// <summary>
-        /// Получить дивиденды по тикеру
-        /// </summary>
-        public Dividend? GetDividend(string ticker) => !DividendData.TryGetValue(ticker, out var result) ? null : result;
-
-        /// <summary>
         /// Получить изменение относительно индекса полной доходности MCFTR по тикеру
         /// </summary>
         public double? GetBenchmarkChange(string ticker) => !BenchmarkChangeData.TryGetValue(ticker, out var result) ? null : result;
@@ -193,41 +148,6 @@
         /// Получить фундаментальные данные по тикеру
         /// </summary>
         public List<FundamentalMetric> GetFundamentalMetrics(string ticker) => !FundamentalMetricData.TryGetValue(ticker, out var result) ? [] : result;
-
-        /// <summary>
-        /// Получить консенсус прогноз по тикеру
-        /// </summary>
-        public Forecast? GetConsensusForecast(string ticker) => !ConsensusForecastData.TryGetValue(ticker, out var result) ? null : result;
-
-        /// <summary>
-        /// Получить консенсус прогноз по тикеру (NataliaBaffetovna)
-        /// </summary>
-        public Forecast? GetNataliaBaffetovnaForecast(string ticker) => !NataliaBaffetovnaForecastData.TryGetValue(ticker, out var result) ? null : result;
-
-        /// <summary>
-        /// Получить консенсус прогноз по тикеру (FinanceMarker)
-        /// </summary>
-        public Forecast? GetFinanceMarkerForecast(string ticker) => !FinanceMarkerForecastData.TryGetValue(ticker, out var result) ? null : result;
-
-        /// <summary>
-        /// Получить консенсус прогноз по тикеру (VladProDengi)
-        /// </summary>
-        public Forecast? GetVladProDengiForecast(string ticker) => !VladProDengiForecastData.TryGetValue(ticker, out var result) ? null : result;
-
-        /// <summary>
-        /// Получить консенсус прогноз по тикеру (Mozgovik)
-        /// </summary>
-        public Forecast? GetMozgovikForecast(string ticker) => !MozgovikForecastData.TryGetValue(ticker, out var result) ? null : result;
-
-        /// <summary>
-        /// Получить консенсус прогноз по тикеру (прогноз чистой прибыли)
-        /// </summary>
-        public Forecast? GetPredictNetProfitForecast(string ticker) => !PredictNetProfitForecastData.TryGetValue(ticker, out var result) ? null : result;
-
-        /// <summary>
-        /// Получить купоны по тикеру (для облигаций)
-        /// </summary>
-        public List<BondCoupon> GetBondCoupons(string ticker) => !BondCouponData.TryGetValue(ticker, out var result) ? [] : result;
 
         /// <summary>
         /// Получить флаг заполненности данных по фундаменталу

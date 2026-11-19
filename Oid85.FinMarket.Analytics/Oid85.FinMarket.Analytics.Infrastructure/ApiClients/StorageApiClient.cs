@@ -17,14 +17,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients
         : IStorageApiClient
     {
         /// <inheritdoc />
-        public async Task<GetDividendListResponse> GetDividendListAsync(GetDividendListRequest request) =>
-            await GetCachedDataAsync<GetDividendListRequest, GetDividendListResponse>("/api/dividends/list", request);
-
-        /// <inheritdoc />
-        public async Task<GetBondCouponListResponse> GetBondCouponListAsync(GetBondCouponListRequest request) =>
-            await GetCachedDataAsync<GetBondCouponListRequest, GetBondCouponListResponse>("/api/bond-coupons/list", request);
-
-        /// <inheritdoc />
         public async Task<GetCandleListResponse> GetCandleListAsync(GetCandleListRequest request) =>
             await GetCachedDataAsync<GetCandleListRequest, GetCandleListResponse>("/api/candles/list", request);
 
@@ -79,10 +71,6 @@ namespace Oid85.FinMarket.Analytics.Infrastructure.ApiClients
         /// <inheritdoc />
         public async Task<GetVvpListResponse> GetVvpListAsync(GetVvpListRequest request) =>
             await GetResponseAsync<GetVvpListRequest, GetVvpListResponse>("/api/vvp/list", request);
-
-        /// <inheritdoc />
-        public async Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request) =>
-            await GetResponseAsync<GetForecastListRequest, GetForecastListResponse>("/api/forecasts/list", request);
 
         private async Task<TResponse> GetCachedDataAsync<TRequest, TResponse>(string url, TRequest request) where TResponse : new()
         {

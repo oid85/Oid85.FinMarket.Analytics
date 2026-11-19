@@ -2,11 +2,28 @@
 
 public static class MathUtils
 {
-    public static double? DivideNullable(double? arg1, double? arg2)
-    {
-        if (arg1 is null || arg2 is null) return null;
-        if (arg1 == 0.0 || arg2 == 0.0) return 0.0;
+	/// <summary>
+	/// Корреляция по формуле Пирсона
+	/// </summary>
+	public static double Correlation(this List<double> valuesX, List<double> valuesY)
+	{
+		if (valuesX.Count != valuesY.Count)
+			return 0.0;
 
-        return Math.Round(arg1.Value / arg2.Value, 2);
-    }
+		double averageX = valuesX.Average();
+		double averageY = valuesY.Average();
+
+		double sum = 0.0;
+		double sumX = 0.0;
+		double sumY = 0.0;
+
+		for (int i = 0; i < valuesX.Count; i++)
+		{
+			sum += (valuesX[i] - averageX) * (valuesY[i] - averageY);
+			sumX += (valuesX[i] - averageX) * (valuesX[i] - averageX);
+			sumY += (valuesY[i] - averageY) * (valuesY[i] - averageY);
+		}
+
+		return sum / Math.Sqrt(sumX * sumY);
+	}  	
 }

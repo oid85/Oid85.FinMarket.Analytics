@@ -14,7 +14,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
     public class BondLifePortfolioService(
         ITraderTinkoffEldApiClient traderTinkoffApiClient,
         IInstrumentService instrumentService,
-        IBondAnalyseService bondAnalyseService,
         IBondLifePositionRepository positionRepository,
         IParameterRepository parameterRepository,
         IMoneyRepository moneyRepository) 
@@ -34,12 +33,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             var instrumentData = (await instrumentService.GetInstrumentListAsync())
                 .Where(x => x.Type == KnownInstrumentTypes.Bond)
                 .Where(x => lifePositionData.ContainsKey(x.Ticker))
-                .ToDictionary(k => k.Ticker, v => v);
-            
-            var bondAnalyseData = (await bondAnalyseService.GetBondAnalyseAsync(new()))
-                .Items
-                .Where(x => lifePositionData.ContainsKey(x.Ticker))                
-                .ToDictionary(k => k.Ticker, v => v);
+                .ToDictionary(k => k.Ticker, v => v);           
 
             var weightData = portfolioPositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
 
@@ -49,12 +43,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             var positions = portfolioPositionData.Values
                 .Select(x =>
                 {
-                    bondAnalyseData.TryGetValue(x.Ticker, out var bondAnalyse);
                     instrumentData.TryGetValue(x.Ticker, out var instrument);                    
                     portfolioPositionData.TryGetValue(x.Ticker, out var portfolioPosition);
 
                     string name = portfolioPosition?.Name ?? string.Empty;                    
-                    var rating = bondAnalyse?.Rating ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
                     var lifeSize = portfolioPosition?.Size ?? 0;
                     var price = portfolioPosition?.CurrentPrice ?? 0;
@@ -70,7 +62,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     {
                         Ticker = x.Ticker,
                         Name = name,                        
-                        Rating = rating,
                         Weight = weight,
                         Cost = cost,
                         Percent = percent,

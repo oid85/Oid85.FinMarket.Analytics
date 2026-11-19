@@ -298,7 +298,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
 
-            var dividend = analyseDataContext.GetDividend(instrument.Ticker);
             var fundamentalScore = await fundamentalScoreService.GetFundamentalScoreAsync(instrument.Ticker);
             var benchmarkChange = analyseDataContext.GetBenchmarkChange(instrument.Ticker);
             var companyFundamentalMetric = analyseDataContext.GetFundamentalMetric(instrument.Ticker);
@@ -325,7 +324,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                 Price = price,
                 TrendState = trendState.Message,
                 FallingFromMax = fallingFromMax,
-                Dividend = dividend,
                 FundamentalScore = fundamentalScore,
                 BenchmarkChange = benchmarkChange,
                 CompanyFundamentalMetric = companyFundamentalMetric,

@@ -12,7 +12,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         IInstrumentRepository instrumentRepository,
         IParameterRepository parameterRepository,
         IShareLifePortfolioService portfolioService,
-        IBondAnalyseService bondAnalyseService,
         IFundamentalService fundamentalService,
         IInstrumentService instrumentService,
         IDataService dataService,
@@ -64,174 +63,10 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             if (request.PortfolioName == "7 ETF")
                 return await SevenEtfPortfolioBacktestAsync();
 
-            if (request.PortfolioName == "Bond")
-                return await BondPortfolioForwardtestAsync();
-
             if (request.PortfolioName == "SharesAndBonds")
                 return await SharesAndBondsPortfolioForwardtestAsync();
 
             return await LifePortfolioBacktestAsync();
-        }
-
-        private async Task<PortfolioBacktestResponse> BondPortfolioForwardtestAsync()
-        {
-            _startDate = DateOnly.FromDateTime(DateTime.Today);
-            _endDate = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
-
-            var keyRate = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).Last().Value;
-
-            var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new()))
-                .Items
-                .Where(x => x.DaysToMaturity >= 365)
-                .Where(x => x.Rating is "AA" or "AAA")
-                .Where(x => x.Yield >= keyRate)
-                .OrderByDescending(x => x.Yield)
-                .ToList();
-
-            var instruments = await instrumentService.GetInstrumentListAsync();
-            var tickers = bondAnalyseItems.Select(x => x.Ticker).ToList();            
-            var analyseDataContext = await dataService.GetAnalyseDataContextAsync();
-            var dates = DateUtils.GetDates(_startDate, _endDate);
-            var sizes = tickers.ToDictionary(k => k, v => 0);
-            var costs = tickers.ToDictionary(k => k, v => 0.0);
-            var prices = bondAnalyseItems.ToDictionary(k => k.Ticker, v => v.Price);
-            var weights = tickers.ToDictionary(k => k, v => 1.0);
-            var lots = tickers.ToDictionary(k => k, v => 1);
-            double money = _startMoneySum;
-            double totalSum = _startMoneySum;
-            var bondCoupons = await dataService.GetBondCouponsAsync(tickers);
-
-            var bondSeries = new PortfolioBacktestSeries()
-            {
-                Name = "Облигации",
-                Color = KnownColors.Green,
-                ColorFill = KnownColors.Green
-            };
-
-            var monthCouponSeries = new PortfolioBacktestSeries()
-            {
-                Name = "Месячный купон (x100)",
-                Color = KnownColors.DarkGreen,
-                ColorFill = KnownColors.DarkGreen
-            };
-
-            for (int i = 0; i < dates.Count; i++)
-            {
-                AddCoupons();
-                AddMoney();
-                UpdateCosts();
-                UpdateTotalSum();
-                Rebalance();
-
-                bondSeries.Data.Add(
-                    new()
-                    {
-                        Date = dates[i],
-                        Value = (totalSum / 1_000.0).RoundTo(2)
-                    });
-
-                monthCouponSeries.Data.Add(
-                    new()
-                    {
-                        Date = dates[i],
-                        Value = (_couponSum / 1_00.0 / ((i + 1) / 30.0)).RoundTo(2)
-                    });
-
-                void UpdateCosts()
-                {
-                    foreach (var ticker in tickers)
-                        costs[ticker] = prices[ticker] * sizes[ticker];
-                }
-
-                void UpdateSizes()
-                {
-                    double baseUnit = totalSum / weights.Values.Sum();
-
-                    foreach (var ticker in tickers)
-                    {
-                        if (prices[ticker] == 0.0)
-                        {
-                            costs[ticker] = 0.0;
-                            continue;
-                        }
-
-                        double tickerCost = baseUnit * weights[ticker];
-                        double tickerSize = tickerCost / prices[ticker];
-                        tickerSize /= lots[ticker];
-                        tickerSize = Math.Truncate(tickerSize);
-                        tickerSize *= lots[ticker];
-                        sizes[ticker] = Convert.ToInt32(tickerSize);
-                    }
-                }
-
-                void AddCoupons()
-                {
-                    foreach (var ticker in tickers)
-                    {
-                        var coupons = bondCoupons[ticker];
-                        var coupon = coupons.Find(x => x.Ticker == ticker && x.CouponDate == dates[i]);
-
-                        if (coupon is not null)
-                        {
-                            double couponPay = sizes[ticker] * coupon.PayOneBond;
-                            money += couponPay;
-                            _couponSum += couponPay;
-                        }
-                    }
-                }
-
-                void AddMoney()
-                {
-                    if (i % _addMoneyPeriodInDays == 0)
-                    {
-                        money += _addMoneySum;
-                        _moneySum += _addMoneySum;
-                    }
-                }
-
-                void UpdateTotalSum()
-                {
-                    totalSum = costs.Values.Sum() + money;
-                }
-
-                void Rebalance()
-                {
-                    UpdateSizes();
-                    UpdateCosts();
-                    money = totalSum - costs.Values.Sum();
-                }
-            }
-
-            var response = new PortfolioBacktestResponse
-            {
-                Series =
-                [
-                    bondSeries,
-                    monthCouponSeries
-                ],
-                Yield = GetAverageYearYieldPercent(bondSeries),
-                CouponSum = _couponSum.RoundTo(2),
-                MoneySum = _moneySum.RoundTo(2)
-            };
-
-            response.PortfolioPositions = bondAnalyseItems
-                .Select(x =>
-                new PortfolioPositionItem
-                {
-                    Ticker = x.Ticker,
-                    Sector = instruments.Find(xx => xx.Ticker == x.Ticker)?.Sector ?? string.Empty,
-                    Name = x.Name,
-                    CurrentDividendYield = x.Yield
-                })
-                .ToList();
-
-            for (int i = 0; i < response.PortfolioPositions.Count; i++)
-                response.PortfolioPositions[i].Percent = (100.0 / (response.PortfolioPositions.Sum(x => x.ResultCoefficient))).RoundTo(2);
-
-            for (int i = 0; i < response.PortfolioPositions.Count; i++)
-                response.PortfolioPositions[i].Number = i + 1;
-
-            return response;
         }
 
         private async Task<PortfolioBacktestResponse> LifePortfolioBacktestAsync()
@@ -549,8 +384,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
         private async Task<PortfolioBacktestSeries> GetPortfolioSeriesAsync(
             Dictionary<string, double> weights, string portfolioName, string color, bool withServe)
         {
-            var tickers = weights.Keys.ToList();
-            var dividends = (await storageApiClient.GetDividendListAsync(new())).Result.Dividends.Where(x => tickers.Contains(x.Ticker)).ToList();
+            var tickers = weights.Keys.ToList();            
             var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => tickers.Contains(x.Ticker)).ToList();
             var storageInstruments = (await instrumentService.GetStorageInstrumentAsync()).Where(x => tickers.Contains(x.Ticker)).ToList();
             var sizes = tickers.ToDictionary(k => k, v => 0);
@@ -573,7 +407,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             for (int i = 0; i < dates.Count; i++)
             {
-                AddDividends();
                 AddMoney();                
                 UpdatePrices();
                 UpdateCosts();
@@ -617,23 +450,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         tickerSize = Math.Truncate(tickerSize);
                         tickerSize *= lots[ticker];
                         sizes[ticker] = Convert.ToInt32(tickerSize);
-                    }
-                }
-
-                void AddDividends()
-                {
-                    if (!withServe) return;
-
-                    foreach (var ticker in tickers)
-                    {
-                        var dividend = dividends.Find(x => x.Ticker == ticker && x.Date == dates[i]);
-
-                        if (dividend is not null)
-                        {
-                            double dividendPay = sizes[ticker] * dividend.Value;
-                            money += dividendPay;
-                            _dividendSum += dividendPay;
-                        }
                     }
                 }
 

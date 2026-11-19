@@ -41,7 +41,6 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
             var closePriceDiagramData = await dataService.GetClosePriceDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
-            var dividendData = await dataService.GetDividendDataAsync(tickers);
 
             var items = new List<GetClosePriceDiagramItemResponse>();
 
@@ -55,8 +54,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
                         Ticker = instrument.Ticker,
                         Name = instrument.Name,                        
                         Data = [.. ultimateSmootherData[instrument.Ticker].Where(x => x.Date >= DateOnly.FromDateTime(DateTime.Today.AddYears(-1 * years))).Select(x => new GetClosePriceDiagramDateValueResponse { Date = x.Date, Value = x.Value })],
-                        TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message,
-                        DividendYield = dividendData.TryGetValue(instrument.Ticker, out Dividend? value) ? value.Yield!.Value.RoundTo(1) : null
+                        TrendState = TrendStateHelper.GetTrendState(ultimateSmootherData[instrument.Ticker]).Message                        
                     });
             }
 

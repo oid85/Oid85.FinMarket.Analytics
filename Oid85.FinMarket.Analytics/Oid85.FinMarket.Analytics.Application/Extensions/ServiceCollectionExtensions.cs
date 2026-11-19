@@ -30,7 +30,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISevenEtfLifePortfolioService, SevenEtfLifePortfolioService>();
         services.AddScoped<IShareLifePortfolioService, ShareLifePortfolioService>();
         services.AddScoped<ILifeSuperPortfolioService, LifeSuperPortfolioService>();
-        services.AddScoped<IBondAnalyseService, BondAnalyseService>();
         services.AddScoped<IDiagramService, DiagramService>();
         services.AddScoped<IFundamentalParameterRatioService, FundamentalParameterRatioService>();
         services.AddScoped<IBulletinService, BulletinService>();

@@ -9,16 +9,6 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
     public interface IStorageApiClient
     {
         /// <summary>
-        /// Получить дивиденды
-        /// </summary>
-        Task<GetDividendListResponse> GetDividendListAsync(GetDividendListRequest request);
-
-        /// <summary>
-        /// Получить купоны
-        /// </summary>
-        Task<GetBondCouponListResponse> GetBondCouponListAsync(GetBondCouponListRequest request);
-
-        /// <summary>
         /// Получить инструменты
         /// </summary>
         Task<GetInstrumentListResponse> GetInstrumentListAsync(GetInstrumentListRequest request);
@@ -87,10 +77,5 @@ namespace Oid85.FinMarket.Analytics.Application.Interfaces.ApiClients
         /// Создать или редактировать значение ключевой ставки
         /// </summary>
         Task<CreateOrUpdateKeyRateResponse> CreateOrUpdateKeyRateAsync(CreateOrUpdateKeyRateRequest request);
-
-        /// <summary>
-        /// Получить прогнозы
-        /// </summary>
-        Task<GetForecastListResponse> GetForecastListAsync(GetForecastListRequest request);
     }
 }

@@ -6,127 +6,12 @@ using Oid85.FinMarket.Analytics.Core.Responses;
 
 namespace Oid85.FinMarket.Analytics.Application.Services
 {
-    public class BlogService(
-        IBondAnalyseService bondAnalyseService,
-        IFundamentalService fundamentalService,
-        IInstrumentService instrumentService,
-        IShareLifePortfolioService portfolioService,
-        IStorageApiClient storageApiClient) 
+    public class BlogService() 
         : IBlogService
     {
         public async Task<CreateWeekTradesPostResponse> CreateWeekTradesPostAsync(CreateWeekTradesPostRequest request)
         {
-            // Тикеры, по которым были получены дивиденды
-            List<string> receivedDividendTickers = GetTickerList(request.ReceivedDividendTickers);
-
-            // Тикеры купленных облигаций
-            List<string> buyBondTickers = GetTickerList(request.BuyBondTickers);
-
-            // Тикеры купленных акций
-            List<string> buyShareTickers = GetTickerList(request.BuyShareTickers);
-
-            var keyRate = (await storageApiClient.GetKeyRateListAsync(new())).Result.KeyRates.OrderBy(x => x.Date).Last().Value;
-            var bondAnalyseItems = (await bondAnalyseService.GetBondAnalyseAsync(new())).Items;
-            var fundamentalRatingListItems = (await fundamentalService.GetFundamentalRatingListAsync(new())).Items;
-            var instruments = await instrumentService.GetInstrumentListAsync();
-            var positionListResponse = (await portfolioService.GetPositionListAsync(new()));
-
-            string filePath = @"c:\Users\79131\Downloads\пост.txt";
-
-            var lines = new List<string>();
-
-            lines.Add("Сделки за неделю");
-            lines.Add("");
-
-            if (receivedDividendTickers.Count > 0)
-            {
-                lines.Add("На неделе пришли дивиденды по акциям:");
-
-                foreach (var ticker in receivedDividendTickers)
-                {
-                    var instrument = instruments.Find(x => x.Ticker == ticker); 
-                    
-                    lines.Add($"📌 {instrument?.Ticker} - {instrument?.Name}");
-                }
-
-                lines.Add("");
-            }
-
-            if (buyBondTickers.Count > 0)
-            {
-                lines.Add("💼 Из облигаций купил в портфель:");
-                lines.Add("");
-                lines.Add("Облигации в портфель приобретаю с рейтингом АКРА не ниже A (AAA, AA и A)");
-                lines.Add($"и доходностью больше ключевой ставки (текущее значение {keyRate.Value:N2} %)");
-                lines.Add("");
-                lines.Add("Приобрел выпуски:");
-
-                foreach (var ticker in buyBondTickers)
-                {
-                    var instrument = instruments.Find(x => x.Ticker == ticker);
-                    var bondAnalyseItem = bondAnalyseItems.Find(x => x.Ticker == ticker);
-
-                    lines.Add($"📌 {instrument?.Ticker} - {instrument?.Name}");
-                    lines.Add($"   Рейтинг эмитента: {bondAnalyseItem?.Rating}");
-                    lines.Add($"   Доходность купонов: {bondAnalyseItem?.Yield} %");
-                    lines.Add("");
-                }
-            }
-
-            if (buyShareTickers.Count > 0)
-            {
-                lines.Add("💼 Из акций купил в портфель:");
-                lines.Add("");
-
-                foreach (var ticker in buyShareTickers)
-                {
-                    var instrument = instruments.Find(x => x.Ticker == ticker);
-                    var fundamentalRatingListItem = fundamentalRatingListItems.Find(x => x.Ticker == ticker);
-                    var position = positionListResponse.PortfolioPositions.Find(x => x.Ticker == ticker);
-
-                    var lifePercent = ((position?.LifeSize * position?.Price) / positionListResponse.TotalSum * 100.0).RoundTo(2);
-
-                    lines.Add($"📌 {instrument?.Ticker} - {instrument?.Name}");
-
-                    lines.Add($"   ДД к текущей цене: {position?.Yield} %");
-                    lines.Add($"   Доля в портфеле: {lifePercent} %");
-                    lines.Add("");
-                }
-
-                lines.Add("");
-            }
-
-            lines.Add("Регулярные покупки являются основой долгосрочной стратегии");
-            lines.Add("");
-            lines.Add("👉 Подписывайтесь на мои каналы");
-            lines.Add("🔗 [ТГ] https://t.me/oid85");
-            lines.Add("🔗 [MAX] https://max.ru/channel_oid85_invest");
-            lines.Add("🔗 [Дзен] https://dzen.ru/oid85_invest");
-            lines.Add("");
-            lines.Add("👉 Если понравилось, ставьте 👍");
-            lines.Add("");
-            lines.Add("Всем успешных инвестиций!");
-            lines.Add("");
-            lines.Add("* Личное мнение автора. Не является индивидуальной инвестиционной рекомендацией");
-            lines.Add("");
-            lines.Add("#ИнвестСделки");
-
-            File.WriteAllLines(filePath, lines);
-
             return new();
-        }
-
-        private static List<string> GetTickerList(string input)
-        {
-            var str = input.Trim();
-
-            if (string.IsNullOrEmpty(str)) 
-                return [];
-
-            if (!str.Contains(';'))
-                return [str];
-
-            return [.. str.Split(';')];
         }
     }
 }
