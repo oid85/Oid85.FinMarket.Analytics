@@ -17,13 +17,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
     {
         public async Task<LifePortfolioResponse> GetPositionListAsync(LifePortfolioRequest request)
     {
+        var lifePortfolioInfo = (await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RIK9C3" })).Result;
+
         var lifePositionData = (await positionRepository.GetAsync())
             .ToDictionary(k => k.Ticker, v => v);
 
         var tickers = lifePositionData.Keys.Select(x => $"{x}@MISX").ToList();
 
-        var priceData = (await traderFinamApiClient.GetInstrumentPriceAsync(new() { Tickers = tickers }))
-            .Result.Items.ToDictionary(k => k.Ticker.Replace("@MISX", ""), v => v.Price);
+        var priceData = lifePortfolioInfo.Positions
+                .ToDictionary(k => k.Ticker.Replace("@MISX", ""), v => Convert.ToDouble(v.CurrentPrice));
 
         var weightData = lifePositionData.ToDictionary(k => k.Key, v => GetWeight(v.Key));
 

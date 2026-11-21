@@ -37,14 +37,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             var bondLifePortfolio = await bondLifePortfolioService.GetPositionListAsync(new ());
             var shareLifePortfolio = await shareLifePortfolioService.GetPositionListAsync(new ());
             var sevenEtfLifePortfolio = await sevenEtfLifePortfolioService.GetPositionListAsync(new ());
-            var threeEtfLifePortfolio = await threeEtfLifePortfolioService.GetPositionListAsync(new ());
-            var momentumLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new());
+            var threeEtfLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RIK9C3" });
+            var momentumLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RK3DV" });
 
             double totalSum =
                 (bondLifePortfolio.TotalSum +
                 shareLifePortfolio.TotalSum +
                 sevenEtfLifePortfolio.TotalSum +
-                threeEtfLifePortfolio.TotalSum +
+                Convert.ToDouble(threeEtfLifePortfolio.Result.TotalSum) +
                 Convert.ToDouble(momentumLifePortfolio.Result.TotalSum))
                 .RoundTo(2);
 
@@ -53,7 +53,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             lifePortfolioItemData["Bond"].LifeCost = bondLifePortfolio.TotalSum.RoundTo(2);
             lifePortfolioItemData["Share"].LifeCost = shareLifePortfolio.TotalSum.RoundTo(2);
             lifePortfolioItemData["SevenEtf"].LifeCost = sevenEtfLifePortfolio.TotalSum.RoundTo(2);
-            lifePortfolioItemData["ThreeEtf"].LifeCost = threeEtfLifePortfolio.TotalSum.RoundTo(2);
+            lifePortfolioItemData["ThreeEtf"].LifeCost = Convert.ToDouble(threeEtfLifePortfolio.Result.TotalSum).RoundTo(2);
             lifePortfolioItemData["Momentum"].LifeCost = Convert.ToDouble(momentumLifePortfolio.Result.TotalSum).RoundTo(2);
 
             foreach (var (_, portfolio) in lifePortfolioItemData)
