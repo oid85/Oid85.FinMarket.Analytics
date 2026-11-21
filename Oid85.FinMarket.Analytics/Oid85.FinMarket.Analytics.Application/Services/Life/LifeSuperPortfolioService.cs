@@ -39,13 +39,15 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             var sevenEtfLifePortfolio = await sevenEtfLifePortfolioService.GetPositionListAsync(new ());
             var threeEtfLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RIK9C3" });
             var momentumLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RK3DV" });
+            var followTrendPortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RN85G" });
 
             double totalSum =
                 (bondLifePortfolio.TotalSum +
                 shareLifePortfolio.TotalSum +
                 sevenEtfLifePortfolio.TotalSum +
                 Convert.ToDouble(threeEtfLifePortfolio.Result.TotalSum) +
-                Convert.ToDouble(momentumLifePortfolio.Result.TotalSum))
+                Convert.ToDouble(momentumLifePortfolio.Result.TotalSum) +
+                Convert.ToDouble(followTrendPortfolio.Result.TotalSum))
                 .RoundTo(2);
 
             double weightSum = lifePortfolioData.Values.Sum(x => x.Weight ?? 0);
@@ -55,6 +57,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             lifePortfolioItemData["SevenEtf"].LifeCost = sevenEtfLifePortfolio.TotalSum.RoundTo(2);
             lifePortfolioItemData["ThreeEtf"].LifeCost = Convert.ToDouble(threeEtfLifePortfolio.Result.TotalSum).RoundTo(2);
             lifePortfolioItemData["Momentum"].LifeCost = Convert.ToDouble(momentumLifePortfolio.Result.TotalSum).RoundTo(2);
+            lifePortfolioItemData["FutureWeekUltimateSmoother"].LifeCost = Convert.ToDouble(followTrendPortfolio.Result.TotalSum).RoundTo(2);
 
             foreach (var (_, portfolio) in lifePortfolioItemData)
             {
@@ -111,15 +114,17 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             var bondLifePortfolio = await bondLifePortfolioService.GetPositionListAsync(new());
             var shareLifePortfolio = await shareLifePortfolioService.GetPositionListAsync(new());
             var sevenEtfLifePortfolio = await sevenEtfLifePortfolioService.GetPositionListAsync(new());
-            var threeEtfLifePortfolio = await threeEtfLifePortfolioService.GetPositionListAsync(new());
-            var momentumLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new());
+            var threeEtfLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RIK9C3" });
+            var momentumLifePortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RK3DV" });
+            var followTrendPortfolio = await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RN85G" });
 
             double totalSum =
                 (bondLifePortfolio.TotalSum +
                 shareLifePortfolio.TotalSum +
                 sevenEtfLifePortfolio.TotalSum +
-                threeEtfLifePortfolio.TotalSum +
-                Convert.ToDouble(momentumLifePortfolio.Result.TotalSum))
+                Convert.ToDouble(threeEtfLifePortfolio.Result.TotalSum) +
+                Convert.ToDouble(momentumLifePortfolio.Result.TotalSum) +
+                Convert.ToDouble(followTrendPortfolio.Result.TotalSum))
                 .RoundTo(2);
 
             var today = DateOnly.FromDateTime(DateTime.Today);
@@ -129,8 +134,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 new MoneyDateValue { Date = today, Money = bondLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "Bond" },
                 new MoneyDateValue { Date = today, Money = shareLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "Share" },                
                 new MoneyDateValue { Date = today, Money = sevenEtfLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "SevenEtf" },
-                new MoneyDateValue { Date = today, Money = threeEtfLifePortfolio.TotalSum.RoundTo(2), PortfolioName = "ThreeEtf" },
-                new MoneyDateValue { Date = today, Money = Convert.ToDouble(momentumLifePortfolio.Result.TotalSum).RoundTo(2), PortfolioName = "Momentum" }
+                new MoneyDateValue { Date = today, Money = Convert.ToDouble(threeEtfLifePortfolio.Result.TotalSum).RoundTo(2), PortfolioName = "ThreeEtf" },
+                new MoneyDateValue { Date = today, Money = Convert.ToDouble(momentumLifePortfolio.Result.TotalSum).RoundTo(2), PortfolioName = "Momentum" },
+                new MoneyDateValue { Date = today, Money = Convert.ToDouble(followTrendPortfolio.Result.TotalSum).RoundTo(2), PortfolioName = "FutureWeekUltimateSmoother" }
             ]);
         }
 

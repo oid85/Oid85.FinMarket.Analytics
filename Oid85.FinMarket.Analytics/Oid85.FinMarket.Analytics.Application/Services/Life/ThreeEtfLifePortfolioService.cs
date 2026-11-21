@@ -80,17 +80,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
         int GetSize(string ticker)
         {
-            lifePositionData.TryGetValue(ticker, out var lifePosition);
-
+            priceData.TryGetValue(ticker, out var price);
             double tickerCost = GetCost(ticker);
-            double price = lifePosition?.Price ?? 0;
 
             return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price));
         }
 
         double GetCost(string ticker)
         {
-            lifePositionData.TryGetValue(ticker, out var lifePosition);
             weightData.TryGetValue(ticker, out var weight);
 
             double totalSum = GetTotalSum();
