@@ -4,7 +4,6 @@ using Oid85.FinMarket.Analytics.Application.Interfaces.Services;
 using Oid85.FinMarket.Analytics.Common.KnownConstants;
 using Oid85.FinMarket.Analytics.Common.Utils;
 using Oid85.FinMarket.Analytics.Core.Enums;
-using Oid85.FinMarket.Analytics.Core.Models;
 using Oid85.FinMarket.Analytics.Core.Requests;
 using Oid85.FinMarket.Analytics.Core.Responses;
 
@@ -13,6 +12,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     public class DiagramService(
         IInstrumentService instrumentService,
         IDataService dataService,
+        IInstrumentRepository instrumentRepository,
+        IShareLifePositionRepository positionRepository,
         IParameterRepository parameterRepository)
         : IDiagramService
     {
@@ -70,11 +71,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services
 
         public async Task<GetTrendAggregateDiagramResponse> GetTrendAggregateDiagramAsync(GetTrendAggregateDiagramRequest request)
         {
-            var instruments = (await instrumentService.GetAnalyticInstrumentListAsync(new())).Instruments                
-                .Where(x => x.Type == KnownInstrumentTypes.Share)                
-                .ToList();
+            var tickers = (await positionRepository.GetAsync()).Select(x => x.Ticker).ToList();
 
-            var tickers = instruments.Select(x => x.Ticker).ToList();
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? [])
+                .Where(x => tickers.Contains(x.Ticker))
+                .ToList();
 
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
 

@@ -11,7 +11,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class WeekTrendService(
         IInstrumentRepository instrumentRepository,
-        IParameterRepository parameterRepository,
+        IShareLifePositionRepository positionRepository,
         IDataService dataService)
         : IWeekTrendService
     {
@@ -21,12 +21,14 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-7 * (request.LastWeeksCount + 1)));
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
-            var indexes = instruments.Where(x => x.Type == KnownInstrumentTypes.Index).ToList();
+            var tickers = (await positionRepository.GetAsync()).Select(x => x.Ticker).ToList();
+
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? [])
+                .Where(x => tickers.Contains(x.Ticker))
+                .ToList();
+
             var shares = instruments.Where(x => x.Type == KnownInstrumentTypes.Share).ToList();
-            var futures = instruments.Where(x => x.Type == KnownInstrumentTypes.Future).ToList();
-            var etfs = instruments.Where(x => x.Type == KnownInstrumentTypes.Etf).ToList();
-            var tickers = instruments!.Select(x => x.Ticker).ToList();
+
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var weeks = DateUtils.GetWeeks(startDate, today);

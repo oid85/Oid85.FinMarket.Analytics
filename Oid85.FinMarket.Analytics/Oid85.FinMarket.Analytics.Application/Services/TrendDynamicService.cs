@@ -11,8 +11,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services
     /// <inheritdoc />
     public class TrendDynamicService(
         IInstrumentRepository instrumentRepository,
-        IDataService dataService,
-        IParameterRepository parameterRepository)
+        IShareLifePositionRepository positionRepository,
+        IDataService dataService)
         : ITrendDynamicService
     {
         /// <inheritdoc />
@@ -21,8 +21,12 @@ namespace Oid85.FinMarket.Analytics.Application.Services
             var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * request.LastDaysCount));
             var to = DateOnly.FromDateTime(DateTime.Today);
 
-            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? []).Where(x => x.IsSelected).ToList();
-            var tickers = instruments!.Select(x => x.Ticker).ToList();
+            var tickers = (await positionRepository.GetAsync()).Select(x => x.Ticker).ToList();
+
+            var instruments = ((await instrumentRepository.GetInstrumentsAsync()) ?? [])
+                .Where(x => tickers.Contains(x.Ticker))
+                .ToList();
+
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var ultimateSmootherData = await dataService.GetUltimateSmootherDataAsync(tickers);
             var dates = DateUtils.GetDates(from, to);
