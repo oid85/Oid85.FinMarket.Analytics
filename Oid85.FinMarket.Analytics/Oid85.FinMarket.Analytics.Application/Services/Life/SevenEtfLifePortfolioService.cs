@@ -98,7 +98,7 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 new() { Name = $"Облигации ({string.Join(',', bondTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(bondTickers), Cost = GetAssetClassCost(bondTickers) },
                 new() { Name = $"Золото ({string.Join(',', goldTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(goldTickers), Cost = GetAssetClassCost(goldTickers) },
                 new() { Name = $"Валюта ({string.Join(',', currencyTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(currencyTickers), Cost = GetAssetClassCost(currencyTickers) },
-                new() { Name = $"Ликвидность ({string.Join(',', moneyTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(moneyTickers), Cost = GetAssetClassCost(moneyTickers) },
+                new() { Name = $"Денежная часть ({string.Join(',', moneyTickers.OrderBy(x => x))})", Percent = GetAssetClassPercent(moneyTickers), Cost = GetAssetClassCost(moneyTickers) },
             };
 
             return new LifePortfolioResponse
