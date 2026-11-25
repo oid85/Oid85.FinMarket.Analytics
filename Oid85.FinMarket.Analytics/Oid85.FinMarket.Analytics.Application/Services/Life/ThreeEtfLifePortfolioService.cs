@@ -19,6 +19,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
         {
             var lifePortfolioInfo = (await traderFinamApiClient.GetPortfolioInfoAsync(new() { AccountName = "OLEG_176683RIK9C3" })).Result;
 
+            var portfolioPositionData = lifePortfolioInfo.Positions
+                .ToDictionary(k => k.Ticker, v => v);
+
             var lifePositionData = (await positionRepository.GetAsync())
                 .ToDictionary(k => k.Ticker, v => v);
 
@@ -36,10 +39,11 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 {
                     lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
                     priceData.TryGetValue(x.Ticker, out var priceValue);
+                    portfolioPositionData.TryGetValue(x.Ticker, out var portfolioPosition);
 
                     string name = lifePosition?.Name ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
-                    var lifeSize = lifePortfolioInfo.Positions.Find(xx => xx.Ticker == x.Ticker)?.Size ?? 0;
+                    var lifeSize = portfolioPosition?.Size ?? 0;
                     var price = priceValue.RoundTo(2);
                     var cost = GetCost(x.Ticker);
                     var size = GetSize(x.Ticker);
