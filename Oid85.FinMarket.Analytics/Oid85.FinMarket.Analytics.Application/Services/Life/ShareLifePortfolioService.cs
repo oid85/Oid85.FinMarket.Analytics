@@ -33,6 +33,8 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
 
             var candleData = await dataService.GetCandleDataAsync(tickers);
 
+            var priceData = candleData.ToDictionary(k => k.Key, v => v.Value.LastOrDefault()?.Close ?? 0.0);
+
             Dictionary<string, FundamentalScore?> fundamentalData = [];
 
             foreach (var ticker in tickers)
@@ -53,13 +55,13 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
                     lifePositionData.TryGetValue(x.Ticker, out var lifePosition);
                     fundamentalData.TryGetValue(x.Ticker, out var fundamental);
+                    priceData.TryGetValue(x.Ticker, out var price);
 
                     string name = instrument?.Name ?? string.Empty;
                     string sector = instrument?.Sector ?? string.Empty;
                     var weight = GetWeight(x.Ticker);
                     var yield = fundamental?.DividendYield?.Value ?? 0.0;
-                    var lifeSize = lifePosition?.Size ?? 0;
-                    var price = instrument?.LastPrice ?? 0;
+                    var lifeSize = lifePosition?.Size ?? 0;                    
                     var cost = GetCost(x.Ticker);
                     var size = GetSize(x.Ticker);
                     var percent = (cost / totalSum * 100.0).RoundTo(2);
@@ -159,9 +161,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
             int GetSize(string ticker)
             {
                 instrumentData.TryGetValue(ticker, out var instrument);
+                priceData.TryGetValue(ticker, out var price);
 
-                double tickerCost = GetCost(ticker);
-                double price = instrument?.LastPrice ?? 0;
+                double tickerCost = GetCost(ticker);                
                 int lot = instrument?.Lot ?? 1;
 
                 return price == 0.0 ? 0 : Convert.ToInt32(Math.Truncate(tickerCost / price / lot) * lot);
@@ -183,7 +185,9 @@ namespace Oid85.FinMarket.Analytics.Application.Services.Life
                 lifePositionData.Values.Sum(x =>
                 {
                     instrumentData.TryGetValue(x.Ticker, out var instrument);
-                    return (x.Size ?? 0) * (instrument?.LastPrice ?? 0);
+                    priceData.TryGetValue(x.Ticker, out var price);
+
+                    return (x.Size ?? 0) * price;
                 });
         }
 
